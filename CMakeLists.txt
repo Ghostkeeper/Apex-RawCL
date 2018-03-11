@@ -40,6 +40,7 @@ if(BUILD_TESTS)
 	#Names of all tests. Each must have a file called "test/<name>.cpp" as source file.
 	set(test_names
 		TestPolygonArea
+		TestPolygonTranslate
 	)
 	#To make sure that the tests are built before running them, add the building of these tests as an additional test.
 	add_custom_target(build_all_tests)

@@ -14,6 +14,9 @@
 
 namespace parallelogram {
 
+/*
+ * Some fixtures for the TestPolygonArea tests.
+ */
 class TestPolygonArea : public testing::Test {
 protected:
 	//A few polygons to test with.
