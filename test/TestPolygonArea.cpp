@@ -22,9 +22,9 @@ protected:
 	virtual void SetUp() {
 		square_1000.emplace_back(); //Contains one simple polygon.
 		square_1000[0].emplace_back(0, 0);
-		square_1000[0].emplace_back(0, 1000);
-		square_1000[0].emplace_back(1000, 1000);
 		square_1000[0].emplace_back(1000, 0);
+		square_1000[0].emplace_back(1000, 1000);
+		square_1000[0].emplace_back(0, 1000);
 	}
 };
 
@@ -77,8 +77,8 @@ TEST_F(TestPolygonArea, Triangle1000) {
 	Polygon triangle_1000;
 	triangle_1000.emplace_back(); //Contains one simple polygon.
 	triangle_1000[0].emplace_back(24, 24);
-	triangle_1000[0].emplace_back(524, 1024);
 	triangle_1000[0].emplace_back(1024, 24);
+	triangle_1000[0].emplace_back(524, 1024);
 
 	EXPECT_EQ(500000, triangle_1000.area());
 }
@@ -93,9 +93,9 @@ TEST_F(TestPolygonArea, NegativeSquare) {
 	Polygon negative_square_1000;
 	negative_square_1000.emplace_back();
 	negative_square_1000[0].emplace_back(0, 0);
-	negative_square_1000[0].emplace_back(1000, 0);
-	negative_square_1000[0].emplace_back(1000, 1000);
 	negative_square_1000[0].emplace_back(0, 1000);
+	negative_square_1000[0].emplace_back(1000, 1000);
+	negative_square_1000[0].emplace_back(1000, 0);
 
 	EXPECT_EQ(-square_1000.area(), negative_square_1000.area());
 }

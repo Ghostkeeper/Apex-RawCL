@@ -23,7 +23,7 @@ coord_t SimplePolygon::area() const {
 		area += at(previous).x * at(vertex).y - at(previous).y * at(vertex).x;
 		previous = vertex;
 	}
-	return abs(area) >> 1;
+	return area >> 1;
 }
 
 void SimplePolygon::translate(const coord_t x, const coord_t y) {
