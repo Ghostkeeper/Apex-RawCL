@@ -11,7 +11,15 @@
 namespace parallelogram {
 
 Polygon::Polygon() {
-    //Only initialise the simple_polygons vector.
+	//Only initialise the simple_polygons vector.
+}
+
+coord_t Polygon::area() const {
+	coord_t area = 0;
+	for(const SimplePolygon& simple_polygon : *this) {
+		area += simple_polygon.area();
+	}
+	return area;
 }
 
 }

@@ -22,12 +22,19 @@ namespace parallelogram {
  * the boundary intersects itself.
  */
 class SimplePolygon : std::vector<Point2> {
-    /*
-     * Constructs an empty simple polygon.
-     *
-     * The polygon will have no vertices or edges and no area.
-     */
-    SimplePolygon();
+public:
+	/*
+	 * Constructs an empty simple polygon.
+	 *
+	 * The polygon will have no vertices or edges and no area.
+	 */
+	SimplePolygon();
+
+	/*
+	 * Compute the total surface area of this simple polygon.
+	 * \return The area of the simple polygon.
+	 */
+	coord_t area() const;
 };
 
 }

@@ -18,12 +18,19 @@ namespace parallelogram {
  * A complex polygon.
  */
 class Polygon : std::vector<SimplePolygon> {
-    /*
-     * Initialise an empty complex polygon.
-     *
-     * The polygon will have no area at all.
-     */
-    Polygon();
+public:
+	/*
+	 * Initialise an empty complex polygon.
+	 *
+	 * The polygon will have no area at all.
+	 */
+	Polygon();
+
+	/*
+	 * Compute the total surface area of the polygon.
+	 * \return The area of the polygon.
+	 */
+	coord_t area() const;
 };
 
 }

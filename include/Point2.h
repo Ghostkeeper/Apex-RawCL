@@ -14,20 +14,21 @@
 namespace parallelogram {
 
 class Point2 {
-    /*
-     * The projection of this point on the X axis.
-     */
-    const coord_t x;
+public:
+	/*
+	 * The projection of this point on the X axis.
+	 */
+	const coord_t x;
 
-    /*
-     * The projection of this point on the Y axis.
-     */
-    const coord_t y;
+	/*
+	 * The projection of this point on the Y axis.
+	 */
+	const coord_t y;
 
-    /*
-     * Create a new point.
-     */
-    Point2(const coord_t x, const coord_t y);
+	/*
+	 * Create a new point.
+	 */
+	Point2(const coord_t x, const coord_t y);
 };
 
 }

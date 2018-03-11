@@ -11,7 +11,18 @@
 namespace parallelogram {
 
 SimplePolygon::SimplePolygon() {
-    //Only construct the vector of vertices.
+	//Only construct the vector of vertices.
+}
+
+coord_t SimplePolygon::area() const {
+	//Apothem method to compute the area.
+	coord_t area = 0;
+	const Point2& previous_vertex = back();
+	for(const Point2 vertex : *this) {
+		area += previous_vertex.x * vertex.y - previous_vertex.y * vertex.x;
+	}
+	area /= 2;
+	return area;
 }
 
 }
