@@ -21,7 +21,7 @@ namespace parallelogram {
  * simple polygon in the mathematical sense since there is no checking whether
  * the boundary intersects itself.
  */
-class SimplePolygon : std::vector<Point2> {
+class SimplePolygon : private std::vector<Point2> {
 public:
 	/*
 	 * Constructs an empty simple polygon.
@@ -29,6 +29,37 @@ public:
 	 * The polygon will have no vertices or edges and no area.
 	 */
 	SimplePolygon();
+
+	//Operations inheriting from std::vector.
+	using std::vector<Point2>::operator=;
+	using std::vector<Point2>::operator[];
+	using std::vector<Point2>::assign;
+	using std::vector<Point2>::at;
+	using std::vector<Point2>::back;
+	using std::vector<Point2>::begin;
+	using std::vector<Point2>::capacity;
+	using std::vector<Point2>::cbegin;
+	using std::vector<Point2>::cend;
+	using std::vector<Point2>::crbegin;
+	using std::vector<Point2>::crend;
+	using std::vector<Point2>::clear;
+	using std::vector<Point2>::data;
+	using std::vector<Point2>::emplace;
+	using std::vector<Point2>::emplace_back;
+	using std::vector<Point2>::empty;
+	using std::vector<Point2>::end;
+	using std::vector<Point2>::front;
+	using std::vector<Point2>::get_allocator;
+	using std::vector<Point2>::insert;
+	using std::vector<Point2>::max_size;
+	using std::vector<Point2>::pop_back;
+	using std::vector<Point2>::push_back;
+	using std::vector<Point2>::rbegin;
+	using std::vector<Point2>::rend;
+	using std::vector<Point2>::reserve;
+	using std::vector<Point2>::shrink_to_fit;
+	using std::vector<Point2>::size;
+	using std::vector<Point2>::swap;
 
 	/*
 	 * Compute the total surface area of this simple polygon.

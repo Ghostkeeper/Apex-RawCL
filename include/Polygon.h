@@ -17,7 +17,7 @@ namespace parallelogram {
 /*
  * A complex polygon.
  */
-class Polygon : std::vector<SimplePolygon> {
+class Polygon : private std::vector<SimplePolygon> {
 public:
 	/*
 	 * Initialise an empty complex polygon.
@@ -25,6 +25,37 @@ public:
 	 * The polygon will have no area at all.
 	 */
 	Polygon();
+
+	//Operations inheriting from std::vector.
+	using std::vector<SimplePolygon>::operator=;
+	using std::vector<SimplePolygon>::operator[];
+	using std::vector<SimplePolygon>::assign;
+	using std::vector<SimplePolygon>::at;
+	using std::vector<SimplePolygon>::back;
+	using std::vector<SimplePolygon>::begin;
+	using std::vector<SimplePolygon>::capacity;
+	using std::vector<SimplePolygon>::cbegin;
+	using std::vector<SimplePolygon>::cend;
+	using std::vector<SimplePolygon>::crbegin;
+	using std::vector<SimplePolygon>::crend;
+	using std::vector<SimplePolygon>::clear;
+	using std::vector<SimplePolygon>::data;
+	using std::vector<SimplePolygon>::emplace;
+	using std::vector<SimplePolygon>::emplace_back;
+	using std::vector<SimplePolygon>::empty;
+	using std::vector<SimplePolygon>::end;
+	using std::vector<SimplePolygon>::front;
+	using std::vector<SimplePolygon>::get_allocator;
+	using std::vector<SimplePolygon>::insert;
+	using std::vector<SimplePolygon>::max_size;
+	using std::vector<SimplePolygon>::pop_back;
+	using std::vector<SimplePolygon>::push_back;
+	using std::vector<SimplePolygon>::rbegin;
+	using std::vector<SimplePolygon>::rend;
+	using std::vector<SimplePolygon>::reserve;
+	using std::vector<SimplePolygon>::shrink_to_fit;
+	using std::vector<SimplePolygon>::size;
+	using std::vector<SimplePolygon>::swap;
 
 	/*
 	 * Compute the total surface area of the polygon.
