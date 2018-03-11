@@ -136,6 +136,27 @@ TEST_F(TestPolygonArea, SquareWithHole) {
 	EXPECT_EQ(100 * 100 - 20 * 20, square_with_hole.area());
 }
 
+TEST_F(TestPolygonArea, NestedSquares) {
+	Polygon nested_squares; //100 by 100 square with a 50 by 50 hole in the middle with a 10 by 10 peg in the hole.
+	nested_squares.emplace_back();
+	nested_squares[0].emplace_back(0, 0);
+	nested_squares[0].emplace_back(100, 0);
+	nested_squares[0].emplace_back(100, 100);
+	nested_squares[0].emplace_back(0, 100);
+	nested_squares.emplace_back(); //A 50x50 hole in the negative.
+	nested_squares[1].emplace_back(25, 25);
+	nested_squares[1].emplace_back(25, 75);
+	nested_squares[1].emplace_back(75, 75);
+	nested_squares[1].emplace_back(75, 25);
+	nested_squares.emplace_back(); //A 10x10 peg in the positive again.
+	nested_squares[2].emplace_back(40, 40);
+	nested_squares[2].emplace_back(50, 40);
+	nested_squares[2].emplace_back(50, 50);
+	nested_squares[2].emplace_back(40, 50);
+
+	EXPECT_EQ(100 * 100 - 50 * 50 + 10 * 10, nested_squares.area());
+}
+
 }
 
 int main(int argc, char* argv[]) {
