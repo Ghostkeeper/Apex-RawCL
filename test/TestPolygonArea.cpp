@@ -40,7 +40,7 @@ TEST_F(TestPolygonArea, InitialAreaIsZero) {
  * Test the area of a 1000 by 1000 square.
  */
 TEST_F(TestPolygonArea, Square1000) {
-	EXPECT_EQ(1000000, square_1000.area());
+	EXPECT_EQ(1000 * 1000, square_1000.area());
 }
 
 /*
@@ -49,7 +49,7 @@ TEST_F(TestPolygonArea, Square1000) {
  */
 TEST_F(TestPolygonArea, Square1000NegativeCoordinates) {
 	square_1000.translate(-1024, -1024);
-	EXPECT_EQ(1000000, square_1000.area());
+	EXPECT_EQ(1000 * 1000, square_1000.area());
 }
 
 /*
@@ -58,7 +58,7 @@ TEST_F(TestPolygonArea, Square1000NegativeCoordinates) {
  */
 TEST_F(TestPolygonArea, Square1000NegativeY) {
 	square_1000.translate(0, -1024);
-	EXPECT_EQ(1000000, square_1000.area());
+	EXPECT_EQ(1000 * 1000, square_1000.area());
 }
 
 /*
@@ -67,7 +67,7 @@ TEST_F(TestPolygonArea, Square1000NegativeY) {
  */
 TEST_F(TestPolygonArea, Square1000AroundOrigin) {
 	square_1000.translate(-512, -512);
-	EXPECT_EQ(1000000, square_1000.area());
+	EXPECT_EQ(1000 * 1000, square_1000.area());
 }
 
 /*
@@ -80,7 +80,7 @@ TEST_F(TestPolygonArea, Triangle1000) {
 	triangle_1000[0].emplace_back(1024, 24);
 	triangle_1000[0].emplace_back(524, 1024);
 
-	EXPECT_EQ(500000, triangle_1000.area());
+	EXPECT_EQ(1000 * 1000 / 2, triangle_1000.area());
 }
 
 /*
