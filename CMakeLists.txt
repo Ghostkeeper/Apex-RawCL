@@ -6,6 +6,7 @@
 
 cmake_minimum_required(VERSION 2.8.12)
 project(parallelogram)
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 
 #Compiler settings.
 if(NOT ${CMAKE_VERSION} VERSION_LESS 3.1)
@@ -28,6 +29,27 @@ set(sources
 #Compilation.
 add_library(parallelogram SHARED ${sources})
 target_include_directories(parallelogram PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+
+#Tests.
+option(BUILD_TESTS "Build automated tests to verify correctness of the library." OFF)
+if(BUILD_TESTS)
+	enable_testing()
+	find_package(GoogleTest REQUIRED)
+	include_directories(${GTEST_INCLUDE_DIRS})
+
+	#Names of all tests. Each must have a file called "test/<name>.cpp" as source file.
+	set(test_names
+		TestPolygonArea
+	)
+	#To make sure that the tests are built before running them, add the building of these tests as an additional test.
+	add_test(ctest_build_tests "${CMAKE_COMMAND}" --build ${CMAKE_BINARY_DIR} --target ${test_names})
+	foreach(test_case ${test_names})
+		add_executable(${test_case} test/${test_case}.cpp)
+		target_link_libraries(${test_case} ${GTEST_BOTH_LIBRARIES} parallelogram) #Link with GTest and the main Parallelogram library.
+		add_test(${test_case} ${test_case})
+		set_tests_properties(${test_case} PROPERTIES DEPENDS ctest_build_tests)
+	endforeach()
+endif()
 
 #Installation.
 #TODO
