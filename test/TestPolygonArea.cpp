@@ -157,6 +157,17 @@ TEST_F(TestPolygonArea, NestedSquares) {
 	EXPECT_EQ(100 * 100 - 50 * 50 + 10 * 10, nested_squares.area());
 }
 
+TEST_F(TestPolygonArea, SelfIntersecting) {
+	Polygon hourglass; //An hourglass figure where two of the edges of the polygon intersect.
+	hourglass.emplace_back();
+	hourglass[0].emplace_back(0, 0);
+	hourglass[0].emplace_back(100, 0);
+	hourglass[0].emplace_back(25, 75); //The top of the hourglass is half as wide as the bottom, resulting in a quarter of the area!
+	hourglass[0].emplace_back(75, 75);
+
+	EXPECT_EQ(100 * 50 / 2 - 50 * 25 / 2, hourglass.area());
+}
+
 }
 
 int main(int argc, char* argv[]) {
