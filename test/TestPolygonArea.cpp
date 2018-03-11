@@ -28,20 +28,36 @@ protected:
 	}
 };
 
-//Test for the area of an empty polygon being 0.
+/*
+ * Test for the area of an empty polygon being 0.
+ */
 TEST_F(TestPolygonArea, InitialAreaIsZero) {
 	Polygon empty_polygon;
 	EXPECT_EQ(0, empty_polygon.area());
 }
 
-//Test the area of a 1000 by 1000 square.
+/*
+ * Test the area of a 1000 by 1000 square.
+ */
 TEST_F(TestPolygonArea, Square1000) {
 	EXPECT_EQ(1000000, square_1000.area());
 }
 
-//Test the area of a 1000 by 1000 square that's completely in the negative coordinate area.
+/*
+ * Test the area of a 1000 by 1000 square that's completely in the negative
+ * coordinate area.
+ */
 TEST_F(TestPolygonArea, Square1000NegativeCoordinates) {
 	square_1000.translate(-1024, -1024);
+	EXPECT_EQ(1000000, square_1000.area());
+}
+
+/*
+ * Test the area of a 1000 by 1000 square that's in the negative area of the Y
+ * dimension but the positive area of the X dimension.
+ */
+TEST_F(TestPolygonArea, Square1000NegativeY) {
+	square_1000.translate(0, -1024);
 	EXPECT_EQ(1000000, square_1000.area());
 }
 
