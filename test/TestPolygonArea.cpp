@@ -14,9 +14,22 @@
 
 namespace parallelogram {
 
+//Test for the area of an empty polygon being 0.
 TEST(TestPolygonArea, InitialAreaIsZero) {
 	Polygon empty_polygon;
 	EXPECT_EQ(0, empty_polygon.area());
+}
+
+//Test the area of a 1000 by 1000 square.
+TEST(TestPolygonArea, Square1000) {
+	Polygon square_1000;
+	square_1000.emplace_back(); //Contains one simple polygon.
+	square_1000[0].emplace_back(0, 0);
+	square_1000[0].emplace_back(0, 1000);
+	square_1000[0].emplace_back(1000, 1000);
+	square_1000[0].emplace_back(1000, 0);
+
+	EXPECT_EQ(1000000, square_1000.area());
 }
 
 }
