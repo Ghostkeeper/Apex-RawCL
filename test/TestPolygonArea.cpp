@@ -75,12 +75,29 @@ TEST_F(TestPolygonArea, Square1000AroundOrigin) {
  */
 TEST_F(TestPolygonArea, Triangle1000) {
 	Polygon triangle_1000;
-	triangle_1000.emplace_back();
+	triangle_1000.emplace_back(); //Contains one simple polygon.
 	triangle_1000[0].emplace_back(24, 24);
 	triangle_1000[0].emplace_back(524, 1024);
 	triangle_1000[0].emplace_back(1024, 24);
 
 	EXPECT_EQ(500000, triangle_1000.area());
+}
+
+/*
+ * Test the area of a negative square, where the vertices are going the other
+ * way around.
+ *
+ * The area should then be negative.
+ */
+TEST_F(TestPolygonArea, NegativeSquare) {
+	Polygon negative_square_1000;
+	negative_square_1000.emplace_back();
+	negative_square_1000[0].emplace_back(0, 0);
+	negative_square_1000[0].emplace_back(1000, 0);
+	negative_square_1000[0].emplace_back(1000, 1000);
+	negative_square_1000[0].emplace_back(0, 1000);
+
+	EXPECT_EQ(-square_1000.area(), negative_square_1000.area());
 }
 
 }
