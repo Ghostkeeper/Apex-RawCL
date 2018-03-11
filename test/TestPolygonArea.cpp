@@ -117,6 +117,25 @@ TEST_F(TestPolygonArea, NegativeSquare) {
 	EXPECT_EQ(-square_1000.area(), negative_square_1000.area());
 }
 
+/*
+ * Tests the area of a complex polygon: A square with a hole in the middle.
+ */
+TEST_F(TestPolygonArea, SquareWithHole) {
+	Polygon square_with_hole; //100 by 100 square with a 20 by 20 hole in the middle.
+	square_with_hole.emplace_back();
+	square_with_hole[0].emplace_back(0, 0);
+	square_with_hole[0].emplace_back(100, 0);
+	square_with_hole[0].emplace_back(100, 100);
+	square_with_hole[0].emplace_back(0, 100);
+	square_with_hole.emplace_back(); //A 20x20 hole in the negative.
+	square_with_hole[1].emplace_back(30, 30);
+	square_with_hole[1].emplace_back(30, 50);
+	square_with_hole[1].emplace_back(50, 50);
+	square_with_hole[1].emplace_back(50, 30);
+
+	EXPECT_EQ(100 * 100 - 20 * 20, square_with_hole.area());
+}
+
 }
 
 int main(int argc, char* argv[]) {
