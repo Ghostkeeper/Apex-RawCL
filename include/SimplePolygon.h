@@ -21,19 +21,13 @@ namespace parallelogram {
  * simple polygon in the mathematical sense since there is no checking whether
  * the boundary intersects itself.
  */
-class SimplePolygon {
+class SimplePolygon : std::vector<Point2> {
     /*
      * Constructs an empty simple polygon.
      *
      * The polygon will have no vertices or edges and no area.
      */
     SimplePolygon();
-
-private:
-    /*
-     * The corner points along the border of this simple polygon.
-     */
-    std::vector<Point2> vertices;
 };
 
 }

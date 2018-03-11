@@ -17,19 +17,13 @@ namespace parallelogram {
 /*
  * A complex polygon.
  */
-class Polygon {
+class Polygon : std::vector<SimplePolygon> {
     /*
      * Initialise an empty complex polygon.
      *
      * The polygon will have no area at all.
      */
     Polygon();
-
-private:
-    /*
-     * The simple polygons that this polygon consists of.
-     */
-    std::vector<SimplePolygon> simple_polygons;
 };
 
 }
