@@ -84,6 +84,20 @@ TEST_F(TestPolygonArea, Triangle1000) {
 }
 
 /*
+ * Tests the area of a long, slim rectangle.
+ */
+TEST_F(TestPolygonArea, Rectangle) {
+	Polygon rectangle;
+	rectangle.emplace_back(); //Contains one simple polygon.
+	rectangle[0].emplace_back(0, 0);
+	rectangle[0].emplace_back(1000, 0);
+	rectangle[0].emplace_back(1000, 1);
+	rectangle[0].emplace_back(0, 1);
+
+	EXPECT_EQ(1000 * 1, rectangle.area());
+}
+
+/*
  * Test computing the area of a concave polygon.
  */
 TEST_F(TestPolygonArea, Concave) {
