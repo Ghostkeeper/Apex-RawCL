@@ -37,6 +37,42 @@ TEST(TestPolygonTranslate, SquareMovePositive) {
 	EXPECT_EQ(1025, square_1000[0][3].y);
 }
 
+/*
+ * Tests moving a complex polygon.
+ */
+TEST(TestPolygonTranslate, SquareDoughnut) {
+	Polygon doughnut;
+	doughnut.emplace_back(); //The outer perimeter.
+	doughnut[0].emplace_back(0, 0);
+	doughnut[0].emplace_back(100, 0);
+	doughnut[0].emplace_back(100, 100);
+	doughnut[0].emplace_back(0, 100);
+	doughnut.emplace_back(); //The hole.
+	doughnut[1].emplace_back(25, 25);
+	doughnut[1].emplace_back(25, 75);
+	doughnut[1].emplace_back(75, 75);
+	doughnut[1].emplace_back(75, 25);
+
+	doughnut.translate(-5, 5);
+
+	EXPECT_EQ(-5, doughnut[0][0].x);
+	EXPECT_EQ(5, doughnut[0][0].y);
+	EXPECT_EQ(95, doughnut[0][1].x);
+	EXPECT_EQ(5, doughnut[0][1].y);
+	EXPECT_EQ(95, doughnut[0][2].x);
+	EXPECT_EQ(105, doughnut[0][2].y);
+	EXPECT_EQ(-5, doughnut[0][3].x);
+	EXPECT_EQ(105, doughnut[0][3].y);
+	EXPECT_EQ(20, doughnut[1][0].x);
+	EXPECT_EQ(30, doughnut[1][0].y);
+	EXPECT_EQ(20, doughnut[1][1].x);
+	EXPECT_EQ(80, doughnut[1][1].y);
+	EXPECT_EQ(70, doughnut[1][2].x);
+	EXPECT_EQ(80, doughnut[1][2].y);
+	EXPECT_EQ(70, doughnut[1][3].x);
+	EXPECT_EQ(30, doughnut[1][3].y);
+}
+
 }
 
 #endif //TESTPOLYGONTRANSLATE
