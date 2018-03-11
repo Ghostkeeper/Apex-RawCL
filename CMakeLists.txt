@@ -42,10 +42,12 @@ if(BUILD_TESTS)
 		TestPolygonArea
 	)
 	#To make sure that the tests are built before running them, add the building of these tests as an additional test.
-	add_test(BuildTests "${CMAKE_COMMAND}" --build ${CMAKE_BINARY_DIR} --target ${test_names})
+	add_custom_target(build_all_tests)
+	add_test(BuildTests "${CMAKE_COMMAND}" --build ${CMAKE_BINARY_DIR} --target build_all_tests)
 	foreach(test_case ${test_names})
 		add_executable(${test_case} test/${test_case}.cpp)
 		target_link_libraries(${test_case} ${GTEST_BOTH_LIBRARIES} parallelogram) #Link with GTest and the main Parallelogram library.
+		add_dependencies(build_all_tests ${test_case}) #Make sure that this gets built as part of the build_all_tests target.
 		add_test(${test_case} ${test_case})
 		set_tests_properties(${test_case} PROPERTIES DEPENDS BuildTests)
 	endforeach()
