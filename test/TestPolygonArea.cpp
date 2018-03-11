@@ -32,6 +32,18 @@ TEST(TestPolygonArea, Square1000) {
 	EXPECT_EQ(1000000, square_1000.area());
 }
 
+//Test the area of a 1000 by 1000 square that's completely in the negative coordinate area.
+TEST(TestPolygonArea, Square1000NegativeCoordinates) {
+	Polygon square_1000;
+	square_1000.emplace_back(); //Contains one simple polygon.
+	square_1000[0].emplace_back(-1024, -1024);
+	square_1000[0].emplace_back(-1024, -24);
+	square_1000[0].emplace_back(-24, -24);
+	square_1000[0].emplace_back(-24, -1024);
+
+	EXPECT_EQ(1000000, square_1000.area());
+}
+
 }
 
 int main(int argc, char* argv[]) {
