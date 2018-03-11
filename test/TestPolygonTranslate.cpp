@@ -15,26 +15,16 @@
 namespace parallelogram {
 
 /*
- * Some fixtures for the TestPolygonTranslate tests.
- */
-class TestPolygonTranslate : public testing::Test {
-protected:
-	//A few polygons to test with.
-	Polygon square_1000;
-
-	virtual void SetUp() {
-		square_1000.emplace_back(); //Contains one simple polygon.
-		square_1000[0].emplace_back(0, 0);
-		square_1000[0].emplace_back(1000, 0);
-		square_1000[0].emplace_back(1000, 1000);
-		square_1000[0].emplace_back(0, 1000);
-	}
-};
-
-/*
  * Tests moving a simple square in a positive direction.
  */
-TEST_F(TestPolygonTranslate, SquareMovePositive) {
+TEST(TestPolygonTranslate, SquareMovePositive) {
+	Polygon square_1000;
+	square_1000.emplace_back(); //Contains one simple polygon.
+	square_1000[0].emplace_back(0, 0);
+	square_1000[0].emplace_back(1000, 0);
+	square_1000[0].emplace_back(1000, 1000);
+	square_1000[0].emplace_back(0, 1000);
+
 	square_1000.translate(10, 25);
 
 	EXPECT_EQ(10, square_1000[0][0].x);
