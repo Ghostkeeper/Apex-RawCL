@@ -18,12 +18,12 @@ SimplePolygon::SimplePolygon() {
 coord_t SimplePolygon::area() const {
 	//Apothem method to compute the area.
 	coord_t area = 0;
-	const Point2& previous_vertex = back();
-	for(const Point2 vertex : *this) {
-		area += previous_vertex.x * vertex.y - previous_vertex.y * vertex.x;
+	size_t previous = size() - 1;
+	for(size_t vertex = 0, previous = size() - 1; vertex < size(); vertex++) {
+		area += at(previous).x * at(vertex).y - at(previous).y * at(vertex).x;
+		previous = vertex;
 	}
-	area /= 2;
-	return abs(area);
+	return abs(area) >> 1;
 }
 
 }
