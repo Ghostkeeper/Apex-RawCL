@@ -70,6 +70,19 @@ TEST_F(TestPolygonArea, Square1000AroundOrigin) {
 	EXPECT_EQ(1000000, square_1000.area());
 }
 
+/*
+ * Test calculating the area of a triangle with a 1000-unit wide base.
+ */
+TEST_F(TestPolygonArea, Triangle1000) {
+	Polygon triangle_1000;
+	triangle_1000.emplace_back();
+	triangle_1000[0].emplace_back(24, 24);
+	triangle_1000[0].emplace_back(524, 1024);
+	triangle_1000[0].emplace_back(1024, 24);
+
+	EXPECT_EQ(500000, triangle_1000.area());
+}
+
 }
 
 int main(int argc, char* argv[]) {
