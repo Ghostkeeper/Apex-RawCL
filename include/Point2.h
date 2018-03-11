@@ -18,17 +18,51 @@ public:
 	/*
 	 * The projection of this point on the X axis.
 	 */
-	const coord_t x;
+	coord_t x;
 
 	/*
 	 * The projection of this point on the Y axis.
 	 */
-	const coord_t y;
+	coord_t y;
 
 	/*
 	 * Create a new point.
 	 */
 	Point2(const coord_t x, const coord_t y);
+
+	/*
+	 * Adds two points together.
+	 *
+	 * This is equivalent to translating this point by the coordinates of the
+	 * other (or vice versa).
+	 * \param other The point to add to this point.
+	 */
+	Point2 operator +(const Point2& other) const;
+
+	/*
+	 * Adds another point to this point in-place.
+	 *
+	 * This is equivalent to translating this point by the coordinates of the
+	 * other.
+	 * \param other The point to add to this point.
+	 */
+	Point2& operator +=(const Point2& other);
+
+	/*
+	 * Subtracts another point from this point.
+	 *
+	 * This results in the difference vector between the two points.
+	 * \param other The point to subtract from this point.
+	 */
+	Point2 operator -(const Point2& other) const;
+
+	/*
+	 * Subtracts another point from this point in-place.
+	 *
+	 * This results in the difference vector between the two points.
+	 * \param other The point to subtract from this point.
+	 */
+	Point2& operator -=(const Point2& other);
 };
 
 }

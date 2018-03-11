@@ -14,4 +14,22 @@ Point2::Point2(const coord_t x, const coord_t y) : x(x), y(y) {
     //Only copy the constructor parameters to the fields.
 }
 
+Point2 Point2::operator +(const Point2& other) const {
+	return Point2(x + other.x, y + other.y);
+}
+
+Point2& Point2::operator +=(const Point2& other) {
+	x += other.x;
+	y += other.y;
+}
+
+Point2 Point2::operator -(const Point2& other) const {
+	return Point2(x - other.x, y - other.y);
+}
+
+Point2& Point2::operator -=(const Point2& other) {
+	x -= other.x;
+	y -= other.y;
+}
+
 }
