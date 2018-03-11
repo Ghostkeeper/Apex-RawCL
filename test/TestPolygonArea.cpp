@@ -84,6 +84,23 @@ TEST_F(TestPolygonArea, Triangle1000) {
 }
 
 /*
+ * Test computing the area of a concave polygon.
+ */
+TEST_F(TestPolygonArea, Concave) {
+	//This concave shape is a triangle with base length 100 and height 100, with a triangle subtracted from it at the base.
+	//The subtracted triangle has base length 100 and height 50.
+	//The area of this concave shape is then (100 * 100) / 2 - (100 * 50) / 2.
+	Polygon concave;
+	concave.emplace_back(); //Contains one simple polygon.
+	concave[0].emplace_back(10, 10);
+	concave[0].emplace_back(60, 60);
+	concave[0].emplace_back(110, 10);
+	concave[0].emplace_back(60, 110);
+
+	EXPECT_EQ(100 * 100 / 2 - 100 * 50 / 2, concave.area());
+}
+
+/*
  * Test the area of a negative square, where the vertices are going the other
  * way around.
  *
