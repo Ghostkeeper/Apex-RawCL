@@ -62,6 +62,13 @@ public:
 	 * \return The area of the polygon.
 	 */
 	coord_t area() const;
+
+	/*
+	 * Move the polygon by a certain offset in each dimension.
+	 * \param x The offset to move in the X direction.
+	 * \param y The offset to move in the Y direction.
+	 */
+	void translate(const coord_t x, const coord_t y);
 };
 
 }

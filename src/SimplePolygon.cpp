@@ -26,4 +26,10 @@ coord_t SimplePolygon::area() const {
 	return abs(area) >> 1;
 }
 
+void SimplePolygon::translate(const coord_t x, const coord_t y) {
+	for(size_t vertex = 0; vertex < size(); vertex++) {
+		at(vertex) += Point2(x, y);
+	}
+}
+
 }

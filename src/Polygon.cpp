@@ -22,4 +22,10 @@ coord_t Polygon::area() const {
 	return area;
 }
 
+void Polygon::translate(const coord_t x, const coord_t y) {
+	for(SimplePolygon& simple_polygon : *this) {
+		simple_polygon.translate(x, y);
+	}
+}
+
 }
