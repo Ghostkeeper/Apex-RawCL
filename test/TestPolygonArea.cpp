@@ -182,6 +182,18 @@ TEST_F(TestPolygonArea, SelfIntersecting) {
 	EXPECT_EQ(100 * 50 / 2 - 50 * 25 / 2, hourglass.area());
 }
 
+/*
+ * Test the area of a line.
+ */
+TEST_F(TestPolygonArea, Line) {
+	Polygon line;
+	line.emplace_back(); //A diagonal line.
+	line[0].emplace_back(0, 0);
+	line[0].emplace_back(100, 100);
+
+	EXPECT_EQ(0, line.area()); //Lines have no area.
+}
+
 }
 
 int main(int argc, char* argv[]) {
