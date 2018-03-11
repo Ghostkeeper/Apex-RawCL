@@ -194,6 +194,30 @@ TEST_F(TestPolygonArea, Line) {
 	EXPECT_EQ(0, line.area()); //Lines have no area.
 }
 
+/*
+ * Tests computing the area of a polygon that consists of a single vertex.
+ */
+TEST_F(TestPolygonArea, Point) {
+	Polygon point;
+	point.emplace_back();
+	point[0].emplace_back(25, 25);
+
+	EXPECT_EQ(0, point.area());
+}
+
+/*
+ * Tests computing the area of a polygon that consists of one simple polygon,
+ * but that polygon has no vertices.
+ *
+ * It should not crash, at least.
+ */
+TEST_F(TestPolygonArea, NoVertices) {
+	Polygon no_vertices;
+	no_vertices.emplace_back();
+
+	EXPECT_EQ(0, no_vertices.area());
+}
+
 }
 
 int main(int argc, char* argv[]) {
