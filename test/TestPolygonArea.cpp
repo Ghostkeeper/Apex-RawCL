@@ -61,6 +61,15 @@ TEST_F(TestPolygonArea, Square1000NegativeY) {
 	EXPECT_EQ(1000000, square_1000.area());
 }
 
+/*
+ * Test the area of a 1000 by 1000 square that's partially in the positive area
+ * and partially in the negative area.
+ */
+TEST_F(TestPolygonArea, Square1000AroundOrigin) {
+	square_1000.translate(-512, -512);
+	EXPECT_EQ(1000000, square_1000.area());
+}
+
 }
 
 int main(int argc, char* argv[]) {
