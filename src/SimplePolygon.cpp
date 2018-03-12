@@ -20,7 +20,7 @@ coord_t SimplePolygon::area() const {
 	coord_t area = 0;
 	size_t previous = size() - 1;
 	for(size_t vertex = 0, previous = size() - 1; vertex < size(); vertex++) {
-		area += at(previous).x * at(vertex).y - at(previous).y * at(vertex).x;
+		area += (*this)[previous].x * (*this)[vertex].y - (*this)[previous].y * (*this)[vertex].x;
 		previous = vertex;
 	}
 	return area >> 1;
