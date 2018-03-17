@@ -13,6 +13,15 @@
 
 namespace parallelogram {
 
+/*
+ * Represents a point in a 2-dimensional coordinate system.
+ *
+ * We call the two dimensions X and Y.
+ *
+ * The coordinates are stored as coord_t, which is an integer type. This allows
+ * for fixed-point accuracy where the loss of accuracy due to rounding is
+ * predictable.
+ */
 class Point2 {
 public:
 	/*
