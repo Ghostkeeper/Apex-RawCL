@@ -24,12 +24,6 @@ namespace parallelogram {
  * This is a caching proxy, so that the devices only need to be found once. The
  * actual device detection is done upon first getting the devices and then
  * cached for performance.
- *
- * It is also a protecting proxy, protecting the OpenCL devices from multi-
- * threaded access if the OpenCL API version is less than 1.0. If the OpenCL API
- * version is 1.1, no such protection is needed since the API specifies that all
- * API calls must be thread-safe, so it is then left to the OpenCL
- * implementation on your operating system to limit concurrency where necessary.
  */
 class OpenCLDevices {
 public:
