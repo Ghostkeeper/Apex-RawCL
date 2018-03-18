@@ -6,8 +6,6 @@
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
  */
 
-#include <iostream> //Test.
-
 #include "OpenCLDevices.h"
 
 namespace parallelogram {
