@@ -24,11 +24,14 @@ set(sources
 	src/Point2.cpp
 	src/Polygon.cpp
 	src/SimplePolygon.cpp
+
+	src/private/OpenCLDevices.cpp
 )
 
 #Compilation.
 add_library(parallelogram SHARED ${sources})
 target_include_directories(parallelogram PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(parallelogram PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include_private)
 
 #Tests.
 option(BUILD_TESTS "Build automated tests to verify correctness of the library." OFF)
