@@ -27,6 +27,7 @@ set(sources
 	src/SimplePolygon.cpp
 
 	src/private/OpenCLDevices.cpp
+	src/private/Benchmarks.cpp
 )
 
 #Compilation.
