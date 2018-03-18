@@ -18,6 +18,7 @@ endif()
 #Dependencies.
 find_package(OpenCL REQUIRED)
 include_directories(${OpenCL_INCLUDE_DIRS})
+link_directories(${OpenCL_LIBRARIES})
 
 #Source files.
 set(sources
@@ -32,6 +33,7 @@ set(sources
 add_library(parallelogram SHARED ${sources})
 target_include_directories(parallelogram PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_include_directories(parallelogram PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include_private)
+target_link_libraries(parallelogram ${OpenCL_LIBRARIES})
 
 #Tests.
 option(BUILD_TESTS "Build automated tests to verify correctness of the library." OFF)
