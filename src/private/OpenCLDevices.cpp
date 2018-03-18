@@ -37,4 +37,12 @@ OpenCLDevices& OpenCLDevices::getInstance() {
 	return instance;
 }
 
+const std::vector<cl::Device>& OpenCLDevices::getCPUs() const {
+	return cpu_devices;
+}
+
+const std::vector<cl::Device>& OpenCLDevices::getGPUs() const {
+	return gpu_devices;
+}
+
 }

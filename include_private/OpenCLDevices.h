@@ -39,6 +39,16 @@ public:
 	static OpenCLDevices& getInstance();
 
 	/*
+	 * Get the CPU devices available to compute with.
+	 */
+	const std::vector<cl::Device>& getCPUs() const;
+
+	/*
+	 * Get the GPU devices available to compute with.
+	 */
+	const std::vector<cl::Device>& getGPUs() const;
+
+	/*
 	 * Since this is a singleton, the copy constructor should not be
 	 * implemented.
 	 */
