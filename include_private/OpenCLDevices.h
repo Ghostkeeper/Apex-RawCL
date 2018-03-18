@@ -9,6 +9,13 @@
 #ifndef OPENCLDEVICES_H
 #define OPENCLDEVICES_H
 
+#include <vector> //To store the platforms.
+#ifdef __APPLE__
+	#include "OpenCL/cl.hpp" //To call the OpenCL API.
+#else
+	#include "CL/cl.hpp" //To call the OpenCL API.
+#endif
+
 namespace parallelogram {
 
 /*
@@ -56,6 +63,24 @@ protected:
 	 * During construction the OpenCL devices on this system will be detected.
 	 */
 	OpenCLDevices();
+
+	/*
+	 * All detected CPU-type devices.
+	 *
+	 * This is used by the scheduler if it expects a task to be more suitable to
+	 * a CPU-type device, for instance if the task is not well parallelised, or
+	 * requires lots of branching.
+	 */
+	std::vector<cl::Device> cpu_devices;
+
+	/*
+	 * All detected GPU-type devices.
+	 *
+	 * This is used by the scheduler if it expects a task to be more suitable to
+	 * a GPU-type device, for instance if the task parallelises well and doesn't
+	 * have a lot of branching.
+	 */
+	std::vector<cl::Device> gpu_devices;
 };
 
 }

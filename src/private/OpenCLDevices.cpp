@@ -6,12 +6,32 @@
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
  */
 
+#include <iostream> //Test.
+
 #include "OpenCLDevices.h"
 
 namespace parallelogram {
 
 OpenCLDevices::OpenCLDevices() {
-	//TODO: Detect devices.
+	//Detect the platforms on this computer.
+	std::vector<cl::Platform> platforms;
+	cl::Platform::get(&platforms);
+
+	/* We're only really interested in the devices.
+	 * Platforms may have additional limitations (e.g. if they are remote and
+	 * the bandwidth is limited. But this is not modelled here. */
+	for(const cl::Platform& platform : platforms) {
+		std::vector<cl::Device> cpus;
+		platform.getDevices(CL_DEVICE_TYPE_CPU, &cpus);
+		for(const cl::Device& cpu : cpus) {
+			cpu_devices.push_back(cpu);
+		}
+		std::vector<cl::Device> gpus;
+		platform.getDevices(CL_DEVICE_TYPE_GPU, &gpus);
+		for(const cl::Device& gpu : gpus) {
+			gpu_devices.push_back(gpu);
+		}
+	}
 }
 
 OpenCLDevices& OpenCLDevices::getInstance() {
