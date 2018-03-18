@@ -44,13 +44,19 @@ if(BUILD_TESTS)
 	set(test_names
 		TestPolygonArea
 		TestPolygonTranslate
+		private/TestOpenCLDevices
 	)
 	#To make sure that the tests are built before running them, add the building of these tests as an additional test.
 	add_custom_target(build_all_tests)
-	add_test(BuildTests "${CMAKE_COMMAND}" --build ${CMAKE_BINARY_DIR} --target build_all_tests)
+	add_test(BuildTests "${CMAKE_COMMAND}" --build ${CMAKE_CURRENT_BINARY_DIR} --target build_all_tests)
 	foreach(test_case ${test_names})
+		#First make sure that the directory exists.
+		get_filename_component(test_dirname ${test_case} DIRECTORY)
+		file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${test_dirname})
+
 		add_executable(${test_case} test/${test_case}.cpp)
 		target_link_libraries(${test_case} ${GTEST_BOTH_LIBRARIES} parallelogram) #Link with GTest and the main Parallelogram library.
+		target_include_directories(${test_case} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include_private) #This test has access to private headers.
 		add_dependencies(build_all_tests ${test_case}) #Make sure that this gets built as part of the build_all_tests target.
 		add_test(${test_case} ${test_case})
 		set_tests_properties(${test_case} PROPERTIES DEPENDS BuildTests)
