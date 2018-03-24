@@ -26,6 +26,8 @@ set(sources
 	src/Polygon.cpp
 	src/SimplePolygon.cpp
 
+	src/polygon_algorithms/Area.cpp
+
 	src/private/OpenCLDevices.cpp
 	src/private/Benchmarks.cpp
 )

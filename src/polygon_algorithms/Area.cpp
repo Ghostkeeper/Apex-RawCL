@@ -6,28 +6,24 @@
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
  */
 
-#include <stdlib.h> //For abs.
 #include "SimplePolygon.h"
 
 namespace parallelogram {
 
-SimplePolygon::SimplePolygon() {
-	//Only construct the vector of vertices.
+coord_t SimplePolygon::area_gpu() const {
+	//TODO: Implement this.
+	return area_host();
 }
 
-coord_t SimplePolygon::area() const {
-	//TODO: Use benchmarks to choose between implementations.
-	if(size() >= 10000000) { //For now use an arbitrary threshold for when to switch to GPU processing. It's probably too low too...
-		return area_gpu();
-	} else {
-		return area_host();
+coord_t SimplePolygon::area_host() const {
+	//Apothem method to compute the area.
+	coord_t area = 0;
+	size_t previous = size() - 1;
+	for(size_t vertex = 0, previous = size() - 1; vertex < size(); vertex++) {
+		area += (*this)[previous].x * (*this)[vertex].y - (*this)[previous].y * (*this)[vertex].x;
+		previous = vertex;
 	}
-}
-
-void SimplePolygon::translate(const coord_t x, const coord_t y) {
-	for(size_t vertex = 0; vertex < size(); vertex++) {
-		at(vertex) += Point2(x, y);
-	}
+	return area >> 1;
 }
 
 }
