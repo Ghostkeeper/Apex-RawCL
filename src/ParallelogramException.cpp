@@ -11,7 +11,7 @@
 namespace parallelogram {
 
 ParallelogramException::ParallelogramException(const char* message) : message(message) {
-
+	//Only need to copy the parameter to the message field.
 }
 
 const char* ParallelogramException::what() {
