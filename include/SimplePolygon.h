@@ -73,6 +73,22 @@ public:
 	 * \param y The offset to move in the Y direction.
 	 */
 	void translate(const coord_t x, const coord_t y);
+
+private:
+	/*
+	 * Implements the ``area`` function via OpenCL tuned for use on a GPU.
+	 *
+	 * This may perform better on large amounts of data.
+	 */
+	coord_t area_gpu() const;
+
+	/*
+	 * Implements the ``area`` function on the host hardware.
+	 *
+	 * This does not go via OpenCL. It may perform better for small amounts of
+	 * data.
+	 */
+	coord_t area_host() const;
 };
 
 }
