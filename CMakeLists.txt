@@ -22,6 +22,7 @@ link_directories(${OpenCL_LIBRARIES})
 
 #Source files.
 set(sources
+	src/ParallelogramException.cpp
 	src/Point2.cpp
 	src/Polygon.cpp
 	src/SimplePolygon.cpp
