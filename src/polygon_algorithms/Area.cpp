@@ -45,11 +45,21 @@ coord_t SimplePolygon::area_gpu() const {
 		throw ParallelogramException("Compiling kernel for Polygon::area failed.");
 	}
 
-	//Allocate constant memory on the device for the input.
+	//We might need to make multiple passes if the device has a very limited amount of memory.
 	cl_ulong constant_buffer_size;
 	if(device.getInfo(CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE, &constant_buffer_size) != CL_SUCCESS) {
 		constant_buffer_size = 64 << 10; //OpenCL standard says that the minimum is 64kB.
 	}
+	cl_ulong local_buffer_size;
+	if(device.getInfo(CL_DEVICE_LOCAL_MEM_SIZE, &local_buffer_size) != CL_SUCCESS) {
+		local_buffer_size = 32 << 10; //OpenCL standard says that the minimum is 32kB.
+	}
+	cl_uint compute_units;
+	if(device.getInfo(CL_DEVICE_MAX_COMPUTE_UNITS, &compute_units) != CL_SUCCESS) {
+		compute_units = 1; //OpenCL standard says that there must be 1 compute unit.
+	}
+	constant_buffer_size = std::min(constant_buffer_size, compute_units * local_buffer_size * 2); //If the sum of the local buffers isn't large enough to hold the intermediary values, make more passes.
+
 	const size_t vertices_per_pass = constant_buffer_size / (sizeof(coord_t) * 2);
 	coord_t total_area = 0; //Result sum of all passes.
 	for(size_t pivot_vertex = 0; pivot_vertex < size(); pivot_vertex += vertices_per_pass - 2) { //If the total data size is more than what fits in constant memory, we'll have to make multiple passes.
@@ -67,6 +77,7 @@ coord_t SimplePolygon::area_gpu() const {
 			vertices_this_pass = size() - pivot_vertex + 1;
 		}
 
+		//Allocate constant memory on the device for the input.
 		cl_ulong this_constant_buffer_size = vertices_this_pass * sizeof(coord_t) * 2;
 		cl::Buffer input_points(context, CL_MEM_READ_ONLY, this_constant_buffer_size);
 		queue.enqueueWriteBuffer(input_points, CL_TRUE, 0, this_constant_buffer_size - sizeof(coord_t) * 4, &(*this)[pivot_vertex]); //Write the polyline and first pivot vertex.
