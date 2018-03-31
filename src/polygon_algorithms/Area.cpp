@@ -108,8 +108,8 @@ void kernel area(global const int2* input_data_points, global long* output_areas
 		const size_t this_compute_units = std::min(static_cast<size_t>(compute_units), vertices_this_pass);
 		const size_t vertices_per_compute_unit = vertices_this_pass / this_compute_units;
 
-		//Allocate an output buffer: One coord_t for each work group as their output.
-		cl_ulong this_output_buffer_size = this_compute_units * vertex_size;
+		//Allocate an output buffer: One area_t for each work group as their output.
+		cl_ulong this_output_buffer_size = this_compute_units * sizeof(area_t);
 		cl::Buffer output_areas(context, CL_MEM_WRITE_ONLY, this_output_buffer_size);
 
 		//Call the kernel to compute the area of this polygon and add it to total_area.
