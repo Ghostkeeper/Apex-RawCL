@@ -94,11 +94,13 @@ coord_t SimplePolygon::area_gpu() const {
 		area_kernel.setArg(0, input_points);
 		area_kernel.setArg(1, output_areas);
 		queue.enqueueNDRangeKernel(area_kernel, cl::NullRange, cl::NDRange(vertices_this_pass), cl::NDRange(vertices_per_compute_unit));
+		queue.finish();
 
 		//Read the output data in.
 		std::vector<coord_t> areas;
 		areas.resize(this_compute_units);
 		queue.enqueueReadBuffer(output_areas, CL_TRUE, 0, this_output_buffer_size, &(areas[0]));
+		queue.finish();
 		for(const coord_t area : areas) {
 			total_area += area;
 		}
