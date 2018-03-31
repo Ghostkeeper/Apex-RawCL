@@ -81,6 +81,14 @@ coord_t SimplePolygon::area_gpu() const {
 		queue.enqueueWriteBuffer(input_points, CL_TRUE, 0, this_constant_buffer_size - vertex_size, &(*this)[pivot_vertex]); //Write the polyline and first pivot vertex.
 		queue.enqueueWriteBuffer(input_points, CL_TRUE, this_constant_buffer_size - vertex_size, vertex_size, &(*this)[pivot_vertex_after]); //Write the second pivot vertex.
 
+		//Dividing the work over as many work groups as possible.
+		const size_t this_compute_units = std::min(static_cast<size_t>(compute_units), vertices_this_pass);
+		const size_t vertices_per_compute_unit = vertices_this_pass / this_compute_units;
+
+		//Allocate an output buffer: One coord_t for each work group as their output.
+		cl_ulong this_local_buffer_size = this_compute_units * vertex_size;
+		cl::Buffer output_areas(context, CL_MEM_WRITE_ONLY, local_buffer_size);
+
 		//TODO: Call the kernel to compute the area of this polygon and add it to total_area.
 	}
 
