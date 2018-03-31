@@ -8,6 +8,14 @@
 
 R"kernel(
 
+/*
+ * Computes the area of (a part of) a polygon.
+ * \param input_data_points The coordinates of the vertices of the polygon.
+ * \param output_areas For each work group, the output area of their part of the
+ * polygon.
+ * \param sums Some scratch space to store the computed areas before summing
+ * them all up within one work group.
+ */
 void kernel area(global const int2* input_data_points, global long* output_areas, local long* sums) {
 	//Compute the area contributed by one line segment.
 	const int global_id = get_global_id(0);
