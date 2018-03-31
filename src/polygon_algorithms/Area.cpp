@@ -86,10 +86,18 @@ coord_t SimplePolygon::area_gpu() const {
 		const size_t vertices_per_compute_unit = vertices_this_pass / this_compute_units;
 
 		//Allocate an output buffer: One coord_t for each work group as their output.
-		cl_ulong this_local_buffer_size = this_compute_units * vertex_size;
-		cl::Buffer output_areas(context, CL_MEM_WRITE_ONLY, local_buffer_size);
+		cl_ulong this_output_buffer_size = this_compute_units * vertex_size;
+		cl::Buffer output_areas(context, CL_MEM_WRITE_ONLY, this_output_buffer_size);
 
 		//TODO: Call the kernel to compute the area of this polygon and add it to total_area.
+
+		//Read the output data in.
+		std::vector<coord_t> areas;
+		areas.resize(this_compute_units);
+		queue.enqueueReadBuffer(output_areas, CL_TRUE, 0, this_output_buffer_size, &(areas[0]));
+		for(const coord_t area : areas) {
+			total_area += area;
+		}
 	}
 
 	return total_area;
