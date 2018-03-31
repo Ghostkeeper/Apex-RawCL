@@ -37,7 +37,30 @@ coord_t SimplePolygon::area_gpu() const {
 	//Load the source code.
 	cl::Program::Sources kernel_sources;
 	const std::string kernel_source = R"kernel(
-//TODO.
+void kernel area(global const long2* input_data_points, global long* output_areas, local long* sums) {
+	//Compute the area contributed by one line segment.
+	const int global_id = get_global_id(0);
+	const long2 previous = input_data_points[global_id];
+	const long2 next = input_data_points[global_id + 1];
+	sums[local_id] = previous[0] * next[1] - previous[1] * next[0];
+
+	//Aggregate sum on the memory in this work group.
+	const int local_id = get_local_id(0);
+	const int local_size = get_local_size(0);
+	for(int offset = local_size / 2 + 1; offset > 0; offset = offset / 2 + 1) {
+		barrier(CLK_LOCAL_MEM_FENCE);
+		if(local_id < offset && local_id + offset < local_size) {
+			sums[local_id] += sums[local_id + offset];
+		}
+	}
+
+	//Copy the resulting sum to the output.
+	barrier(CLK_LOCAL_MEM_FENCE);
+	if(local_id == 0) {
+		const int workgroup_id = global_id / local_size;
+		output_areas[workgroup_id] = sums[local_id];
+	}
+}
 )kernel";
 	kernel_sources.push_back({kernel_source.c_str(), kernel_source.length()});
 	cl::Program program(context, kernel_sources);
@@ -93,7 +116,7 @@ coord_t SimplePolygon::area_gpu() const {
 		cl::Kernel area_kernel(program, "area");
 		area_kernel.setArg(0, input_points);
 		area_kernel.setArg(1, output_areas);
-		queue.enqueueNDRangeKernel(area_kernel, cl::NullRange, cl::NDRange(vertices_this_pass), cl::NDRange(vertices_per_compute_unit));
+		queue.enqueueNDRangeKernel(area_kernel, cl::NullRange, cl::NDRange(vertices_this_pass - 1), cl::NDRange(vertices_per_compute_unit));
 		queue.finish();
 
 		//Read the output data in.
