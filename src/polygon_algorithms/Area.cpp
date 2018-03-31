@@ -95,11 +95,11 @@ void kernel area(global const int2* input_data_points, global long* output_areas
 		size_t vertices_this_pass = vertices_per_pass;
 		if(pivot_vertex_after >= size()) {
 			pivot_vertex_after = 0;
-			vertices_this_pass = size() - pivot_vertex + 1;
+			vertices_this_pass = size() - pivot_vertex;
 		}
 
 		//Allocate constant memory on the device for the input.
-		cl_ulong this_constant_buffer_size = vertices_this_pass * vertex_size;
+		cl_ulong this_constant_buffer_size = (vertices_this_pass + 1) * vertex_size;
 		cl::Buffer input_points(context, CL_MEM_READ_ONLY, this_constant_buffer_size);
 		queue.enqueueWriteBuffer(input_points, CL_TRUE, 0, this_constant_buffer_size - vertex_size, &(*this)[pivot_vertex]); //Write the polyline and first pivot vertex.
 		queue.enqueueWriteBuffer(input_points, CL_TRUE, this_constant_buffer_size - vertex_size, vertex_size, &(*this)[pivot_vertex_after]); //Write the second pivot vertex.
@@ -114,7 +114,7 @@ void kernel area(global const int2* input_data_points, global long* output_areas
 
 		//Call the kernel to compute the area of this polygon and add it to total_area.
 		cl::make_kernel<cl::Buffer, cl::Buffer, cl::LocalSpaceArg> area_kernel(program, "area");
-		cl::EnqueueArgs enqueue_arguments(queue, cl::NullRange, cl::NDRange(vertices_this_pass - 1), cl::NDRange(vertices_per_compute_unit));
+		cl::EnqueueArgs enqueue_arguments(queue, cl::NullRange, cl::NDRange(vertices_this_pass), cl::NDRange(vertices_per_compute_unit));
 		cl::Event compute_result = area_kernel(enqueue_arguments, input_points, output_areas, cl::Local(vertices_per_compute_unit * vertex_size));
 		compute_result.wait(); //Let the device do its thing!
 
