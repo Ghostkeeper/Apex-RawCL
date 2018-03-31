@@ -134,7 +134,6 @@ void kernel area(global const int2* input_data_points, global long* output_areas
 area_t SimplePolygon::area_host() const {
 	//Apothem method to compute the area.
 	area_t area = 0;
-	size_t previous = size() - 1;
 	for(size_t vertex = 0, previous = size() - 1; vertex < size(); vertex++) {
 		area += (area_t)(*this)[previous].x * (area_t)(*this)[vertex].y - (area_t)(*this)[previous].y * (area_t)(*this)[vertex].x;
 		previous = vertex;
