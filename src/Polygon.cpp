@@ -15,7 +15,7 @@ Polygon::Polygon() {
 }
 
 area_t Polygon::area() const {
-	coord_t area = 0;
+	area_t area = 0;
 	for(const SimplePolygon& simple_polygon : *this) {
 		area += simple_polygon.area();
 	}
