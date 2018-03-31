@@ -65,7 +65,7 @@ void kernel area(global const long2* input_data_points, global long* output_area
 	kernel_sources.push_back({kernel_source.c_str(), kernel_source.length()});
 	cl::Program program(context, kernel_sources);
 	if(program.build({device}) != CL_SUCCESS) {
-		throw ParallelogramException("Compiling kernel for Polygon::area failed.");
+		throw ParallelogramException((std::string("Compiling kernel for Polygon::area failed: ") + program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(device)).c_str());
 	}
 
 	//We might need to make multiple passes if the device has a very limited amount of memory.
