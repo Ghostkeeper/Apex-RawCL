@@ -47,11 +47,13 @@ void kernel area(global const int2* input_data_points, global long* output_areas
 
 	//Aggregate sum on the memory in this work group.
 	const int local_size = get_local_size(0);
-	for(int offset = local_size / 2; offset > 0; offset = offset / 2) {
+	int current_size = local_size;
+	for(int offset = (current_size + 1) / 2; offset > 1; offset = (current_size + 1) / 2) {
 		barrier(CLK_LOCAL_MEM_FENCE);
-		if(local_id < offset && local_id + offset < local_size) {
+		if(local_id < offset && local_id + offset < current_size) {
 			sums[local_id] += sums[local_id + offset];
 		}
+		current_size = offset;
 	}
 
 	//Copy the resulting sum to the output.
