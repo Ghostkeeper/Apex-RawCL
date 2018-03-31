@@ -42,10 +42,10 @@ void kernel area(global const long2* input_data_points, global long* output_area
 	const int global_id = get_global_id(0);
 	const long2 previous = input_data_points[global_id];
 	const long2 next = input_data_points[global_id + 1];
+	const int local_id = get_local_id(0);
 	sums[local_id] = previous[0] * next[1] - previous[1] * next[0];
 
 	//Aggregate sum on the memory in this work group.
-	const int local_id = get_local_id(0);
 	const int local_size = get_local_size(0);
 	for(int offset = local_size / 2 + 1; offset > 0; offset = offset / 2 + 1) {
 		barrier(CLK_LOCAL_MEM_FENCE);
