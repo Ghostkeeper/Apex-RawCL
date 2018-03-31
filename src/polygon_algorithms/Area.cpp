@@ -89,7 +89,11 @@ coord_t SimplePolygon::area_gpu() const {
 		cl_ulong this_output_buffer_size = this_compute_units * vertex_size;
 		cl::Buffer output_areas(context, CL_MEM_WRITE_ONLY, this_output_buffer_size);
 
-		//TODO: Call the kernel to compute the area of this polygon and add it to total_area.
+		//Call the kernel to compute the area of this polygon and add it to total_area.
+		cl::Kernel area_kernel(program, "area");
+		area_kernel.setArg(0, input_points);
+		area_kernel.setArg(1, output_areas);
+		queue.enqueueNDRangeKernel(area_kernel, cl::NullRange, cl::NDRange(vertices_this_pass), cl::NDRange(vertices_per_compute_unit));
 
 		//Read the output data in.
 		std::vector<coord_t> areas;
