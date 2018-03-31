@@ -46,24 +46,27 @@ coord_t SimplePolygon::area_gpu() const {
 	}
 
 	//We might need to make multiple passes if the device has a very limited amount of memory.
-	cl_ulong constant_buffer_size;
-	if(device.getInfo(CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE, &constant_buffer_size) != CL_SUCCESS) {
-		constant_buffer_size = 64 << 10; //OpenCL standard says that the minimum is 64kB.
+	constexpr size_t vertex_size = sizeof(coord_t) * 2;
+	cl_uint compute_units;
+	if(device.getInfo(CL_DEVICE_MAX_COMPUTE_UNITS, &compute_units) != CL_SUCCESS) {
+		compute_units = 1; //OpenCL standard says that there must be 1 compute unit.
 	}
 	cl_ulong local_buffer_size;
 	if(device.getInfo(CL_DEVICE_LOCAL_MEM_SIZE, &local_buffer_size) != CL_SUCCESS) {
 		local_buffer_size = 32 << 10; //OpenCL standard says that the minimum is 32kB.
 	}
-	cl_uint compute_units;
-	if(device.getInfo(CL_DEVICE_MAX_COMPUTE_UNITS, &compute_units) != CL_SUCCESS) {
-		compute_units = 1; //OpenCL standard says that there must be 1 compute unit.
+	local_buffer_size = local_buffer_size / vertex_size * vertex_size;
+	cl_ulong constant_buffer_size;
+	if(device.getInfo(CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE, &constant_buffer_size) != CL_SUCCESS) {
+		constant_buffer_size = 64 << 10; //OpenCL standard says that the minimum is 64kB.
 	}
+	constant_buffer_size = constant_buffer_size / vertex_size * vertex_size; //Make sure that the constant buffer holds an integer number of vertices.
 	constant_buffer_size = std::min(constant_buffer_size, compute_units * local_buffer_size * 2); //If the sum of the local buffers isn't large enough to hold the intermediary values, make more passes.
 
-	const size_t vertices_per_pass = constant_buffer_size / (sizeof(coord_t) * 2);
+	const size_t vertices_per_pass = constant_buffer_size / vertex_size;
 	coord_t total_area = 0; //Result sum of all passes.
 	for(size_t pivot_vertex = 0; pivot_vertex < size(); pivot_vertex += vertices_per_pass - 1) { //If the total data size is more than what fits in constant memory, we'll have to make multiple passes.
-		//Each unit works on a line segment, which requires two vertices.
+		//Each item works on a line segment, which requires two vertices.
 		//So we must leave space for 1 extra vertex in memory.
 		size_t pivot_vertex_after = pivot_vertex + vertices_per_pass - 1; //-1 because the pivot vertex of the next pass is the last vertex of this pass.
 		size_t vertices_this_pass = vertices_per_pass;
@@ -73,10 +76,10 @@ coord_t SimplePolygon::area_gpu() const {
 		}
 
 		//Allocate constant memory on the device for the input.
-		cl_ulong this_constant_buffer_size = vertices_this_pass * sizeof(coord_t) * 2;
+		cl_ulong this_constant_buffer_size = vertices_this_pass * vertex_size;
 		cl::Buffer input_points(context, CL_MEM_READ_ONLY, this_constant_buffer_size);
-		queue.enqueueWriteBuffer(input_points, CL_TRUE, 0, this_constant_buffer_size - sizeof(coord_t) * 2, &(*this)[pivot_vertex]); //Write the polyline and first pivot vertex.
-		queue.enqueueWriteBuffer(input_points, CL_TRUE, this_constant_buffer_size - sizeof(coord_t) * 2, sizeof(coord_t) * 2, &(*this)[pivot_vertex_after]); //Write the second pivot vertex.
+		queue.enqueueWriteBuffer(input_points, CL_TRUE, 0, this_constant_buffer_size - vertex_size, &(*this)[pivot_vertex]); //Write the polyline and first pivot vertex.
+		queue.enqueueWriteBuffer(input_points, CL_TRUE, this_constant_buffer_size - vertex_size, vertex_size, &(*this)[pivot_vertex_after]); //Write the second pivot vertex.
 
 		//TODO: Call the kernel to compute the area of this polygon and add it to total_area.
 	}
