@@ -61,7 +61,7 @@ public:
 	 * Compute the total surface area of the polygon.
 	 * \return The area of the polygon.
 	 */
-	coord_t area() const;
+	area_t area() const;
 
 	/*
 	 * Move the polygon by a certain offset in each dimension.

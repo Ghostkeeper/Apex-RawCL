@@ -15,7 +15,7 @@ SimplePolygon::SimplePolygon() {
 	//Only construct the vector of vertices.
 }
 
-coord_t SimplePolygon::area() const {
+area_t SimplePolygon::area() const {
 	//TODO: Use benchmarks to choose between implementations.
 	if(size() >= 10000000) { //For now use an arbitrary threshold for when to switch to GPU processing. It's probably too low too...
 		return area_gpu();

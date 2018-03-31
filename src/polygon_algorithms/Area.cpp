@@ -19,7 +19,7 @@
 
 namespace parallelogram {
 
-coord_t SimplePolygon::area_gpu() const {
+area_t SimplePolygon::area_gpu() const {
 	//TODO: We want to get the preferred device from the benchmarks::choose function.
 	OpenCLDevices& devices = OpenCLDevices::getInstance();
 	cl::Device device;
@@ -37,11 +37,11 @@ coord_t SimplePolygon::area_gpu() const {
 	//Load the source code.
 	cl::Program::Sources kernel_sources;
 	const std::string kernel_source = R"kernel(
-void kernel area(global const long2* input_data_points, global long* output_areas, local long* sums) {
+void kernel area(global const int2* input_data_points, global long* output_areas, local long* sums) {
 	//Compute the area contributed by one line segment.
 	const int global_id = get_global_id(0);
-	const long2 previous = input_data_points[global_id];
-	const long2 next = input_data_points[global_id + 1];
+	const int2 previous = input_data_points[global_id];
+	const int2 next = input_data_points[global_id + 1];
 	const int local_id = get_local_id(0);
 	sums[local_id] = previous.x * next.y - previous.y * next.x;
 
@@ -87,7 +87,7 @@ void kernel area(global const long2* input_data_points, global long* output_area
 	constant_buffer_size = std::min(constant_buffer_size, compute_units * local_buffer_size * 2); //If the sum of the local buffers isn't large enough to hold the intermediary values, make more passes.
 
 	const size_t vertices_per_pass = constant_buffer_size / vertex_size;
-	coord_t total_area = 0; //Result sum of all passes.
+	area_t total_area = 0; //Result sum of all passes.
 	for(size_t pivot_vertex = 0; pivot_vertex < size(); pivot_vertex += vertices_per_pass - 1) { //If the total data size is more than what fits in constant memory, we'll have to make multiple passes.
 		//Each item works on a line segment, which requires two vertices.
 		//So we must leave space for 1 extra vertex in memory.
@@ -119,11 +119,11 @@ void kernel area(global const long2* input_data_points, global long* output_area
 		compute_result.wait(); //Let the device do its thing!
 
 		//Read the output data in.
-		std::vector<coord_t> areas;
+		std::vector<area_t> areas;
 		areas.resize(this_compute_units);
 		queue.enqueueReadBuffer(output_areas, CL_TRUE, 0, this_output_buffer_size, &(areas[0]));
 		queue.finish();
-		for(const coord_t area : areas) {
+		for(const area_t area : areas) {
 			total_area += area;
 		}
 	}
@@ -131,12 +131,12 @@ void kernel area(global const long2* input_data_points, global long* output_area
 	return total_area;
 }
 
-coord_t SimplePolygon::area_host() const {
+area_t SimplePolygon::area_host() const {
 	//Apothem method to compute the area.
-	coord_t area = 0;
+	area_t area = 0;
 	size_t previous = size() - 1;
 	for(size_t vertex = 0, previous = size() - 1; vertex < size(); vertex++) {
-		area += (*this)[previous].x * (*this)[vertex].y - (*this)[previous].y * (*this)[vertex].x;
+		area += (area_t)(*this)[previous].x * (area_t)(*this)[vertex].y - (area_t)(*this)[previous].y * (area_t)(*this)[vertex].x;
 		previous = vertex;
 	}
 	return area >> 1;

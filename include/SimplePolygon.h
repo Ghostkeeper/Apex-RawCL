@@ -65,7 +65,7 @@ public:
 	 * Compute the total surface area of this simple polygon.
 	 * \return The area of the simple polygon.
 	 */
-	coord_t area() const;
+	area_t area() const;
 
 	/*
 	 * Move the polygon by a certain offset in each dimension.
@@ -80,7 +80,7 @@ private:
 	 *
 	 * This may perform better on large amounts of data.
 	 */
-	coord_t area_gpu() const;
+	area_t area_gpu() const;
 
 	/*
 	 * Implements the ``area`` function on the host hardware.
@@ -88,7 +88,7 @@ private:
 	 * This does not go via OpenCL. It may perform better for small amounts of
 	 * data.
 	 */
-	coord_t area_host() const;
+	area_t area_host() const;
 };
 
 }

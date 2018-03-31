@@ -13,7 +13,8 @@
 
 namespace parallelogram {
 
-typedef int64_t coord_t; //Needs to be a fixed-length type in order to communicate with OpenCL.
+typedef int32_t coord_t; //Needs to be a fixed-length type in order to communicate with OpenCL.
+typedef int64_t area_t; //Must be twice the length of coord_t so that we can hold quadratic numbers.
 
 }
 
