@@ -116,7 +116,10 @@ void kernel area(global const int2* input_data_points, global long* output_areas
 		cl::make_kernel<cl::Buffer, cl::Buffer, cl::LocalSpaceArg> area_kernel(program, "area");
 		cl::EnqueueArgs enqueue_arguments(queue, cl::NullRange, cl::NDRange(vertices_this_pass), cl::NDRange(vertices_per_compute_unit));
 		cl::Event compute_result = area_kernel(enqueue_arguments, input_points, output_areas, cl::Local(vertices_per_compute_unit * vertex_size));
-		compute_result.wait(); //Let the device do its thing!
+		cl_int result = compute_result.wait();
+		if(result != CL_SUCCESS) { //Let the device do its thing!
+			throw ParallelogramException("Error executing command queue for area computation.");
+		}
 
 		//Read the output data in.
 		std::vector<area_t> areas;
