@@ -131,7 +131,7 @@ void kernel area(global const int2* input_data_points, global long* output_areas
 		}
 	}
 
-	return total_area;
+	return total_area >> 1;
 }
 
 area_t SimplePolygon::area_host() const {
