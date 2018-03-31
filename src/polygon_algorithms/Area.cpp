@@ -62,15 +62,10 @@ coord_t SimplePolygon::area_gpu() const {
 
 	const size_t vertices_per_pass = constant_buffer_size / (sizeof(coord_t) * 2);
 	coord_t total_area = 0; //Result sum of all passes.
-	for(size_t pivot_vertex = 0; pivot_vertex < size(); pivot_vertex += vertices_per_pass - 2) { //If the total data size is more than what fits in constant memory, we'll have to make multiple passes.
-		/* Each pass will compute the area of a part of the polygon.
-		 * We'll take a part of the perimeter and close that polyline off with
-		 * the initial vertex to create a polygon and compute that area. We save
-		 * the beginning and ending vertex of each such polygon to compute the
-		 * area that we missed in the middle of these pieces of polygon (the
-		 * pivot vertices). */
-
-		size_t pivot_vertex_after = pivot_vertex + vertices_per_pass - 2; //-1 because we need to store the pivot_vertex twice, and -1 because the pivot vertex of the next pass is the last vertex of this pass.
+	for(size_t pivot_vertex = 0; pivot_vertex < size(); pivot_vertex += vertices_per_pass - 1) { //If the total data size is more than what fits in constant memory, we'll have to make multiple passes.
+		//Each unit works on a line segment, which requires two vertices.
+		//So we must leave space for 1 extra vertex in memory.
+		size_t pivot_vertex_after = pivot_vertex + vertices_per_pass - 1; //-1 because the pivot vertex of the next pass is the last vertex of this pass.
 		size_t vertices_this_pass = vertices_per_pass;
 		if(pivot_vertex_after >= size()) {
 			pivot_vertex_after = 0;
@@ -80,13 +75,10 @@ coord_t SimplePolygon::area_gpu() const {
 		//Allocate constant memory on the device for the input.
 		cl_ulong this_constant_buffer_size = vertices_this_pass * sizeof(coord_t) * 2;
 		cl::Buffer input_points(context, CL_MEM_READ_ONLY, this_constant_buffer_size);
-		queue.enqueueWriteBuffer(input_points, CL_TRUE, 0, this_constant_buffer_size - sizeof(coord_t) * 4, &(*this)[pivot_vertex]); //Write the polyline and first pivot vertex.
-		queue.enqueueWriteBuffer(input_points, CL_TRUE, this_constant_buffer_size - sizeof(coord_t) * 4, sizeof(coord_t) * 2, &(*this)[pivot_vertex_after]); //Write the second pivot vertex.
-		queue.enqueueWriteBuffer(input_points, CL_TRUE, this_constant_buffer_size - sizeof(coord_t) * 2, sizeof(coord_t) * 2, &(*this)[pivot_vertex]); //Write the first pivot vertex again to close the polygon.
+		queue.enqueueWriteBuffer(input_points, CL_TRUE, 0, this_constant_buffer_size - sizeof(coord_t) * 2, &(*this)[pivot_vertex]); //Write the polyline and first pivot vertex.
+		queue.enqueueWriteBuffer(input_points, CL_TRUE, this_constant_buffer_size - sizeof(coord_t) * 2, sizeof(coord_t) * 2, &(*this)[pivot_vertex_after]); //Write the second pivot vertex.
 
 		//TODO: Call the kernel to compute the area of this polygon and add it to total_area.
-
-		total_area += (*this)[pivot_vertex].x * (*this)[pivot_vertex_after].y - (*this)[pivot_vertex].y * (*this)[pivot_vertex_after].x;
 	}
 
 	return total_area;
