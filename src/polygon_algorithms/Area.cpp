@@ -113,11 +113,10 @@ void kernel area(global const long2* input_data_points, global long* output_area
 		cl::Buffer output_areas(context, CL_MEM_WRITE_ONLY, this_output_buffer_size);
 
 		//Call the kernel to compute the area of this polygon and add it to total_area.
-		cl::Kernel area_kernel(program, "area");
-		area_kernel.setArg(0, input_points);
-		area_kernel.setArg(1, output_areas);
-		queue.enqueueNDRangeKernel(area_kernel, cl::NullRange, cl::NDRange(vertices_this_pass - 1), cl::NDRange(vertices_per_compute_unit));
-		queue.finish();
+		cl::make_kernel<cl::Buffer, cl::Buffer, cl::LocalSpaceArg> area_kernel(program, "area");
+		cl::EnqueueArgs enqueue_arguments(queue, cl::NullRange, cl::NDRange(vertices_this_pass - 1), cl::NDRange(vertices_per_compute_unit));
+		cl::Event compute_result = area_kernel(enqueue_arguments, input_points, output_areas, cl::Local(vertices_per_compute_unit * vertex_size));
+		compute_result.wait(); //Let the device do its thing!
 
 		//Read the output data in.
 		std::vector<coord_t> areas;
