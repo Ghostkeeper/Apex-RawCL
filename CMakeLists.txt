@@ -37,6 +37,7 @@ set(sources
 add_library(parallelogram SHARED ${sources})
 target_include_directories(parallelogram PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_include_directories(parallelogram PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include_private)
+target_include_directories(parallelogram PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/benchmark) #To make the benchmarker a friend class.
 target_link_libraries(parallelogram ${OpenCL_LIBRARIES})
 
 #Tests.
@@ -62,11 +63,25 @@ if(BUILD_TESTS)
 
 		add_executable(${test_case} test/${test_case}.cpp)
 		target_link_libraries(${test_case} ${GTEST_BOTH_LIBRARIES} parallelogram) #Link with GTest and the main Parallelogram library.
+		target_include_directories(${test_case} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/benchmark)
 		target_include_directories(${test_case} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include_private) #This test has access to private headers.
 		add_dependencies(build_all_tests ${test_case}) #Make sure that this gets built as part of the build_all_tests target.
 		add_test(${test_case} ${test_case})
 		set_tests_properties(${test_case} PROPERTIES DEPENDS BuildTests)
 	endforeach()
+endif()
+
+#Benchmarking application.
+option(BUILD_BENCHMARKER "Build tool to compute benchmarks for your current set-up." ON)
+if(BUILD_BENCHMARKER)
+	set(benchmark_sources
+		benchmark/Benchmarker.cpp
+	)
+	add_executable(benchmarker ${benchmark_sources})
+	target_include_directories(benchmarker PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/benchmark)
+	target_include_directories(benchmarker PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+	target_include_directories(benchmarker PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include_private) #The benchmarker has access to private headers to call specific implementations.
+	target_link_libraries(benchmarker parallelogram)
 endif()
 
 #Installation.

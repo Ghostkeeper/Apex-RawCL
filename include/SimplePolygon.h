@@ -10,6 +10,7 @@
 #define SIMPLEPOLYGON_H
 
 #include <vector> //To store the vertices.
+#include "Benchmarker.h" //To give the benchmarker access to private members to benchmark them.
 #include "Point2.h" //The type to represent a vertex.
 
 namespace parallelogram {
@@ -22,6 +23,7 @@ namespace parallelogram {
  * the boundary intersects itself.
  */
 class SimplePolygon : private std::vector<Point2> {
+	friend class Benchmarker;
 public:
 	/*
 	 * Constructs an empty simple polygon.
