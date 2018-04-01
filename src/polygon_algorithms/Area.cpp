@@ -8,9 +8,9 @@
 
 #include <algorithm> //For std::min.
 #ifdef __APPLE__
-	#include "OpenCL/opencl.h"
+	#include "OpenCL/opencl.hpp"
 #else
-	#include "CL/cl.h"
+	#include "CL/cl.hpp"
 #endif
 
 #include "OpenCLDevices.h" //To get the OpenCL devices we can run on.
