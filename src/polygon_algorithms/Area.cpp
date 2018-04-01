@@ -7,11 +7,7 @@
  */
 
 #include <algorithm> //For std::min.
-#ifdef __APPLE__
-	#include "OpenCL/opencl.hpp"
-#else
-	#include "CL/cl.hpp"
-#endif
+#include "OpenCL.h" //To call the OpenCL API.
 
 #include "OpenCLDevices.h" //To get the OpenCL devices we can run on.
 #include "ParallelogramException.h"

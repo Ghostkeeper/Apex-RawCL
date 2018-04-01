@@ -9,11 +9,7 @@
 #ifndef BENCHMARKS_H
 #define BENCHMARKS_H
 
-#ifdef __APPLE__
-	#include "OpenCL/cl.hpp" //To call the OpenCL API.
-#else
-	#include "CL/cl.hpp" //To call the OpenCL API.
-#endif
+#include "OpenCL.h" //To call the OpenCL API.
 
 namespace parallelogram {
 namespace benchmarks { //Contain all benchmark data and the ``choose`` function in a sub-namespace.

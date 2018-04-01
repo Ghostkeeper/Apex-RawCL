@@ -10,11 +10,7 @@
 #define OPENCLDEVICES_H
 
 #include <vector> //To store the platforms.
-#ifdef __APPLE__
-	#include "OpenCL/cl.hpp" //To call the OpenCL API.
-#else
-	#include "CL/cl.hpp" //To call the OpenCL API.
-#endif
+#include "OpenCL.h" //To call the OpenCL API.
 
 namespace parallelogram {
 
