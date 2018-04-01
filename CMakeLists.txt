@@ -65,8 +65,10 @@ if(BUILD_TESTS)
 		get_filename_component(test_dirname ${test_path} DIRECTORY)
 		file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${test_dirname})
 
+		find_package(Threads REQUIRED)
+
 		add_executable(${test_case} test/${test_path}.cpp)
-		target_link_libraries(${test_case} ${GTEST_BOTH_LIBRARIES} parallelogram) #Link with GTest and the main Parallelogram library.
+		target_link_libraries(${test_case} ${GTEST_BOTH_LIBRARIES} Threads::Threads parallelogram) #Link with GTest and the main Parallelogram library.
 		target_include_directories(${test_case} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/benchmark)
 		target_include_directories(${test_case} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include_private) #This test has access to private headers.
 		add_dependencies(build_all_tests ${test_case}) #Make sure that this gets built as part of the build_all_tests target.
