@@ -79,7 +79,7 @@ area_t SimplePolygon::area_gpu() const {
 
 		//Dividing the work over as many work groups as possible.
 		const size_t this_compute_units = std::min(static_cast<size_t>(compute_units), vertices_this_pass);
-		const size_t vertices_per_compute_unit = vertices_this_pass / this_compute_units;
+		const size_t vertices_per_compute_unit = (vertices_this_pass + this_compute_units - 1) / this_compute_units;
 
 		//Allocate an output buffer: One area_t for each work group as their output.
 		cl_ulong this_output_buffer_size = this_compute_units * sizeof(area_t);
