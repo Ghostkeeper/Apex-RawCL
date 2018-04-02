@@ -226,9 +226,11 @@ TEST_F(TestPolygonArea, NoVertices) {
 }
 
 /*
- * Tests computing the area of a polygon that consists of many vertices.
+ * Tests computing the area of a regular polygon that consists of many vertices.
  *
- * This is tested with a polygon that approaches a circle.
+ * This is tested with a regular polygon that approaches a circle. The ground
+ * truth is calculated with the formula for the area of a regular polygon:
+ * 1/2 * n * r^2 * sin(2*pi / n)
  */
 TEST_F(TestPolygonArea, Circle) {
 	Polygon circle;
@@ -241,7 +243,7 @@ TEST_F(TestPolygonArea, Circle) {
 		circle[0].emplace_back(x, y);
 	}
 
-	constexpr area_t ground_truth = num_vertices * radius * radius * std::sin(PI * 2 / num_vertices) / 2; //Formula for area of regular n-gon.
+	constexpr area_t ground_truth = num_vertices * radius * radius * std::sin(PI * 2 / num_vertices) / 2; //Formula for area of regular polygon.
 	EXPECT_NEAR(ground_truth, circle.area(), num_vertices / 1000); //Allow 0.001 squared unit per vertex due to rounding of input coordinates.
 }
 
