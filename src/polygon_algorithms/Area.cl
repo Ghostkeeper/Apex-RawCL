@@ -22,7 +22,7 @@ void kernel area(global const int2* input_data_points, global long* output_areas
 	const int2 previous = input_data_points[global_id];
 	const int2 next = input_data_points[global_id + 1];
 	const int local_id = get_local_id(0);
-	sums[local_id] = previous.x * next.y - previous.y * next.x;
+	sums[local_id] = (long)previous.x * (long)next.y - (long)previous.y * (long)next.x;
 
 	//Aggregate sum on the memory in this work group.
 	const int local_size = get_local_size(0);
