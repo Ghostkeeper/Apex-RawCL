@@ -244,7 +244,7 @@ TEST_F(TestPolygonArea, Circle) {
 	}
 
 	constexpr area_t ground_truth = num_vertices * radius * radius * std::sin(PI * 2 / num_vertices) / 2; //Formula for area of regular polygon.
-	EXPECT_NEAR(ground_truth, circle.area(), num_vertices / 1000); //Allow 0.001 squared unit per vertex due to rounding of input coordinates.
+	EXPECT_NEAR(ground_truth, circle.area(), std::sqrt(num_vertices) / num_vertices / 6 * (PI * radius * radius - PI * (radius - 1) * (radius - 1))); //Allow some error due to rounding of input coordinates.
 }
 
 }
