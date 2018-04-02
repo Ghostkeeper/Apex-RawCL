@@ -9,8 +9,12 @@
 #ifndef TESTPOLYGONAREA
 #define TESTPOLYGONAREA
 
+#include <cmath> //To construct a circle.
 #include <gtest/gtest.h>
+#include <Coordinate.h> //Constructing vertices for the polygon.
 #include "Polygon.h"
+
+#define PI 3.14159265358979
 
 namespace parallelogram {
 
@@ -219,6 +223,26 @@ TEST_F(TestPolygonArea, NoVertices) {
 	no_vertices.emplace_back();
 
 	EXPECT_EQ(0, no_vertices.area());
+}
+
+/*
+ * Tests computing the area of a polygon that consists of many vertices.
+ *
+ * This is tested with a polygon that approaches a circle.
+ */
+TEST_F(TestPolygonArea, Circle) {
+	Polygon circle;
+	circle.emplace_back();
+	constexpr size_t num_vertices = 1000000;
+	constexpr coord_t radius = 1000000;
+	for(size_t vertex = 0; vertex < num_vertices; vertex++) { //Construct a circle with lots of vertices.
+		const coord_t x = std::lround(std::cos(PI * 2 / num_vertices * vertex) * radius); //This rounding naturally introduces error, so we must allow some lenience in the output.
+		const coord_t y = std::lround(std::sin(PI * 2 / num_vertices * vertex) * radius);
+		circle[0].emplace_back(x, y);
+	}
+
+	constexpr area_t ground_truth = num_vertices * radius * radius * std::sin(PI * 2 / num_vertices) / 2; //Formula for area of regular n-gon.
+	EXPECT_NEAR(ground_truth, circle.area(), num_vertices / 1000); //Allow 0.001 squared unit per vertex due to rounding of input coordinates.
 }
 
 }
