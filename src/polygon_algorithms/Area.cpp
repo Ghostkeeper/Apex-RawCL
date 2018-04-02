@@ -86,10 +86,12 @@ area_t SimplePolygon::area_gpu() const {
 		cl::Buffer output_areas(context, CL_MEM_WRITE_ONLY, this_output_buffer_size);
 
 		//Call the kernel to compute the area of this polygon and add it to total_area.
-		cl::make_kernel<cl::Buffer, cl::Buffer, cl::LocalSpaceArg> area_kernel(program, "area");
-		cl::EnqueueArgs enqueue_arguments(queue, cl::NullRange, cl::NDRange(vertices_this_pass), cl::NDRange(vertices_per_compute_unit));
-		cl::Event compute_result = area_kernel(enqueue_arguments, input_points, output_areas, cl::Local(vertices_per_compute_unit * vertex_size));
-		cl_int result = compute_result.wait();
+		cl::Kernel area_kernel(program, "area");
+		area_kernel.setArg(0, input_points);
+		area_kernel.setArg(1, output_areas);
+		area_kernel.setArg(2, cl::Local(vertices_per_compute_unit * vertex_size));
+		queue.enqueueNDRangeKernel(area_kernel, cl::NullRange, cl::NDRange(vertices_this_pass), cl::NDRange(vertices_per_compute_unit));
+		cl_int result = queue.finish();
 		if(result != CL_SUCCESS) { //Let the device do its thing!
 			throw ParallelogramException("Error executing command queue for area computation.");
 		}
