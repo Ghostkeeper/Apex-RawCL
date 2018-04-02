@@ -38,6 +38,9 @@ void kernel area(global const int2* input_data_points, global long* output_areas
 	//Copy the resulting sum to the output.
 	barrier(CLK_LOCAL_MEM_FENCE);
 	if(local_id == 0) {
+		if(local_size > 1) { //Last iteration of the aggregate sum.
+			sums[local_id] += sums[local_id + 1];
+		}
 		const int workgroup_id = global_id / local_size;
 		output_areas[workgroup_id] = sums[local_id];
 	}
