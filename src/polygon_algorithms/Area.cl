@@ -16,17 +16,25 @@ R"kernel(
  * \param sums Some scratch space to store the computed areas before summing
  * them all up within one work group.
  */
-void kernel area(global const int2* input_data_points, global long* output_areas, local long* sums) {
+void kernel area(global const int2* input_data_points, const long total_vertices, global long* output_areas, local long* sums) {
 	//Compute the area contributed by one line segment.
-	const int global_id = get_global_id(0);
+	const uint global_id = get_global_id(0);
 	const int2 previous = input_data_points[global_id];
 	const int2 next = input_data_points[global_id + 1];
-	const int local_id = get_local_id(0);
+	const uint local_id = get_local_id(0);
 	sums[local_id] = (long)previous.x * (long)next.y - (long)previous.y * (long)next.x;
 
 	//Aggregate sum on the memory in this work group.
-	const int local_size = get_local_size(0);
-	int current_size = local_size;
+	const uint local_size = get_local_size(0);
+	const uint workgroup_id = global_id / local_size;
+	uint current_size = local_size;
+	if((workgroup_id + 1) * local_size > total_vertices) {
+		if(workgroup_id * local_size < total_vertices) {
+			current_size = total_vertices % local_size;
+		} else {
+			current_size = 0;
+		}
+	}
 	for(int offset = (current_size + 1) / 2; offset > 1; offset = (current_size + 1) / 2) {
 		barrier(CLK_LOCAL_MEM_FENCE);
 		if(local_id < offset && local_id + offset < current_size) {
@@ -38,10 +46,11 @@ void kernel area(global const int2* input_data_points, global long* output_areas
 	//Copy the resulting sum to the output.
 	barrier(CLK_LOCAL_MEM_FENCE);
 	if(local_id == 0) {
-		if(local_size > 1) { //Last iteration of the aggregate sum.
+		if(current_size > 1) { //Last iteration of the aggregate sum.
 			sums[local_id] += sums[local_id + 1];
+		} else if(current_size == 0) { //Edge case for work groups whose work was indivisible such that they got 0 work.
+			sums[local_id] = 0;
 		}
-		const int workgroup_id = global_id / local_size;
 		output_areas[workgroup_id] = sums[local_id];
 	}
 }

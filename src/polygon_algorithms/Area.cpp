@@ -72,7 +72,7 @@ area_t SimplePolygon::area_gpu() const {
 		}
 
 		//Allocate constant memory on the device for the input.
-		cl_ulong this_constant_buffer_size = (vertices_this_pass + 1) * vertex_size;
+		const cl_ulong this_constant_buffer_size = (vertices_this_pass + 1) * vertex_size;
 		cl::Buffer input_points(context, CL_MEM_READ_ONLY, this_constant_buffer_size);
 		queue.enqueueWriteBuffer(input_points, CL_TRUE, 0, this_constant_buffer_size - vertex_size, &(*this)[pivot_vertex]); //Write the polyline and first pivot vertex.
 		queue.enqueueWriteBuffer(input_points, CL_TRUE, this_constant_buffer_size - vertex_size, vertex_size, &(*this)[pivot_vertex_after]); //Write the second pivot vertex.
@@ -88,8 +88,9 @@ area_t SimplePolygon::area_gpu() const {
 		//Call the kernel to compute the area of this polygon and add it to total_area.
 		cl::Kernel area_kernel(program, "area");
 		area_kernel.setArg(0, input_points);
-		area_kernel.setArg(1, output_areas);
-		area_kernel.setArg(2, cl::Local(vertices_per_compute_unit * vertex_size));
+		area_kernel.setArg(1, vertices_this_pass);
+		area_kernel.setArg(2, output_areas);
+		area_kernel.setArg(3, cl::Local(vertices_per_compute_unit * vertex_size));
 		queue.enqueueNDRangeKernel(area_kernel, cl::NullRange, cl::NDRange(vertices_this_pass), cl::NDRange(vertices_per_compute_unit));
 		cl_int result = queue.finish();
 		if(result != CL_SUCCESS) { //Let the device do its thing!
