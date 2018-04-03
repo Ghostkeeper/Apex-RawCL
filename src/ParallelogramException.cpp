@@ -14,7 +14,7 @@ ParallelogramException::ParallelogramException(const char* message) : message(me
 	//Only need to copy the parameter to the message field.
 }
 
-const char* ParallelogramException::what() {
+const char* ParallelogramException::what() const throw() {
 	return message;
 }
 

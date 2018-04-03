@@ -29,7 +29,7 @@ public:
 	/*
 	 * Returns the message stored with this exception.
 	 */
-	const char* what();
+	const char* what() const throw();
 
 private:
 	/*
