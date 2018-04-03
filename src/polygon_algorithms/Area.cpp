@@ -91,7 +91,9 @@ area_t SimplePolygon::area_gpu() const {
 		area_kernel.setArg(1, vertices_this_pass);
 		area_kernel.setArg(2, output_areas);
 		area_kernel.setArg(3, cl::Local(vertices_per_compute_unit * vertex_size));
-		queue.enqueueNDRangeKernel(area_kernel, cl::NullRange, cl::NDRange(vertices_this_pass), cl::NDRange(vertices_per_compute_unit));
+		//Round the global work size up to multiple of vertices_per_compute_unit. The kernel itself handles work items that need to idle.
+		const size_t global_work_size = (vertices_this_pass + vertices_per_compute_unit - 1) / vertices_per_compute_unit * vertices_per_compute_unit;
+		queue.enqueueNDRangeKernel(area_kernel, cl::NullRange, cl::NDRange(global_work_size), cl::NDRange(vertices_per_compute_unit));
 		cl_int result = queue.finish();
 		if(result != CL_SUCCESS) { //Let the device do its thing!
 			throw ParallelogramException("Error executing command queue for area computation.");
