@@ -78,8 +78,10 @@ area_t SimplePolygon::area_gpu() const {
 		queue.enqueueWriteBuffer(input_points, CL_TRUE, this_constant_buffer_size - vertex_size, vertex_size, &(*this)[pivot_vertex_after]); //Write the second pivot vertex.
 
 		//Dividing the work over as many work groups as possible.
-		const size_t this_compute_units = std::min(static_cast<size_t>(compute_units), vertices_this_pass);
-		const size_t vertices_per_compute_unit = (vertices_this_pass + this_compute_units - 1) / this_compute_units;
+		size_t this_compute_units = std::min(static_cast<size_t>(compute_units), vertices_this_pass);
+		size_t vertices_per_compute_unit = (vertices_this_pass + this_compute_units - 1) / this_compute_units;
+		vertices_per_compute_unit = std::min(vertices_per_compute_unit, max_work_group_size); //However the work group size is limited by hardware and the number of compute units scales then.
+		this_compute_units = (vertices_this_pass + vertices_per_compute_unit - 1) / vertices_per_compute_unit;
 
 		//Allocate an output buffer: One area_t for each work group as their output.
 		cl_ulong this_output_buffer_size = this_compute_units * sizeof(area_t);
