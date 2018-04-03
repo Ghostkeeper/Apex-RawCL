@@ -58,6 +58,10 @@ area_t SimplePolygon::area_gpu() const {
 	}
 	constant_buffer_size = constant_buffer_size / vertex_size * vertex_size; //Make sure that the constant buffer holds an integer number of vertices.
 	constant_buffer_size = std::min(constant_buffer_size, compute_units * local_buffer_size * 2); //If the sum of the local buffers isn't large enough to hold the intermediary values, make more passes.
+	size_t max_work_group_size;
+	if(device.getInfo(CL_DEVICE_MAX_WORK_GROUP_SIZE, &max_work_group_size) != CL_SUCCESS) {
+		max_work_group_size = 1; //OpenCL standard says that the minimum is 1.
+	}
 
 	const size_t vertices_per_pass = constant_buffer_size / vertex_size;
 	area_t total_area = 0; //Result sum of all passes.
