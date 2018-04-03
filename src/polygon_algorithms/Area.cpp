@@ -8,6 +8,7 @@
 
 #include <algorithm> //For std::min.
 #include "OpenCL.h" //To call the OpenCL API.
+#include <iostream>
 
 #include "OpenCLDevices.h" //To get the OpenCL devices we can run on.
 #include "ParallelogramException.h"
@@ -57,7 +58,6 @@ area_t SimplePolygon::area_gpu() const {
 		global_buffer_size = 64 << 10; //OpenCL standard says that the minimum is 64kB.
 	}
 	global_buffer_size = global_buffer_size / vertex_size * vertex_size; //Make sure that the constant buffer holds an integer number of vertices.
-	global_buffer_size = std::min(global_buffer_size, compute_units * local_buffer_size * 2); //If the sum of the local buffers isn't large enough to hold the intermediary values, make more passes.
 	size_t max_work_group_size;
 	if(device.getInfo(CL_DEVICE_MAX_WORK_GROUP_SIZE, &max_work_group_size) != CL_SUCCESS) {
 		max_work_group_size = 1; //OpenCL standard says that the minimum is 1.
