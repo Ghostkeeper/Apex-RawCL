@@ -8,7 +8,6 @@
 
 #include <algorithm> //For std::min.
 #include "OpenCL.h" //To call the OpenCL API.
-#include <iostream>
 
 #include "OpenCLDevices.h" //To get the OpenCL devices we can run on.
 #include "ParallelogramException.h"
@@ -82,13 +81,13 @@ area_t SimplePolygon::area_gpu() const {
 		queue.enqueueWriteBuffer(input_points, CL_TRUE, this_constant_buffer_size - vertex_size, vertex_size, &(*this)[pivot_vertex_after]); //Write the second pivot vertex.
 
 		//Dividing the work over as many work groups as possible.
-		size_t this_compute_units = std::min(static_cast<size_t>(compute_units), vertices_this_pass);
-		size_t vertices_per_compute_unit = (vertices_this_pass + this_compute_units - 1) / this_compute_units;
-		vertices_per_compute_unit = std::min(vertices_per_compute_unit, max_work_group_size); //However the work group size is limited by hardware and the number of compute units scales then.
-		this_compute_units = (vertices_this_pass + vertices_per_compute_unit - 1) / vertices_per_compute_unit;
+		size_t this_work_groups = std::min(static_cast<size_t>(compute_units), vertices_this_pass);
+		size_t vertices_per_work_group = (vertices_this_pass + this_work_groups - 1) / this_work_groups;
+		vertices_per_work_group = std::min(vertices_per_work_group, max_work_group_size); //However the work group size is limited by hardware and the number of compute units scales then.
+		this_work_groups = (vertices_this_pass + vertices_per_work_group - 1) / vertices_per_work_group;
 
 		//Allocate an output buffer: One area_t for each work group as their output.
-		cl_ulong this_output_buffer_size = this_compute_units * sizeof(area_t);
+		cl_ulong this_output_buffer_size = this_work_groups * sizeof(area_t);
 		cl::Buffer output_areas(context, CL_MEM_WRITE_ONLY, this_output_buffer_size);
 
 		//Call the kernel to compute the area of this polygon and add it to total_area.
@@ -96,10 +95,10 @@ area_t SimplePolygon::area_gpu() const {
 		area_kernel.setArg(0, input_points);
 		area_kernel.setArg(1, vertices_this_pass);
 		area_kernel.setArg(2, output_areas);
-		area_kernel.setArg(3, cl::Local(vertices_per_compute_unit * vertex_size));
-		//Round the global work size up to multiple of vertices_per_compute_unit. The kernel itself handles work items that need to idle.
-		const size_t global_work_size = (vertices_this_pass + vertices_per_compute_unit - 1) / vertices_per_compute_unit * vertices_per_compute_unit;
-		queue.enqueueNDRangeKernel(area_kernel, cl::NullRange, cl::NDRange(global_work_size), cl::NDRange(vertices_per_compute_unit));
+		area_kernel.setArg(3, cl::Local(vertices_per_work_group * vertex_size));
+		//Round the global work size up to multiple of vertices_per_work_group. The kernel itself handles work items that need to idle.
+		const size_t global_work_size = (vertices_this_pass + vertices_per_work_group - 1) / vertices_per_work_group * vertices_per_work_group;
+		queue.enqueueNDRangeKernel(area_kernel, cl::NullRange, cl::NDRange(global_work_size), cl::NDRange(vertices_per_work_group));
 		cl_int result = queue.finish();
 		if(result != CL_SUCCESS) { //Let the device do its thing!
 			throw ParallelogramException("Error executing command queue for area computation.");
@@ -107,7 +106,7 @@ area_t SimplePolygon::area_gpu() const {
 
 		//Read the output data in.
 		std::vector<area_t> areas;
-		areas.resize(this_compute_units);
+		areas.resize(this_work_groups);
 		queue.enqueueReadBuffer(output_areas, CL_TRUE, 0, this_output_buffer_size, &(areas[0]));
 		queue.finish();
 		for(const area_t area : areas) {
