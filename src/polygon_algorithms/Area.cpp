@@ -52,18 +52,18 @@ area_t SimplePolygon::area_gpu() const {
 		local_buffer_size = 32 << 10; //OpenCL standard says that the minimum is 32kB.
 	}
 	local_buffer_size = local_buffer_size / vertex_size * vertex_size;
-	cl_ulong constant_buffer_size;
-	if(device.getInfo(CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE, &constant_buffer_size) != CL_SUCCESS) {
-		constant_buffer_size = 64 << 10; //OpenCL standard says that the minimum is 64kB.
+	cl_ulong global_buffer_size;
+	if(device.getInfo(CL_DEVICE_GLOBAL_MEM_SIZE, &global_buffer_size) != CL_SUCCESS) {
+		global_buffer_size = 64 << 10; //OpenCL standard says that the minimum is 64kB.
 	}
-	constant_buffer_size = constant_buffer_size / vertex_size * vertex_size; //Make sure that the constant buffer holds an integer number of vertices.
-	constant_buffer_size = std::min(constant_buffer_size, compute_units * local_buffer_size * 2); //If the sum of the local buffers isn't large enough to hold the intermediary values, make more passes.
+	global_buffer_size = global_buffer_size / vertex_size * vertex_size; //Make sure that the constant buffer holds an integer number of vertices.
+	global_buffer_size = std::min(global_buffer_size, compute_units * local_buffer_size * 2); //If the sum of the local buffers isn't large enough to hold the intermediary values, make more passes.
 	size_t max_work_group_size;
 	if(device.getInfo(CL_DEVICE_MAX_WORK_GROUP_SIZE, &max_work_group_size) != CL_SUCCESS) {
 		max_work_group_size = 1; //OpenCL standard says that the minimum is 1.
 	}
 
-	const size_t vertices_per_pass = constant_buffer_size / vertex_size;
+	const size_t vertices_per_pass = global_buffer_size / vertex_size;
 	area_t total_area = 0; //Result sum of all passes.
 	for(size_t pivot_vertex = 0; pivot_vertex < size(); pivot_vertex += vertices_per_pass - 1) { //If the total data size is more than what fits in constant memory, we'll have to make multiple passes.
 		//Each item works on a line segment, which requires two vertices.
