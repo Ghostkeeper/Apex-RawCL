@@ -37,7 +37,7 @@ private:
 	 * is modified in-place.
 	 * \return The input but with the whitespace at the start and end removed.
 	 */
-	void trim(std::string& input) const;
+	inline void trim(std::string& input) const;
 };
 
 }

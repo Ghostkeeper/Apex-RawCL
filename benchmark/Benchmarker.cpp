@@ -73,7 +73,7 @@ std::string Benchmarker::host_identifier() const {
 	return result;
 }
 
-void Benchmarker::trim(std::string& input) const {
+inline void Benchmarker::trim(std::string& input) const {
 	input.erase(input.begin(), std::find_if(input.begin(), input.end(), std::not1(std::ptr_fun<int, int>(std::isspace)))); //Trim whitespace at the start.
 	input.erase(std::find_if(input.rbegin(), input.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), input.end()); //Trim whitespace at the end.
 }
