@@ -23,7 +23,7 @@ namespace parallelogram {
  * the boundary intersects itself.
  */
 class SimplePolygon : private std::vector<Point2> {
-	friend class Benchmarker;
+	friend class benchmarks::Benchmarker;
 public:
 	/*
 	 * Constructs an empty simple polygon.

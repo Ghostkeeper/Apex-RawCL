@@ -10,6 +10,7 @@
 #define BENCHMARKER_H
 
 namespace parallelogram {
+namespace benchmarks {
 
 class Benchmarker {
 public:
@@ -17,7 +18,6 @@ public:
 };
 
 }
+}
 
-
-#endif /* BENCHMARKER_H */
-
+#endif //BENCHMARKER_H
