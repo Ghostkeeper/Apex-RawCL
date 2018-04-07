@@ -56,7 +56,6 @@ void Benchmarker::benchmark_area() {
 		const double time = static_cast<double>(end_time - start_time) / CLOCKS_PER_SEC / repeats;
 		std::cout << time << ";" << std::endl;
 	}
-	std::cout << "};" << std::endl;
 }
 
 std::string Benchmarker::gpu_identifier() const {
