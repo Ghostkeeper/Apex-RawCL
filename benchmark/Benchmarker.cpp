@@ -6,9 +6,12 @@
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
  */
 
+#include <algorithm> //For find_if to trim whitespace.
 #include <iostream> //To output the benchmark data to stdout.
 #include <time.h> //For high-resolution timers to measure benchmarks.
 #include <vector> //Lists of problem sizes to test with.
+#include "OpenCL.h" //To get device information.
+#include "OpenCLDevices.h" //To find the identifiers of the devices the benchmark is performed on.
 #include "Point2.h" //To construct vertices for polygons.
 #include "SimplePolygon.h" //A class of which we're benchmarking performance.
 
@@ -45,6 +48,30 @@ void Benchmarker::benchmark_area() {
 		std::cout << time << ", ";
 	}
 	std::cout << "};" << std::endl;
+}
+
+std::string Benchmarker::gpu_identifier() const {
+	OpenCLDevices& devices = OpenCLDevices::getInstance();
+	const cl::Device& device = devices.getGPUs()[0]; //This makes the assumption that the benchmarks are running on the first available GPU.
+	std::string result;
+	if(device.getInfo(CL_DEVICE_NAME, &result) != CL_SUCCESS) {
+		return std::string("unknown_gpu");
+	}
+	result.erase(result.begin(), std::find_if(result.begin(), result.end(), std::not1(std::ptr_fun<int, int>(std::isspace)))); //Trim whitespace at the start.
+	result.erase(std::find_if(result.rbegin(), result.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), result.end()); //Trim whitespace at the end.
+	return result;
+}
+
+std::string Benchmarker::host_identifier() const {
+	OpenCLDevices& devices = OpenCLDevices::getInstance();
+	const cl::Device& device = devices.getCPUs()[0]; //This makes the assumption that the first CPU is the host.
+	std::string result;
+	if(device.getInfo(CL_DEVICE_NAME, &result) != CL_SUCCESS) {
+		return std::string("unknown_host");
+	}
+	result.erase(result.begin(), std::find_if(result.begin(), result.end(), std::not1(std::ptr_fun<int, int>(std::isspace)))); //Trim whitespace at the start.
+	result.erase(std::find_if(result.rbegin(), result.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), result.end()); //Trim whitespace at the end.
+	return result;
 }
 
 }

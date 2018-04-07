@@ -9,12 +9,26 @@
 #ifndef BENCHMARKER_H
 #define BENCHMARKER_H
 
+#include <string> //To return the device identifiers.
+
 namespace parallelogram {
 namespace benchmarks {
 
 class Benchmarker {
 public:
 	void benchmark_area();
+
+private:
+	/*
+	 * Returns a string identifying the device that the host runs on.
+	 */
+	std::string host_identifier() const;
+
+	/*
+	 * Returns a string identifying the device that the GPU-targeted algorithms
+	 * run on.
+	 */
+	std::string gpu_identifier() const;
 };
 
 }
