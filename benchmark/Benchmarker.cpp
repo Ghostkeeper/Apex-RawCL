@@ -21,8 +21,9 @@ namespace benchmarks {
 void Benchmarker::benchmark_area() {
 	//The polygon sizes we'll be testing with.
 	const std::vector<size_t> sizes = {1, 10, 100, 1000, 10000, 1000000, 2000000, 4000000, 8000000, 16000000, 32000000, 64000000, 128000000, 256000000, 512000000, 1024000000};
-	std::cout << "const std::vector<float> bench_host_area = {";
+	std::string host_device = host_identifier();
 	for(const size_t size : sizes) {
+		std::cout << "area_host_time[std::make_pair(\"" << host_device << "\", " << size << ")] = ";
 		SimplePolygon polygon;
 		for(size_t vertex = 0; vertex < size; vertex++) {
 			polygon.emplace_back(vertex, vertex);
@@ -31,12 +32,12 @@ void Benchmarker::benchmark_area() {
 		polygon.area_host();
 		const unsigned long end_time = clock();
 		const double time = static_cast<double>(end_time - start_time) / CLOCKS_PER_SEC;
-		std::cout << time << ", ";
+		std::cout << time << ";" << std::endl;
 	}
-	std::cout << "};" << std::endl;
 
-	std::cout << "const std::vector<float> bench_gpu_area = {";
+	std::string gpu_device = gpu_identifier();
 	for(const size_t size : sizes) {
+		std::cout << "area_gpu_time[std::make_pair(\"" << gpu_device << "\", " << size << ")] = ";
 		SimplePolygon polygon;
 		for(size_t vertex = 0; vertex < size; vertex++) {
 			polygon.emplace_back(vertex, vertex);
@@ -45,7 +46,7 @@ void Benchmarker::benchmark_area() {
 		polygon.area_gpu();
 		const unsigned long end_time = clock();
 		const double time = static_cast<double>(end_time - start_time) / CLOCKS_PER_SEC;
-		std::cout << time << ", ";
+		std::cout << time << ";" << std::endl;
 	}
 	std::cout << "};" << std::endl;
 }
