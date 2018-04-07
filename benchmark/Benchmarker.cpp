@@ -7,6 +7,7 @@
  */
 
 #include <algorithm> //For find_if to trim whitespace.
+#include <functional> //For cref to trim whitespace.
 #include <iostream> //To output the benchmark data to stdout.
 #include <time.h> //For high-resolution timers to measure benchmarks.
 #include <vector> //Lists of problem sizes to test with.
@@ -74,8 +75,11 @@ std::string Benchmarker::host_identifier() const {
 }
 
 inline void Benchmarker::trim(std::string& input) const {
-	input.erase(input.begin(), std::find_if(input.begin(), input.end(), std::not1(std::ptr_fun<int, int>(std::isspace)))); //Trim whitespace at the start.
-	input.erase(std::find_if(input.rbegin(), input.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), input.end()); //Trim whitespace at the end.
+	const std::function<bool(char)> is_not_whitespace = [](char character) {
+		return !std::isspace<char>(character, std::locale::classic()) && character != 0;
+	};
+	input.erase(input.begin(), std::find_if(input.begin(), input.end(), is_not_whitespace)); //Trim whitespace at the start.
+	input.erase(std::find_if(input.rbegin(), input.rend(), is_not_whitespace).base(), input.end()); //Trim whitespace at the end.
 }
 
 }
