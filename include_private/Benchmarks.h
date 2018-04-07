@@ -10,11 +10,10 @@
 #define BENCHMARKS_H
 
 #include "OpenCL.h" //To call the OpenCL API.
+#include "BenchmarkData.h" //File that groups the actual benchmark data in compile time.
 
 namespace parallelogram {
 namespace benchmarks { //Contain all benchmark data and the ``choose`` function in a sub-namespace.
-
-//#include "BenchmarkData.h" //File that groups the actual benchmark data in compile time.
 
 /*
  * Uses available benchmark data to choose between implementations of an
