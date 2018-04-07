@@ -26,7 +26,7 @@ void Benchmarker::benchmark_area() {
 		const unsigned long start_time = clock();
 		polygon.area_host();
 		const unsigned long end_time = clock();
-		const float time = static_cast<float>(end_time - start_time) / CLOCKS_PER_SEC;
+		const double time = static_cast<double>(end_time - start_time) / CLOCKS_PER_SEC;
 		std::cout << time << ", ";
 	}
 	std::cout << "};" << std::endl;
@@ -40,7 +40,7 @@ void Benchmarker::benchmark_area() {
 		const unsigned long start_time = clock();
 		polygon.area_gpu();
 		const unsigned long end_time = clock();
-		const float time = static_cast<float>(end_time - start_time) / CLOCKS_PER_SEC;
+		const double time = static_cast<double>(end_time - start_time) / CLOCKS_PER_SEC;
 		std::cout << time << ", ";
 	}
 	std::cout << "};" << std::endl;
