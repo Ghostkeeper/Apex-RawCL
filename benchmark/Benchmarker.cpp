@@ -22,6 +22,9 @@ namespace benchmarks {
 void Benchmarker::benchmark_area() {
 	//The polygon sizes we'll be testing with.
 	const std::vector<size_t> sizes = {1, 10, 100, 1000, 10000, 1000000, 2000000, 4000000, 8000000, 16000000, 32000000, 64000000, 128000000, 256000000, 512000000, 1024000000};
+	//How many repeats to perform. More increases accuracy of timing.
+	constexpr unsigned int repeats = 10;
+
 	std::string host_device = host_identifier();
 	for(const size_t size : sizes) {
 		std::cout << "area_host_time[std::make_pair(\"" << host_device << "\", " << size << ")] = ";
@@ -30,9 +33,11 @@ void Benchmarker::benchmark_area() {
 			polygon.emplace_back(vertex, vertex);
 		}
 		const unsigned long start_time = clock();
-		polygon.area_host();
+		for(unsigned int repeat = 0; repeat < repeats; repeat++) {
+			polygon.area_host();
+		}
 		const unsigned long end_time = clock();
-		const double time = static_cast<double>(end_time - start_time) / CLOCKS_PER_SEC;
+		const double time = static_cast<double>(end_time - start_time) / CLOCKS_PER_SEC / repeats;
 		std::cout << time << ";" << std::endl;
 	}
 
@@ -44,9 +49,11 @@ void Benchmarker::benchmark_area() {
 			polygon.emplace_back(vertex, vertex);
 		}
 		const unsigned long start_time = clock();
-		polygon.area_gpu();
+		for(unsigned int repeat = 0; repeat < repeats; repeat++) {
+			polygon.area_gpu();
+		}
 		const unsigned long end_time = clock();
-		const double time = static_cast<double>(end_time - start_time) / CLOCKS_PER_SEC;
+		const double time = static_cast<double>(end_time - start_time) / CLOCKS_PER_SEC / repeats;
 		std::cout << time << ";" << std::endl;
 	}
 	std::cout << "};" << std::endl;
