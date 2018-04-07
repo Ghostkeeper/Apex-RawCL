@@ -58,8 +58,7 @@ std::string Benchmarker::gpu_identifier() const {
 	if(device.getInfo(CL_DEVICE_NAME, &result) != CL_SUCCESS) {
 		return std::string("unknown_gpu");
 	}
-	result.erase(result.begin(), std::find_if(result.begin(), result.end(), std::not1(std::ptr_fun<int, int>(std::isspace)))); //Trim whitespace at the start.
-	result.erase(std::find_if(result.rbegin(), result.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), result.end()); //Trim whitespace at the end.
+	trim(result);
 	return result;
 }
 
@@ -70,9 +69,13 @@ std::string Benchmarker::host_identifier() const {
 	if(device.getInfo(CL_DEVICE_NAME, &result) != CL_SUCCESS) {
 		return std::string("unknown_host");
 	}
-	result.erase(result.begin(), std::find_if(result.begin(), result.end(), std::not1(std::ptr_fun<int, int>(std::isspace)))); //Trim whitespace at the start.
-	result.erase(std::find_if(result.rbegin(), result.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), result.end()); //Trim whitespace at the end.
+	trim(result);
 	return result;
+}
+
+void Benchmarker::trim(std::string& input) const {
+	input.erase(input.begin(), std::find_if(input.begin(), input.end(), std::not1(std::ptr_fun<int, int>(std::isspace)))); //Trim whitespace at the start.
+	input.erase(std::find_if(input.rbegin(), input.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), input.end()); //Trim whitespace at the end.
 }
 
 }

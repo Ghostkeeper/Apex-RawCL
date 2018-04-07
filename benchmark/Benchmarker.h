@@ -29,6 +29,15 @@ private:
 	 * run on.
 	 */
 	std::string gpu_identifier() const;
+
+	/*
+	 * Trims whitespace at the beginning and ending of a string.
+	 *
+	 * This is a helper function to canonicalise CPU and GPU names. The string
+	 * is modified in-place.
+	 * \return The input but with the whitespace at the start and end removed.
+	 */
+	void trim(std::string& input) const;
 };
 
 }
