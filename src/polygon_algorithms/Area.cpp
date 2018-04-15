@@ -9,6 +9,7 @@
 #include <algorithm> //For std::min.
 #include "OpenCL.h" //To call the OpenCL API.
 
+#include "OpenCLContext.h" //To get the OpenCL context to run on.
 #include "OpenCLDevices.h" //To get the OpenCL devices we can run on.
 #include "ParallelogramException.h"
 #include "SimplePolygon.h" //We're implementing functions from this header.
@@ -27,19 +28,13 @@ area_t SimplePolygon::area_gpu() const {
 		throw ParallelogramException("No supported OpenCL devices!");
 	}
 
-	cl::Context context({device});
+	cl::Context& context = OpenCLContext::getInstance().context;
 	cl::CommandQueue queue(context, device);
 
 	//Load the source code.
-	cl::Program::Sources kernel_sources;
-	const std::string kernel_source =
-	#include "Area.cl"
-	;
-	kernel_sources.push_back({kernel_source.c_str(), kernel_source.length()});
-	cl::Program program(context, kernel_sources);
-	if(program.build({device}) != CL_SUCCESS) {
-		throw ParallelogramException((std::string("Compiling kernel for Polygon::area failed: ") + program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(device)).c_str());
-	}
+	cl::Program& program = OpenCLContext::getInstance().compile(
+		#include "Area.cl"
+	);
 
 	//We might need to make multiple passes if the device has a very limited amount of memory.
 	constexpr size_t vertex_size = sizeof(coord_t) * 2;
