@@ -14,8 +14,21 @@
 namespace parallelogram {
 namespace benchmarks {
 
+/*
+ * Performs benchmarks to determine the relative performance of various
+ * algorithms on the current hardware.
+ *
+ * These benchmarks will then assist in making a better choice of strategy when
+ * the algorithms are executed.
+ *
+ * The CPP file for this class also contains an entry point in order to perform
+ * the benchmarks separately.
+ */
 class Benchmarker {
 public:
+	/*
+	 * Performs a benchmark on computing the area of a polygon.
+	 */
 	void benchmark_area();
 
 private:
