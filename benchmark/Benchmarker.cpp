@@ -21,9 +21,9 @@ namespace benchmarks {
 
 void Benchmarker::benchmark_area() {
 	//The polygon sizes we'll be testing with.
-	const std::vector<size_t> sizes = {1, 10, 100, 1000, 10000, 1000000, 2000000, 4000000, 8000000, 16000000, 32000000, 64000000, 128000000, 256000000, 512000000, 1024000000};
+	const std::vector<size_t> sizes = {1, 10, 100, 1000, 10000, 20000, 40000, 80000, 160000, 320000, 640000, 1000000, 2000000, 4000000, 8000000};
 	//How many repeats to perform. More increases accuracy of timing.
-	constexpr unsigned int repeats = 10;
+	constexpr unsigned int repeats = 50;
 
 	//Debug output for progress reporting goes through std::cerr.
 	std::cerr << "Area:   0%";
