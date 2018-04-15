@@ -26,54 +26,55 @@ void Benchmarker::benchmark_area() {
 	constexpr unsigned int repeats = 10;
 
 	//Debug output for progress reporting goes through std::cerr.
-	std::cerr << "Area (Host):   0%";
+	std::cerr << "Area:   0%";
 
+	//Results of the timing.
+	std::vector<double> gpu_times(sizes.size(), 0.0);
+	std::vector<double> host_times(sizes.size(), 0.0);
+
+	for(size_t size_index = 0; size_index < sizes.size(); size_index++) {
+		//Generate a polygon of the appropriate size to test on.
+		SimplePolygon polygon;
+		for(size_t vertex = 0; vertex < sizes[size_index]; vertex++) {
+			polygon.emplace_back(vertex, vertex);
+		}
+
+		unsigned long total_gpu_time = 0;
+		unsigned long total_host_time = 0;
+		unsigned long start_time = 0;
+		unsigned long end_time = 0;
+		for(unsigned int repeat = 0; repeat < repeats; repeat++) {
+			start_time = clock();
+			polygon.area_host();
+			end_time = clock();
+			total_host_time += end_time - start_time;
+
+			start_time = clock();
+			polygon.area_gpu();
+			end_time = clock();
+			total_gpu_time += end_time - start_time;
+
+			const int progress = (repeat + size_index * repeats) * 100 / (sizes.size() * repeats);
+			std::cerr << "\b\b\b";
+			if(progress < 10) {
+				std::cerr << " ";
+			}
+			std::cerr << progress << "%";
+		}
+		gpu_times[size_index] = static_cast<double>(total_gpu_time) / CLOCKS_PER_SEC / repeats;
+		host_times[size_index] = static_cast<double>(total_host_time) / CLOCKS_PER_SEC / repeats;
+	}
+
+	//Output the results to cout.
 	std::string host_device = host_identifier();
 	for(size_t size_index = 0; size_index < sizes.size(); size_index++) {
-		std::cout << "area_host_time[std::make_pair(\"" << host_device << "\", " << sizes[size_index] << ")] = ";
-		SimplePolygon polygon;
-		for(size_t vertex = 0; vertex < sizes[size_index]; vertex++) {
-			polygon.emplace_back(vertex, vertex);
-		}
-		const unsigned long start_time = clock();
-		for(unsigned int repeat = 0; repeat < repeats; repeat++) {
-			polygon.area_host();
-			const int progress = (repeat + size_index * repeats) * 100 / (sizes.size() * repeats);
-			std::cerr << "\b\b\b";
-			if(progress < 10) {
-				std::cerr << " ";
-			}
-			std::cerr << progress << "%";
-		}
-		const unsigned long end_time = clock();
-		const double time = static_cast<double>(end_time - start_time) / CLOCKS_PER_SEC / repeats;
-		std::cout << time << ";" << std::endl;
+		std::cout << "area_host_time[std::make_pair(\"" << host_device << "\", " << sizes[size_index] << ")] = " << host_times[size_index] << ";" << std::endl;
 	}
-	std::cerr << "\b\b\b\b" << "100%" << std::endl;
-
-	std::cerr << "Area (GPU):   0%";
 	std::string gpu_device = gpu_identifier();
 	for(size_t size_index = 0; size_index < sizes.size(); size_index++) {
-		std::cout << "area_gpu_time[std::make_pair(\"" << gpu_device << "\", " << sizes[size_index] << ")] = ";
-		SimplePolygon polygon;
-		for(size_t vertex = 0; vertex < sizes[size_index]; vertex++) {
-			polygon.emplace_back(vertex, vertex);
-		}
-		const unsigned long start_time = clock();
-		for(unsigned int repeat = 0; repeat < repeats; repeat++) {
-			polygon.area_gpu();
-			const int progress = (repeat + size_index * repeats) * 100 / (sizes.size() * repeats);
-			std::cerr << "\b\b\b";
-			if(progress < 10) {
-				std::cerr << " ";
-			}
-			std::cerr << progress << "%";
-		}
-		const unsigned long end_time = clock();
-		const double time = static_cast<double>(end_time - start_time) / CLOCKS_PER_SEC / repeats;
-		std::cout << time << ";" << std::endl;
+		std::cout << "area_gpu_time[std::make_pair(\"" << gpu_device << "\", " << sizes[size_index] << ")] = " << gpu_times[size_index] << ";" << std::endl;
 	}
-	std::cerr << "\b\b\b\b" << "100%" << std::endl;
+	std::cerr << "\b\b\b\b100%" << std::endl;
 }
 
 std::string Benchmarker::gpu_identifier() const {
