@@ -35,6 +35,11 @@ public:
 	static OpenCLDevices& getInstance();
 
 	/*
+	 * Get all devices available to compute with.
+	 */
+	const std::vector<cl::Device>& getAll() const;
+
+	/*
 	 * Get the CPU devices available to compute with.
 	 */
 	const std::vector<cl::Device>& getCPUs() const;
@@ -63,6 +68,11 @@ protected:
 	 * During construction the OpenCL devices on this system will be detected.
 	 */
 	OpenCLDevices();
+
+	/*
+	 * All detected devices.
+	 */
+	std::vector<cl::Device> all_devices;
 
 	/*
 	 * All detected CPU-type devices.

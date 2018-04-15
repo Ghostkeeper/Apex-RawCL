@@ -23,11 +23,13 @@ OpenCLDevices::OpenCLDevices() {
 		platform.getDevices(CL_DEVICE_TYPE_CPU, &cpus);
 		for(const cl::Device& cpu : cpus) {
 			cpu_devices.push_back(cpu);
+			all_devices.push_back(cpu);
 		}
 		std::vector<cl::Device> gpus;
 		platform.getDevices(CL_DEVICE_TYPE_GPU, &gpus);
 		for(const cl::Device& gpu : gpus) {
 			gpu_devices.push_back(gpu);
+			all_devices.push_back(gpu);
 		}
 	}
 }
@@ -35,6 +37,10 @@ OpenCLDevices::OpenCLDevices() {
 OpenCLDevices& OpenCLDevices::getInstance() {
 	static OpenCLDevices instance; //Constructs using the default constructor.
 	return instance;
+}
+
+const std::vector<cl::Device>& OpenCLDevices::getAll() const {
+	return all_devices;
 }
 
 const std::vector<cl::Device>& OpenCLDevices::getCPUs() const {
