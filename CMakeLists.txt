@@ -29,6 +29,7 @@ set(sources
 
 	src/polygon_algorithms/Area.cpp
 
+	src/private/OpenCLContext.cpp
 	src/private/OpenCLDevices.cpp
 	src/private/Benchmarks.cpp
 )
