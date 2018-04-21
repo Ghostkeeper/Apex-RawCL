@@ -36,7 +36,11 @@ namespace parallelogram {
 OpenCLContext::OpenCLContext() {
 	//Create a context for every device.
 	for(const cl::Device& device : OpenCLDevices::getInstance().getAll()) {
-		contexts[device] = cl::Context({device});
+		cl_int result = CL_SUCCESS;
+		contexts[device] = cl::Context({device}, nullptr, nullptr, nullptr, &result);
+		if(result != CL_SUCCESS) {
+			throw ParallelogramException((std::string("Constructing context failed: error ") + std::to_string(result)).c_str());
+		}
 	}
 }
 
@@ -50,9 +54,14 @@ cl::Program& OpenCLContext::compile(const cl::Device& device, const std::string 
 	if(programs.find(device_and_source) == programs.end()) {
 		cl::Program::Sources sources;
 		sources.push_back({source.c_str(), source.length()});
-		programs[device_and_source] = cl::Program(contexts[device], sources);
-		if(programs[device_and_source].build({device}) != CL_SUCCESS) {
-			throw ParallelogramException((std::string("Compiling kernel failed: ") + programs[device_and_source].getBuildInfo<CL_PROGRAM_BUILD_LOG>(device)).c_str());
+		cl_int result = CL_SUCCESS;
+		programs[device_and_source] = cl::Program(contexts[device], sources, &result);
+		if(result != CL_SUCCESS) {
+			throw ParallelogramException((std::string("Constructing program object failed: error ") + std::to_string(result)).c_str());
+		}
+		result = programs[device_and_source].build({device});
+		if(result != CL_SUCCESS) {
+			throw ParallelogramException((std::string("Compiling kernel failed (") + std::to_string(result) + std::string("): ") + programs[device_and_source].getBuildInfo<CL_PROGRAM_BUILD_LOG>(device)).c_str());
 		}
 	}
 	return programs[device_and_source];
