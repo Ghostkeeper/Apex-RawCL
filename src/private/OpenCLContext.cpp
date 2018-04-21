@@ -16,12 +16,8 @@ size_t hash<cl::Device>::operator ()(const cl::Device& device) const {
 	return reinterpret_cast<size_t>(&device); //Devices should be unique, so we can simply return their pointer.
 }
 
-size_t hash<const cl::Device>::operator ()(const cl::Device& device) const {
-	return reinterpret_cast<size_t>(&device);
-}
-
-size_t hash<const string>::operator ()(const string& str) const {
-	return hash<string>()(str);
+template<typename T> size_t hash<const T>::operator ()(const T& obj) const {
+	return hash<T>()(obj);
 }
 
 template<typename F, typename S> size_t hash<pair<F, S>>::operator ()(const pair<F, S>& the_pair) const {

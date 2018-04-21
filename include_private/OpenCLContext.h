@@ -24,23 +24,13 @@ template<> struct hash<cl::Device> {
 };
 
 /*
- * Hashes const cl::Device instances.
+ * Generic template for hashing const objects.
  *
- * This is the same as hashing non-const instances, but since the template
- * specialisation for the hash struct doesn't match we need to define it again.
+ * This refers to its non-const implementation. Hashing a const object is
+ * exactly the same as hashing a non-const object.
  */
-template<> struct hash<const cl::Device> {
-	size_t operator ()(const cl::Device& device) const;
-};
-
-/*
- * Hashes const strings.
- *
- * This refers through to the hash of non-const strings. The standard library
- * doesn't define any hash for the const version.
- */
-template<> struct hash<const string> {
-	size_t operator ()(const string& str) const;
+template<typename T> struct hash<const T> {
+	size_t operator ()(const T& obj) const;
 };
 
 /*
