@@ -17,7 +17,7 @@ namespace std {
 /*
  * Hashes cl::Device instances.
  *
- * Since these devices should be unique, the hash is simply the memory address.
+ * Devices are hashed by their cl_device_id, which should be unique per device.
  */
 template<> struct hash<cl::Device> {
 	size_t operator ()(const cl::Device& device) const;
@@ -46,7 +46,8 @@ template<typename F, typename S> struct hash<pair<F, S>> {
 /*
  * Compares two devices for equality.
  *
- * Since the devices should be unique, we simply compare their memory addresses.
+ * Devices are compared by their cl_device_id, which should be unique per
+ * device.
  */
 bool operator ==(const cl::Device& first, const cl::Device& second);
 
