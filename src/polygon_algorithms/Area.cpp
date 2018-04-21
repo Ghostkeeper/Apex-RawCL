@@ -16,7 +16,7 @@
 
 namespace parallelogram {
 
-area_t SimplePolygon::area_gpu() const {
+area_t SimplePolygon::area_opencl() const {
 	//TODO: We want to get the preferred device from the benchmarks::choose function.
 	OpenCLDevices& devices = OpenCLDevices::getInstance();
 	cl::Device device;

@@ -50,7 +50,7 @@ void Benchmarker::benchmark_area() {
 			total_host_time += end_time - start_time;
 
 			start_time = clock();
-			polygon.area_gpu();
+			polygon.area_opencl();
 			end_time = clock();
 			total_gpu_time += end_time - start_time;
 
@@ -72,7 +72,7 @@ void Benchmarker::benchmark_area() {
 	}
 	std::string gpu_device = gpu_identifier();
 	for(size_t size_index = 0; size_index < sizes.size(); size_index++) {
-		std::cout << "area_gpu_time[std::make_pair(\"" << gpu_device << "\", " << sizes[size_index] << ")] = " << gpu_times[size_index] << ";" << std::endl;
+		std::cout << "area_opencl_time[std::make_pair(\"" << gpu_device << "\", " << sizes[size_index] << ")] = " << gpu_times[size_index] << ";" << std::endl;
 	}
 	std::cerr << "\b\b\b\b100%" << std::endl;
 }

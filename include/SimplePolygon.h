@@ -78,11 +78,11 @@ public:
 
 private:
 	/*
-	 * Implements the ``area`` function via OpenCL tuned for use on a GPU.
+	 * Implements the ``area`` function via OpenCL.
 	 *
 	 * This may perform better on large amounts of data.
 	 */
-	area_t area_gpu() const;
+	area_t area_opencl() const;
 
 	/*
 	 * Implements the ``area`` function on the host hardware.

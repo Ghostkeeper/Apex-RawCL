@@ -35,12 +35,12 @@ struct pair_hash {
 std::unordered_map<std::pair<std::string, size_t>, double, pair_hash> area_host_time;
 
 /*
- * Stores the benchmark data for computing the area of a polygon on the GPU.
+ * Stores the benchmark data for computing the area of a polygon via OpenCL.
  *
- * The keys of this map are pairs of the GPU device model and the problem size.
- * The values are the time it took to compute, in seconds.
+ * The keys of this map are pairs of the OpenCL device model and the problem
+ * size. The values are the time it took to compute, in seconds.
  */
-std::unordered_map<std::pair<std::string, size_t>, double, pair_hash> area_gpu_time;
+std::unordered_map<std::pair<std::string, size_t>, double, pair_hash> area_opencl_time;
 
 }
 }

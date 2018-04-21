@@ -18,7 +18,7 @@ SimplePolygon::SimplePolygon() {
 area_t SimplePolygon::area() const {
 	//TODO: Use benchmarks to choose between implementations.
 	if(size() >= 60000) { //For now, use a measured threshold from a single benchmark. About here the GPU starts to become faster.
-		return area_gpu();
+		return area_opencl();
 	} else {
 		return area_host();
 	}
