@@ -69,17 +69,19 @@ area_t SimplePolygon::area_gpu() const {
 			vertices_this_pass = size() - pivot_vertex;
 		}
 
-		//Allocate constant memory on the device for the input.
-		const cl_ulong this_constant_buffer_size = (vertices_this_pass + 1) * vertex_size;
-		cl::Buffer input_points(context, CL_MEM_READ_ONLY, this_constant_buffer_size);
-		queue.enqueueWriteBuffer(input_points, CL_TRUE, 0, this_constant_buffer_size - vertex_size, &(*this)[pivot_vertex]); //Write the polyline and first pivot vertex.
-		queue.enqueueWriteBuffer(input_points, CL_TRUE, this_constant_buffer_size - vertex_size, vertex_size, &(*this)[pivot_vertex_after]); //Write the second pivot vertex.
-
 		//Dividing the work over as many work groups as possible.
 		size_t this_work_groups = std::min(static_cast<size_t>(compute_units), vertices_this_pass);
 		size_t vertices_per_work_group = (vertices_this_pass + this_work_groups - 1) / this_work_groups;
 		vertices_per_work_group = std::min(vertices_per_work_group, max_work_group_size); //However the work group size is limited by hardware and the number of compute units scales then.
 		this_work_groups = (vertices_this_pass + vertices_per_work_group - 1) / vertices_per_work_group;
+		//Round the global work size up to multiple of vertices_per_work_group. The kernel itself handles work items that need to idle.
+		const size_t global_work_size = (vertices_this_pass + vertices_per_work_group - 1) / vertices_per_work_group * vertices_per_work_group;
+
+		//Allocate constant memory on the device for the input.
+		const cl_ulong this_constant_buffer_size = (vertices_this_pass + 1) * vertex_size;
+		cl::Buffer input_points(context, CL_MEM_READ_ONLY, (global_work_size + 1) * vertex_size);
+		queue.enqueueWriteBuffer(input_points, CL_TRUE, 0, this_constant_buffer_size - vertex_size, &(*this)[pivot_vertex]); //Write the polyline and first pivot vertex.
+		queue.enqueueWriteBuffer(input_points, CL_TRUE, this_constant_buffer_size - vertex_size, vertex_size, &(*this)[pivot_vertex_after]); //Write the second pivot vertex.
 
 		//Allocate an output buffer: One area_t for each work group as their output.
 		cl_ulong this_output_buffer_size = this_work_groups * sizeof(area_t);
@@ -91,11 +93,9 @@ area_t SimplePolygon::area_gpu() const {
 		area_kernel.setArg(1, vertices_this_pass);
 		area_kernel.setArg(2, output_areas);
 		area_kernel.setArg(3, cl::Local(vertices_per_work_group * vertex_size));
-		//Round the global work size up to multiple of vertices_per_work_group. The kernel itself handles work items that need to idle.
-		const size_t global_work_size = (vertices_this_pass + vertices_per_work_group - 1) / vertices_per_work_group * vertices_per_work_group;
 		queue.enqueueNDRangeKernel(area_kernel, cl::NullRange, cl::NDRange(global_work_size), cl::NDRange(vertices_per_work_group));
-		cl_int result = queue.finish();
-		if(result != CL_SUCCESS) { //Let the device do its thing!
+		cl_int result = queue.finish(); //Let the device do its thing!
+		if(result != CL_SUCCESS) {
 			throw ParallelogramException("Error executing command queue for area computation.");
 		}
 
