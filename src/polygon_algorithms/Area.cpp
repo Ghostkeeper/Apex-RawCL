@@ -28,11 +28,11 @@ area_t SimplePolygon::area_gpu() const {
 		throw ParallelogramException("No supported OpenCL devices!");
 	}
 
-	cl::Context& context = OpenCLContext::getInstance().context;
+	cl::Context& context = OpenCLContext::getInstance().contexts[device];
 	cl::CommandQueue queue(context, device);
 
 	//Load the source code.
-	cl::Program& program = OpenCLContext::getInstance().compile(
+	cl::Program& program = OpenCLContext::getInstance().compile(device,
 		#include "Area.cl"
 	);
 
