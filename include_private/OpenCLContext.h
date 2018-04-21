@@ -9,14 +9,66 @@
 #ifndef OPENCLCONTEXT_H
 #define OPENCLCONTEXT_H
 
-#include <unordered_map> //The cache of OpenCL programs.
+#include <unordered_map> //The caches of OpenCL programs and contexts.
 #include "OpenCL.h" //To store the context and programs.
+
+namespace std {
+
+/*
+ * Hashes cl::Device instances.
+ *
+ * Since these devices should be unique, the hash is simply the memory address.
+ */
+template<> struct hash<cl::Device> {
+	size_t operator ()(const cl::Device& device) const;
+};
+
+/*
+ * Hashes const cl::Device instances.
+ *
+ * This is the same as hashing non-const instances, but since the template
+ * specialisation for the hash struct doesn't match we need to define it again.
+ */
+template<> struct hash<const cl::Device> {
+	size_t operator ()(const cl::Device& device) const;
+};
+
+/*
+ * Hashes const strings.
+ *
+ * This refers through to the hash of non-const strings. The standard library
+ * doesn't define any hash for the const version.
+ */
+template<> struct hash<const string> {
+	size_t operator ()(const string& str) const;
+};
+
+/*
+ * Hashes any arbitrary std::pair.
+ *
+ * This refers through to the hash of both elements and combines them with some
+ * bitwise operators.
+ */
+template<typename F, typename S> struct hash<pair<F, S>> {
+	size_t operator ()(const pair<F, S>& the_pair) const;
+};
+
+/*
+ * Compares two devices for equality.
+ *
+ * Since the devices should be unique, we simply compare their memory addresses.
+ */
+bool operator ==(const cl::Device& first, const cl::Device& second);
+
+}
 
 namespace parallelogram {
 
 /*
- * This holds the OpenCL context so that we don't have to recreate it for every
- * function call.
+ * This holds the OpenCL contexts so that we don't have to recreate them for
+ * every function call.
+ *
+ * One context is created for every available device.
  *
  * It also holds a cache for the compiled OpenCL programs to prevent having to
  * build them over and over again. All OpenCL kernels are compiled for every
@@ -25,9 +77,9 @@ namespace parallelogram {
 class OpenCLContext {
 public:
 	/*
-	 * The OpenCL context that all kernels should be run in.
+	 * For each OpenCL device its context, where all kernels should be run.
 	 */
-	cl::Context context;
+	std::unordered_map<cl::Device, cl::Context> contexts;
 
 	/*
 	 * Statically gets the instance of this class.
@@ -39,12 +91,13 @@ public:
 
 	/*
 	 * Compiles the given source code and returns a program that can be executed
-	 * on any available OpenCL device.
+	 * on the specified device.
 	 *
 	 * If the given source code has been compiled before, a cached program will
 	 * be returned. It only needs to compile once.
+	 * \param device The OpenCL device to compile the source code for.
 	 */
-	cl::Program& compile(std::string source);
+	cl::Program& compile(const cl::Device& device, const std::string source);
 
 	/*
 	 * Since this is a singleton, the copy constructor should not be
@@ -61,7 +114,7 @@ protected:
 	/*
 	 * The cache storing programs after compiling them from source code.
 	 */
-	std::unordered_map<std::string, cl::Program> programs;
+	std::unordered_map<std::pair<const cl::Device, const std::string>, cl::Program> programs;
 
 	/*
 	 * Creates a new instance of the OpenCL program cache.
