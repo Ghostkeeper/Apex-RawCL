@@ -13,7 +13,7 @@
 namespace std {
 
 size_t hash<cl::Device>::operator ()(const cl::Device& device) const {
-	return reinterpret_cast<size_t>(&device); //Devices should be unique, so we can simply return their pointer.
+	return hash<cl_device_id>()(device());
 }
 
 template<typename T> size_t hash<const T>::operator ()(const T& obj) const {
@@ -26,7 +26,7 @@ template<typename F, typename S> size_t hash<pair<F, S>>::operator ()(const pair
 }
 
 bool operator ==(const cl::Device& first, const cl::Device& second) {
-	return &first == &second; //Only equal if the memory addresses are equal.
+	return first() == second(); //Equal if their cl_device_ids are equal.
 };
 
 }
