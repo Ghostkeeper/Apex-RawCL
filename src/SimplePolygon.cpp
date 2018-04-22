@@ -6,7 +6,6 @@
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
  */
 
-#include <stdlib.h> //For abs.
 #include "OpenCLDevices.h" //To choose the preferred device.
 #include "ParallelogramException.h"
 #include "SimplePolygon.h"
