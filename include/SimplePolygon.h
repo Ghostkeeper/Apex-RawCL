@@ -11,6 +11,7 @@
 
 #include <vector> //To store the vertices.
 #include "Benchmarker.h" //To give the benchmarker access to private members to benchmark them.
+#include "OpenCL.h" //To communicate devices for OpenCL-enabled functions.
 #include "Point2.h" //The type to represent a vertex.
 
 namespace parallelogram {
@@ -81,14 +82,17 @@ private:
 	 * Implements the ``area`` function via OpenCL.
 	 *
 	 * This may perform better on large amounts of data.
+	 * \param device The OpenCL device to compute the area with.
+	 * \return The area of the current polygon.
 	 */
-	area_t area_opencl() const;
+	area_t area_opencl(const cl::Device& device) const;
 
 	/*
 	 * Implements the ``area`` function on the host hardware.
 	 *
 	 * This does not go via OpenCL. It may perform better for small amounts of
 	 * data.
+	 * \return The area of the current polygon.
 	 */
 	area_t area_host() const;
 };

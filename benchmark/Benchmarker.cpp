@@ -50,7 +50,7 @@ void Benchmarker::benchmark_area() const {
 				end_time = clock();
 			} else {
 				start_time = clock();
-				polygon.area_opencl(); //TODO: Pass correct device to this function.
+				polygon.area_opencl(*device);
 				end_time = clock();
 			}
 			total_time += end_time - start_time;

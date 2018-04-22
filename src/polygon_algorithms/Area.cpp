@@ -16,18 +16,7 @@
 
 namespace parallelogram {
 
-area_t SimplePolygon::area_opencl() const {
-	//TODO: We want to get the preferred device from the benchmarks::choose function.
-	OpenCLDevices& devices = OpenCLDevices::getInstance();
-	cl::Device device;
-	if(!devices.getGPUs().empty()) {
-		device = devices.getGPUs()[0];
-	} else if(!devices.getCPUs().empty()) {
-		device = devices.getCPUs()[0];
-	} else {
-		throw ParallelogramException("No supported OpenCL devices!");
-	}
-
+area_t SimplePolygon::area_opencl(const cl::Device& device) const {
 	cl::Context& context = OpenCLContext::getInstance().contexts[device];
 	cl::CommandQueue queue(context, device);
 

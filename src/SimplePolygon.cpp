@@ -7,6 +7,8 @@
  */
 
 #include <stdlib.h> //For abs.
+#include "OpenCLDevices.h" //To choose the preferred device.
+#include "ParallelogramException.h"
 #include "SimplePolygon.h"
 
 namespace parallelogram {
@@ -18,7 +20,16 @@ SimplePolygon::SimplePolygon() {
 area_t SimplePolygon::area() const {
 	//TODO: Use benchmarks to choose between implementations.
 	if(size() >= 60000) { //For now, use a measured threshold from a single benchmark. About here the GPU starts to become faster.
-		return area_opencl();
+		OpenCLDevices& devices = OpenCLDevices::getInstance();
+		cl::Device device;
+		if(!devices.getGPUs().empty()) {
+			device = devices.getGPUs()[0];
+		} else if(!devices.getCPUs().empty()) {
+			device = devices.getCPUs()[0];
+		} else {
+			throw ParallelogramException("No supported OpenCL devices!");
+		}
+		return area_opencl(device);
 	} else {
 		return area_host();
 	}
