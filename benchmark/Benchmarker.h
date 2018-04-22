@@ -11,6 +11,12 @@
 
 #include <string> //To return the device identifiers.
 
+namespace cl {
+
+class Device; //Forward declaration of device to associate benchmarker with.
+
+}
+
 namespace parallelogram {
 namespace benchmarks {
 
@@ -27,22 +33,35 @@ namespace benchmarks {
 class Benchmarker {
 public:
 	/*
+	 * The device that this benchmarker is measuring.
+	 *
+	 * If measuring the host, this should be ``nullptr``.
+	 */
+	const cl::Device* device;
+
+	/*
+	 * Creates a new benchmarker for benchmarking the performance of a specific
+	 * device.
+	 * \param device The device to benchmark. If benchmarking the host, use
+	 * ``nullptr``.
+	 */
+	Benchmarker(const cl::Device* device);
+
+	/*
 	 * Performs a benchmark on computing the area of a polygon.
 	 */
-	void benchmark_area();
+	void benchmark_area() const;
 
+	/*
+	 * Returns a string identifying the device.
+	 */
+	std::string identifier() const;
+
+	/*
+	 * Runs all benchmarks for the current device.
+	 */
+	void run() const;
 private:
-	/*
-	 * Returns a string identifying the device that the host runs on.
-	 */
-	std::string host_identifier() const;
-
-	/*
-	 * Returns a string identifying the device that the GPU-targeted algorithms
-	 * run on.
-	 */
-	std::string gpu_identifier() const;
-
 	/*
 	 * Trims whitespace at the beginning and ending of a string.
 	 *
