@@ -24,8 +24,7 @@ Benchmarker::Benchmarker(const cl::Device* device) : device(device) { }
 
 void Benchmarker::benchmark_area() const {
 	//The polygon sizes we'll be testing with.
-	//const std::vector<size_t> sizes = {1, 10, 100, 1000, 10000, 20000, 40000, 80000, 160000, 320000, 640000, 1000000, 2000000, 4000000, 8000000};
-	const std::vector<size_t> sizes = {1, 10, 100, 1000, 10000, 20000, 40000, 80000, 160000, 320000, 640000};
+	const std::vector<size_t> sizes = {1, 10, 100, 1000, 10000, 20000, 40000, 80000, 160000, 320000, 640000, 1000000, 2000000, 4000000, 8000000};
 	//How many repeats to perform. More increases accuracy of timing.
 	constexpr unsigned int repeats = 50;
 
