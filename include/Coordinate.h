@@ -13,8 +13,27 @@
 
 namespace parallelogram {
 
-typedef int32_t coord_t; //Needs to be a fixed-length type in order to communicate with OpenCL.
-typedef int64_t area_t; //Must be twice the length of coord_t so that we can hold quadratic numbers.
+/*
+ * The type to use to store coordinates in space.
+ *
+ * This type is an integer-type rather than a floating point type, so no partial
+ * unit coordinates are possible. This is intended to prevent inaccuracies due
+ * to rounding errors.
+ *
+ * It must be exactly 32 bits long to cast properly to cl_int.
+ */
+typedef int32_t coord_t;
+
+/*
+ * The type to use to store a 2-dimensional area.
+ *
+ * In order to be able to store all areas that can be defined with all possible
+ * coordinates, this type needs to be twice as long as coord_t, except the sign.
+ * This requires 31 * 2 = 62 bits, plus an extra bit for the sign.
+ *
+ * This must also be a signed integer because polygons can have a negative area.
+ */
+typedef int64_t area_t;
 
 }
 
