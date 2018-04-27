@@ -24,7 +24,8 @@ Benchmarker::Benchmarker(const cl::Device* device) : device(device) { }
 
 void Benchmarker::benchmark_area() const {
 	//The polygon sizes we'll be testing with.
-	const std::vector<size_t> sizes = {1, 10, 100, 1000, 10000, 20000, 40000, 80000, 160000, 320000, 640000, 1000000, 2000000, 4000000, 8000000};
+	//const std::vector<size_t> sizes = {1, 10, 100, 1000, 10000, 20000, 40000, 80000, 160000, 320000, 640000, 1000000, 2000000, 4000000, 8000000};
+	const std::vector<size_t> sizes = {1, 10, 100, 1000, 10000, 20000, 40000, 80000, 160000, 320000, 640000};
 	//How many repeats to perform. More increases accuracy of timing.
 	constexpr unsigned int repeats = 50;
 
@@ -80,6 +81,7 @@ void Benchmarker::benchmark_area() const {
 
 void Benchmarker::device_statistics() const {
 	std::string identity = identifier();
+	const cl::Device* device_to_request = device ? device : &OpenCLDevices::getInstance().getCPUs()[0]; //Assume that the host is the first CPU.
 	const std::vector<std::pair<std::string, cl_device_info>> information_to_request = { //Which info to request.
 		{"device_type", CL_DEVICE_TYPE},
 		{"compute_units", CL_DEVICE_MAX_COMPUTE_UNITS},
@@ -91,7 +93,7 @@ void Benchmarker::device_statistics() const {
 
 	for(const std::pair<std::string, cl_device_info>& request : information_to_request) {
 		cl_ulong result;
-		if(device->getInfo(request.second, &result) != CL_SUCCESS) {
+		if(device_to_request->getInfo(request.second, &result) != CL_SUCCESS) {
 			throw ParallelogramException((std::string("Couldn't get information on device ") + identity + std::string(": ") + request.first).c_str());
 		}
 		std::cout << "device[\"" << identity << "\"][\"" << request.first << "\"] = " << result << ";" << std::endl;
