@@ -13,6 +13,7 @@
 #include <vector> //Lists of problem sizes to test with.
 #include "OpenCL.h" //To get device information.
 #include "OpenCLDevices.h" //To find the identifiers of the devices the benchmark is performed on.
+#include "ParallelogramException.h"
 #include "Point2.h" //To construct vertices for polygons.
 #include "SimplePolygon.h" //A class of which we're benchmarking performance.
 
@@ -77,6 +78,21 @@ void Benchmarker::benchmark_area() const {
 	std::cerr << "\b\b\b\b100%" << std::endl;
 }
 
+void Benchmarker::device_statistics() const {
+	std::string identity = identifier();
+	const std::vector<std::pair<std::string, cl_device_info>> information_to_request = { //Which info to request.
+		{"device_type", CL_DEVICE_TYPE}
+	};
+
+	for(const std::pair<std::string, cl_device_info>& request : information_to_request) {
+		cl_ulong result;
+		if(device->getInfo(request.second, &result) != CL_SUCCESS) {
+			throw ParallelogramException((std::string("Couldn't get information on device ") + identity + std::string(": ") + request.first).c_str());
+		}
+		std::cout << "device[\"" << identity << "\"][\"" << request.first << "\"] = " << result << ";" << std::endl;
+	}
+}
+
 std::string Benchmarker::identifier() const {
 	std::string result;
 	const cl::Device* device_to_identify = device ? device : &OpenCLDevices::getInstance().getCPUs()[0]; //Assume that the host is the first CPU.
@@ -111,6 +127,7 @@ int main(int argc, char** argv) {
 	for(const cl::Device& device : devices.getAll()) {
 		parallelogram::benchmarks::Benchmarker benchmarker(&device);
 		std::cerr << "Benchmarking: " << benchmarker.identifier() << std::endl;
+		benchmarker.device_statistics();
 		benchmarker.run();
 	}
 

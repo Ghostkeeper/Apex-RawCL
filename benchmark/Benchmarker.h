@@ -53,6 +53,15 @@ public:
 	void benchmark_area() const;
 
 	/*
+	 * Prints the statistics of the device that can be detected via OpenGL.
+	 *
+	 * This will output computational statistics such as clock speed and number
+	 * of cores. This is then used to approximate the performance for devices
+	 * that are unknown but have similar statistics.
+	 */
+	void device_statistics() const;
+
+	/*
 	 * Returns a string identifying the device.
 	 */
 	std::string identifier() const;
