@@ -81,7 +81,12 @@ void Benchmarker::benchmark_area() const {
 void Benchmarker::device_statistics() const {
 	std::string identity = identifier();
 	const std::vector<std::pair<std::string, cl_device_info>> information_to_request = { //Which info to request.
-		{"device_type", CL_DEVICE_TYPE}
+		{"device_type", CL_DEVICE_TYPE},
+		{"compute_units", CL_DEVICE_MAX_COMPUTE_UNITS},
+		{"items_per_compute_unit", CL_DEVICE_MAX_WORK_GROUP_SIZE},
+		{"clock_frequency", CL_DEVICE_MAX_CLOCK_FREQUENCY},
+		{"global_memory", CL_DEVICE_GLOBAL_MEM_SIZE},
+		{"local_memory", CL_DEVICE_LOCAL_MEM_SIZE}
 	};
 
 	for(const std::pair<std::string, cl_device_info>& request : information_to_request) {
