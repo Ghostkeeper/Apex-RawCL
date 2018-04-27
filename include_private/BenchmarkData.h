@@ -42,6 +42,18 @@ std::unordered_map<std::pair<std::string, size_t>, double, pair_hash> area_host_
  */
 std::unordered_map<std::pair<std::string, size_t>, double, pair_hash> area_opencl_time;
 
+/*
+ * Statistics on the known devices.
+ *
+ * Each device that we've performed benchmarks for will have some statistics
+ * logged. When the user has a device that we have precise benchmarks for, we
+ * can give precise benchmark results that empirically determine which device is
+ * faster to execute an algorithm with. But when the user has a device that is
+ * not known to us, we can interpolate between the known devices using their
+ * device statistics.
+ */
+std::unordered_map<std::string, std::unordered_map<std::string, cl_ulong>> device;
+
 }
 }
 
