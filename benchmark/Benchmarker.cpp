@@ -25,6 +25,10 @@ Benchmarker::Benchmarker(const cl::Device* device) : device(device) { }
 void Benchmarker::benchmark_area() const {
 	//The polygon sizes we'll be testing with.
 	const std::vector<size_t> sizes = {1, 10, 100, 1000, 10000, 20000, 40000, 80000, 160000, 320000, 640000, 1000000, 2000000, 4000000, 8000000};
+	size_t total_size = 0;
+	for(const size_t& size : sizes) {
+		total_size += size;
+	}
 	//How many repeats to perform. More increases accuracy of timing.
 	constexpr unsigned int repeats = 50;
 
@@ -34,6 +38,7 @@ void Benchmarker::benchmark_area() const {
 	//Results of the timing.
 	std::vector<double> times(sizes.size(), 0.0);
 
+	size_t size_progress = 0;
 	for(size_t size_index = 0; size_index < sizes.size(); size_index++) {
 		//Generate a polygon of the appropriate size to test on.
 		SimplePolygon polygon;
@@ -56,13 +61,14 @@ void Benchmarker::benchmark_area() const {
 			}
 			total_time += end_time - start_time;
 
-			const int progress = (repeat + size_index * repeats) * 100 / (sizes.size() * repeats);
+			const long progress = (size_progress * repeats + sizes[size_index] * repeat) * 100 / (total_size * repeats);  //(repeat + size_progress * repeats) / (total_size * repeats);
 			std::cerr << "\b\b\b";
 			if(progress < 10) {
 				std::cerr << " ";
 			}
 			std::cerr << progress << "%";
 		}
+		size_progress += sizes[size_index];
 		times[size_index] = static_cast<double>(total_time) / CLOCKS_PER_SEC / repeats;
 	}
 
