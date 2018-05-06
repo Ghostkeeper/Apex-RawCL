@@ -69,6 +69,12 @@ else()
 		set(EIGEN_FOUND TRUE)
 		set(EIGEN_VERSION ${EIGEN_MAJOR_VERSION}.${EIGEN_MINOR_VERSION}.${EIGEN_PATCH_VERSION})
 		message(STATUS "Found Eigen version: ${EIGEN_VERSION}")
+	else() #Don't want us to build it for you either? Fine, screw you then.
+		if(Eigen_FIND_REQUIRED)
+			message(FATAL_ERROR "Could NOT find Eigen.")
+		else()
+			message(WARNING "Could NOT find Eigen.")
+		endif()
 	endif()
 endif()
 
