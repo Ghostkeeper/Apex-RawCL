@@ -91,10 +91,10 @@ else()
 		if(NOT Eigen_FIND_QUIETLY)
 			message(STATUS "Found Eigen version: ${EIGEN_VERSION}")
 		endif()
-	else() #Don't want us to build it for you either? Fine, screw you then.
+	elseif(NOT Eigen_FIND_QUIETLY) #Don't want us to build it for you either? Fine, screw you then.
 		if(Eigen_FIND_REQUIRED)
 			message(FATAL_ERROR "Could NOT find Eigen.")
-		elsif(NOT Eigen_FIND_QUIETLY)
+		else()
 			message(WARNING "Could NOT find Eigen.")
 		endif()
 	endif()
