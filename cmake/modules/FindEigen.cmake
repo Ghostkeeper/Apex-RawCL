@@ -10,7 +10,7 @@
 # - EIGEN_FOUND: True if the Eigen library was found, or False if it wasn't.
 # - EIGEN_INCLUDE_DIRS: The location of the Eigen headers, if found.
 # - EIGEN_VERSION: The version of Eigen that was found.
-# - EIGEN_MAJOR_VERSION: The major version number of Eigen (TODO: Only matches for version 3).
+# - EIGEN_MAJOR_VERSION: The major version number of Eigen.
 # - EIGEN_MINOR_VERSION: The minor version number of Eigen.
 # - EIGEN_PATCH_VERSION: The patch version number of Eigen.
 # - EIGEN_DEFINITIONS: Compiler switches required for using Eigen.
