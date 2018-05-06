@@ -74,7 +74,7 @@ else()
 		set(EIGEN_VERSION ${EIGEN_MAJOR_VERSION}.${EIGEN_MINOR_VERSION}.${EIGEN_PATCH_VERSION})
 
 		#First download and extract the source code.
-		file(DOWNLOAD http://bitbucket.org/eigen/eigen/get/${EIGEN_MAJOR_VERSION}.${EIGEN_MINOR_VERSION}.${EIGEN_PATCH_VERSION}.zip "${CMAKE_CURRENT_BINARY_DIR}/eigen.zip")
+		file(DOWNLOAD http://bitbucket.org/eigen/eigen/get/${EIGEN_VERSION}.zip "${CMAKE_CURRENT_BINARY_DIR}/eigen.zip")
 		execute_process(
 			COMMAND ${CMAKE_COMMAND} -E tar x "${CMAKE_CURRENT_BINARY_DIR}/eigen.zip"
 			WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
