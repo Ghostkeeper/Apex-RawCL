@@ -28,7 +28,7 @@ else() #GTest was not found.
 		set(GOOGLETEST_FOUND TRUE)
 		set(GOOGLETEST_INCLUDE_DIRS ${CMAKE_CURRENT_BINARY_DIR}/GoogleTest-prefix/src/GoogleTest/googletest/include)
 		set(GOOGLETEST_LIBRARIES ${CMAKE_CURRENT_BINARY_DIR}/GoogleTest-prefix/src/GoogleTest-build/googlemock/gtest/libgtest${CMAKE_STATIC_LIBRARY_SUFFIX})
-		set(GOOGLETEST_MAIN_LIBRARIES ${CMAKE_CURRENT_BINARY_DIR}/GoogleTest-prefix/src/GoogleTest-build/googlemock/gtest/libgtest-main${CMAKE_STATIC_LIBRARY_SUFFIX})
+		set(GOOGLETEST_MAIN_LIBRARIES ${CMAKE_CURRENT_BINARY_DIR}/GoogleTest-prefix/src/GoogleTest-build/googlemock/gtest/libgtest_main${CMAKE_STATIC_LIBRARY_SUFFIX})
 		set(GOOGLETEST_BOTH_LIBRARIES ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES})
 	else()
 		if(GoogleTest_FIND_REQUIRED)
