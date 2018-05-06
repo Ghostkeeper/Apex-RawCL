@@ -11,6 +11,7 @@ if(NOT GTEST_FOUND)
 	#Give the option to build Google Test from source.
 	option(BUILD_GTEST "Build Google Test from source." ON)
 	if(BUILD_GTEST)
+		message(STATUS "Building Google Test from source.")
 		include(ExternalProject)
 		ExternalProject_Add(GTest
 			GIT_REPOSITORY https://github.com/google/googletest
