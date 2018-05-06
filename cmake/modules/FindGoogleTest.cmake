@@ -8,7 +8,7 @@
 find_package(GTest QUIET)
 
 if(GTEST_FOUND)
-	message(STATUS "Found GTest.")
+	message(STATUS "Found GoogleTest.")
 	set(GOOGLETEST_FOUND TRUE)
 	set(GOOGLETEST_INCLUDE_DIRS ${GTEST_INCLUDE_DIRS})
 	set(GOOGLETEST_LIBRARIES ${GTEST_LIBRARIES})
@@ -23,6 +23,7 @@ else() #GTest was not found.
 		ExternalProject_Add(GoogleTest
 			GIT_REPOSITORY https://github.com/google/googletest
 			CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
+			INSTALL_COMMAND "" #If we want to build it just for this project, no need to install it.
 		)
 		set(GOOGLETEST_FOUND TRUE)
 		set(GOOGLETEST_INCLUDE_DIRS ${CMAKE_CURRENT_BINARY_DIR}/GoogleTest-prefix/src/GoogleTest/include/gtest)
