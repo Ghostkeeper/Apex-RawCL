@@ -8,7 +8,9 @@
 find_package(GTest QUIET)
 
 if(GTEST_FOUND)
-	message(STATUS "Found GoogleTest.")
+	if(NOT GoogleTest_FIND_QUIETLY)
+		message(STATUS "Found GoogleTest.")
+	endif()
 	set(GOOGLETEST_FOUND TRUE)
 	set(GOOGLETEST_INCLUDE_DIRS "${GTEST_INCLUDE_DIRS}")
 	set(GOOGLETEST_LIBRARIES "${GTEST_LIBRARIES}")
@@ -18,7 +20,9 @@ else() #GTest was not found.
 	#Give the option to build Google Test from source.
 	option(BUILD_GOOGLETEST "Build Google Test from source." ON)
 	if(BUILD_GOOGLETEST)
-		message(STATUS "Building Google Test from source.")
+		if(NOT GoogleTest_FIND_QUIETLY)
+			message(STATUS "Building Google Test from source.")
+		endif()
 		include(ExternalProject)
 		ExternalProject_Add(GoogleTest
 			GIT_REPOSITORY https://github.com/google/googletest
@@ -30,7 +34,7 @@ else() #GTest was not found.
 		set(GOOGLETEST_LIBRARIES "${CMAKE_CURRENT_BINARY_DIR}/GoogleTest-prefix/src/GoogleTest-build/googlemock/gtest/libgtest${CMAKE_STATIC_LIBRARY_SUFFIX}")
 		set(GOOGLETEST_MAIN_LIBRARIES "${CMAKE_CURRENT_BINARY_DIR}/GoogleTest-prefix/src/GoogleTest-build/googlemock/gtest/libgtest_main${CMAKE_STATIC_LIBRARY_SUFFIX}")
 		set(GOOGLETEST_BOTH_LIBRARIES "${GOOGLETEST_LIBRARIES};${GOOGLETEST_MAIN_LIBRARIES}")
-	else()
+	elseif(NOT GoogleTest_FIND_QUIETLY)
 		if(GoogleTest_FIND_REQUIRED)
 			message(FATAL_ERROR "Could NOT find Google Test.")
 		else()
