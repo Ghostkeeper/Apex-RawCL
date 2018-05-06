@@ -10,10 +10,10 @@ find_package(GTest QUIET)
 if(GTEST_FOUND)
 	message(STATUS "Found GoogleTest.")
 	set(GOOGLETEST_FOUND TRUE)
-	set(GOOGLETEST_INCLUDE_DIRS ${GTEST_INCLUDE_DIRS})
-	set(GOOGLETEST_LIBRARIES ${GTEST_LIBRARIES})
-	set(GOOGLETEST_MAIN_LIBRARIES ${GTEST_MAIN_LIBRARIES})
-	set(GOOGLETEST_BOTH_LIBRARIES ${GTEST_BOTH_LIBRARIES})
+	set(GOOGLETEST_INCLUDE_DIRS "${GTEST_INCLUDE_DIRS}")
+	set(GOOGLETEST_LIBRARIES "${GTEST_LIBRARIES}")
+	set(GOOGLETEST_MAIN_LIBRARIES "${GTEST_MAIN_LIBRARIES}")
+	set(GOOGLETEST_BOTH_LIBRARIES "${GTEST_BOTH_LIBRARIES}")
 else() #GTest was not found.
 	#Give the option to build Google Test from source.
 	option(BUILD_GOOGLETEST "Build Google Test from source." ON)
@@ -22,14 +22,14 @@ else() #GTest was not found.
 		include(ExternalProject)
 		ExternalProject_Add(GoogleTest
 			GIT_REPOSITORY https://github.com/google/googletest
-			CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
+			CMAKE_ARGS -DCMAKE_INSTALL_PREFIX="${CMAKE_INSTALL_PREFIX}"
 			INSTALL_COMMAND "" #If we want to build it just for this project, no need to install it.
 		)
 		set(GOOGLETEST_FOUND TRUE)
-		set(GOOGLETEST_INCLUDE_DIRS ${CMAKE_CURRENT_BINARY_DIR}/GoogleTest-prefix/src/GoogleTest/googletest/include)
-		set(GOOGLETEST_LIBRARIES ${CMAKE_CURRENT_BINARY_DIR}/GoogleTest-prefix/src/GoogleTest-build/googlemock/gtest/libgtest${CMAKE_STATIC_LIBRARY_SUFFIX})
-		set(GOOGLETEST_MAIN_LIBRARIES ${CMAKE_CURRENT_BINARY_DIR}/GoogleTest-prefix/src/GoogleTest-build/googlemock/gtest/libgtest_main${CMAKE_STATIC_LIBRARY_SUFFIX})
-		set(GOOGLETEST_BOTH_LIBRARIES ${GOOGLETEST_LIBRARIES};${GOOGLETEST_MAIN_LIBRARIES})
+		set(GOOGLETEST_INCLUDE_DIRS "${CMAKE_CURRENT_BINARY_DIR}/GoogleTest-prefix/src/GoogleTest/googletest/include")
+		set(GOOGLETEST_LIBRARIES "${CMAKE_CURRENT_BINARY_DIR}/GoogleTest-prefix/src/GoogleTest-build/googlemock/gtest/libgtest${CMAKE_STATIC_LIBRARY_SUFFIX}")
+		set(GOOGLETEST_MAIN_LIBRARIES "${CMAKE_CURRENT_BINARY_DIR}/GoogleTest-prefix/src/GoogleTest-build/googlemock/gtest/libgtest_main${CMAKE_STATIC_LIBRARY_SUFFIX}")
+		set(GOOGLETEST_BOTH_LIBRARIES "${GOOGLETEST_LIBRARIES};${GOOGLETEST_MAIN_LIBRARIES}")
 	else()
 		if(GoogleTest_FIND_REQUIRED)
 			message(FATAL_ERROR "Could NOT find Google Test.")
