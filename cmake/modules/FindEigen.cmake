@@ -35,7 +35,7 @@ if(EIGEN_FOUND) #Found an existing installation.
 	#Take the macro file that contains the version number and append a program to it that outputs the values of the macro.
 	file(READ "${EIGEN_INCLUDE_DIRS}/Eigen/src/Core/util/Macros.h" _eigen_macros_file)
 	file(READ "${CMAKE_MODULE_PATH}/GetEigenVersion/GetEigenVersion.cpp" _get_eigen_version_original)
-	file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/GetEigenVersionPatched.cpp" "#define EIGEN_DEVICE_FUNC\n\n${_eigen_macros_file}\n\n${_get_eigen_version_original}") #Append a simple program to one of the macro files.
+	file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/GetEigenVersionPatched.cpp" "#define EIGEN_DEVICE_FUNC\n\n${_eigen_macros_file}\n\n#include <iostream>\nint main(int argc, char** argv) {std::cout << EIGEN_WORLD_VERSION << \";\" << EIGEN_MAJOR_VERSION << \";\" << EIGEN_MINOR_VERSION;}") #Append a simple program to one of the macro files.
 	#Compile this program, get its result.
 	try_run(RUN_RESULT COMPILE_RESULT
 		"${CMAKE_CURRENT_BINARY_DIR}"
