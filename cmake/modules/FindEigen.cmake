@@ -52,9 +52,26 @@ else()
 	option(BUILD_EIGEN "Build Eigen from source." ON) #This is a lie actually, since Eigen is header-only and doesn't need any compiling.
 	if(BUILD_EIGEN)
 		message(STATUS "Building Eigen from source.")
-		set(EIGEN_MAJOR_VERSION 3) #The version that we want.
-		set(EIGEN_MINOR_VERSION 3)
-		set(EIGEN_PATCH_VERSION 4)
+		if(Eigen_FIND_VERSION)
+			#Parse this version number.
+			set(EIGEN_MAJOR_VERSION 1) #Minimum version number. Parts of this version number are applied if they are missing from the version string.
+			set(EIGEN_MINOR_VERSION 0)
+			set(EIGEN_PATCH_VERSION 0)
+			string(REPLACE "." ";" _version_list ${Eigen_FIND_VERSION})
+			list(LENGTH _version_list _version_list_length)
+			list(GET _version_list 0 EIGEN_MAJOR_VERSION)
+			if(${_version_list_length} GREATER 1)
+				list(GET _version_list 1 EIGEN_MINOR_VERSION)
+				if(${_version_list_length} GREATER 2)
+					list(GET _version_list 2 EIGEN_PATCH_VERSION)
+				endif()
+			endif()
+		else()
+			set(EIGEN_MAJOR_VERSION 3) #The version that we want.
+			set(EIGEN_MINOR_VERSION 3)
+			set(EIGEN_PATCH_VERSION 4)
+		endif()
+		set(EIGEN_VERSION ${EIGEN_MAJOR_VERSION}.${EIGEN_MINOR_VERSION}.${EIGEN_PATCH_VERSION})
 
 		#First download and extract the source code.
 		file(DOWNLOAD http://bitbucket.org/eigen/eigen/get/${EIGEN_MAJOR_VERSION}.${EIGEN_MINOR_VERSION}.${EIGEN_PATCH_VERSION}.zip "${CMAKE_CURRENT_BINARY_DIR}/eigen.zip")
@@ -67,7 +84,6 @@ else()
 		message(STATUS "Eigen recogniser: ${_eigen_recogniser}")
 		get_filename_component(EIGEN_INCLUDE_DIRS, ${_eigen_recogniser} DIRECTORY)
 		set(EIGEN_FOUND TRUE)
-		set(EIGEN_VERSION ${EIGEN_MAJOR_VERSION}.${EIGEN_MINOR_VERSION}.${EIGEN_PATCH_VERSION})
 		message(STATUS "Found Eigen version: ${EIGEN_VERSION}")
 	else() #Don't want us to build it for you either? Fine, screw you then.
 		if(Eigen_FIND_REQUIRED)
