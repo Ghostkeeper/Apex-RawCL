@@ -7,25 +7,27 @@
 #First try finding the library using CMake's built-in find script.
 find_package(GTest)
 
-if(NOT GTEST_FOUND)
+if(GTEST_FOUND)
+	set(GOOGLETEST_FOUND TRUE)
+	set(GOOGLETEST_INCLUDE_DIRS ${GTEST_INCLUDE_DIRS})
+	set(GOOGLETEST_LIBRARIES ${GTEST_LIBRARIES})
+	set(GOOGLETEST_MAIN_LIBRARIES ${GTEST_MAIN_LIBRARIES})
+	set(GOOGLETEST_BOTH_LIBRARIES ${GTEST_BOTH_LIBRARIES})
+else() #GTest was not found.
 	#Give the option to build Google Test from source.
-	option(BUILD_GTEST "Build Google Test from source." ON)
-	if(BUILD_GTEST)
+	option(BUILD_GOOGLETEST "Build Google Test from source." ON)
+	if(BUILD_GOOGLETEST)
 		message(STATUS "Building Google Test from source.")
 		include(ExternalProject)
-		ExternalProject_Add(GTest
+		ExternalProject_Add(GoogleTest
 			GIT_REPOSITORY https://github.com/google/googletest
 			CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
 		)
-		set(GTEST_FOUND TRUE)
-		set(GTEST_INCLUDE_DIRS ${CMAKE_INSTALL_PREFIX}/include/gtest)
-		set(GTEST_LIBRARIES ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/libgtest${CMAKE_STATIC_LIBRARY_SUFFIX})
-		set(GTEST_MAIN_LIBRARIES ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/libgtest-main${CMAKE_STATIC_LIBRARY_SUFFIX})
-		set(GTEST_BOTH_LIBRARIES ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES})
-		mark_as_advanced(GTEST_INCLUDE_DIRS)
-		mark_as_advanced(GTEST_LIBRARIES)
-		mark_as_advanced(GTEST_MAIN_LIBRARIES)
-		mark_as_advanced(GTEST_BOTH_LIBRARIES)
+		set(GOOGLETEST_FOUND TRUE)
+		set(GOOGLETEST_INCLUDE_DIRS ${CMAKE_CURRENT_BINARY_DIR}/GoogleTest-prefix/src/GoogleTest/include/gtest)
+		set(GOOGLETEST_LIBRARIES ${CMAKE_CURRENT_BINARY_DIR}/GoogleTest-prefix/src/GoogleTest-build/libgtest${CMAKE_STATIC_LIBRARY_SUFFIX})
+		set(GOOGLETEST_MAIN_LIBRARIES ${CMAKE_CURRENT_BINARY_DIR}/GoogleTest-prefix/src/GoogleTest-build/libgtest-main${CMAKE_STATIC_LIBRARY_SUFFIX})
+		set(GOOGLETEST_BOTH_LIBRARIES ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES})
 	else()
 		if(GoogleTest_FIND_REQUIRED)
 			message(FATAL_ERROR "Could NOT find Google Test.")
@@ -34,3 +36,8 @@ if(NOT GTEST_FOUND)
 		endif()
 	endif()
 endif()
+
+mark_as_advanced(GOOGLETEST_INCLUDE_DIRS)
+mark_as_advanced(GOOGLETEST_LIBRARIES)
+mark_as_advanced(GOOGLETEST_MAIN_LIBRARIES)
+mark_as_advanced(GOOGLETEST_BOTH_LIBRARIES)

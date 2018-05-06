@@ -44,8 +44,8 @@ target_link_libraries(parallelogram ${OpenCL_LIBRARIES})
 option(BUILD_TESTS "Build automated tests to verify correctness of the library." OFF)
 if(BUILD_TESTS)
 	enable_testing()
+
 	find_package(GoogleTest REQUIRED)
-	include_directories(${GTEST_INCLUDE_DIRS})
 
 	#Names of all tests. Each must have a file called "test/<name>.cpp" as source file.
 	#Instead of slashes, use periods.
@@ -68,9 +68,10 @@ if(BUILD_TESTS)
 		find_package(Threads REQUIRED)
 
 		add_executable(${test_case} test/${test_path}.cpp)
-		target_link_libraries(${test_case} ${GTEST_BOTH_LIBRARIES} Threads::Threads parallelogram) #Link with GTest and the main Parallelogram library.
+		target_link_libraries(${test_case} ${GOOGLETEST_BOTH_LIBRARIES} Threads::Threads parallelogram) #Link with GoogleTest and the main Parallelogram library.
 		target_include_directories(${test_case} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/benchmark)
 		target_include_directories(${test_case} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include_private) #This test has access to private headers.
+		target_include_directories(${test_case} PRIVATE ${GOOGLETEST_INCLUDE_DIRS})
 		add_dependencies(build_all_tests ${test_case}) #Make sure that this gets built as part of the build_all_tests target.
 		add_test(${test_case} ${test_case})
 		set_tests_properties(${test_case} PROPERTIES DEPENDS BuildTests)
