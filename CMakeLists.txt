@@ -81,10 +81,12 @@ endif()
 #Benchmarking application.
 option(BUILD_BENCHMARKER "Build tool to compute benchmarks for your current set-up." ON)
 if(BUILD_BENCHMARKER)
+	find_package(Eigen REQUIRED)
 	set(benchmark_sources
 		benchmark/Benchmarker.cpp
 	)
 	add_executable(benchmarker ${benchmark_sources})
+	target_include_directories(benchmarker PRIVATE ${EIGEN_INCLUDE_DIRS})
 	target_include_directories(benchmarker PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/benchmark)
 	target_include_directories(benchmarker PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 	target_include_directories(benchmarker PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include_private) #The benchmarker has access to private headers to call specific implementations.
