@@ -82,7 +82,6 @@ else()
 		#Eigen packages these zips with their commit ID, which is unknown. Use glob to figure out what the folder is there.
 		file(GLOB _eigen_recogniser "${CMAKE_CURRENT_BINARY_DIR}/eigen-eigen-*/eigen3.pc.in")
 		list(GET _eigen_recogniser 0 _eigen_recogniser)
-		message(STATUS "Eigen recogniser: ${_eigen_recogniser}")
 		get_filename_component(EIGEN_INCLUDE_DIRS, ${_eigen_recogniser} DIRECTORY)
 		set(EIGEN_FOUND TRUE)
 		message(STATUS "Found Eigen version: ${EIGEN_VERSION}")
