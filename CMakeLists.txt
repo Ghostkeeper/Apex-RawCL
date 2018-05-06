@@ -68,10 +68,11 @@ if(BUILD_TESTS)
 		find_package(Threads REQUIRED)
 
 		add_executable(${test_case} test/${test_path}.cpp)
-		target_link_libraries(${test_case} ${GOOGLETEST_BOTH_LIBRARIES} Threads::Threads parallelogram) #Link with GoogleTest and the main Parallelogram library.
+		target_link_libraries(${test_case} ${GOOGLETEST_BOTH_LIBRARIES} ${OpenCL_LIBRARIES} Threads::Threads parallelogram) #Link with GoogleTest, OpenCL and the main Parallelogram library.
 		target_include_directories(${test_case} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/benchmark)
 		target_include_directories(${test_case} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include_private) #This test has access to private headers.
 		target_include_directories(${test_case} PRIVATE ${GOOGLETEST_INCLUDE_DIRS})
+		target_include_directories(${test_case} PRIVATE ${OpenCL_INCLUDE_DIRS})
 		add_dependencies(${test_case} GoogleTest)
 		add_dependencies(build_all_tests ${test_case}) #Make sure that this gets built as part of the build_all_tests target.
 		add_test(${test_case} ${test_case})
