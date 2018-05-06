@@ -5,9 +5,10 @@
 #You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
 
 #First try finding the library using CMake's built-in find script.
-find_package(GTest)
+find_package(GTest QUIET)
 
 if(GTEST_FOUND)
+	message(STATUS "Found GTest.")
 	set(GOOGLETEST_FOUND TRUE)
 	set(GOOGLETEST_INCLUDE_DIRS ${GTEST_INCLUDE_DIRS})
 	set(GOOGLETEST_LIBRARIES ${GTEST_LIBRARIES})
