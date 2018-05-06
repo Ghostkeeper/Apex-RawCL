@@ -4,6 +4,17 @@
 #This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for details.
 #You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
 
+#Find module for the Google Test testing suite.
+#
+#This module exports the following variables:
+# - GOOGLETEST_FOUND: True if the Google Test suite was found, or False if it
+#   wasn't.
+# - GOOGLETEST_INCLUDE_DIRS: The location of Google Test's headers, if found.
+# - GOOGLETEST_LIBRARIES: The library with Google Test's functions.
+# - GOOGLETEST_MAIN_LIBRARIES: A library that allows creating a test as a
+#   separate executable (with its own main() entry point).
+# - GOOGLETEST_BOTH_LIBRARIES: Both the normal library and the main library.
+
 #First try finding the library using CMake's built-in find script.
 find_package(GTest QUIET)
 
