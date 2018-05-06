@@ -73,16 +73,16 @@ else()
 		endif()
 		set(EIGEN_VERSION ${EIGEN_MAJOR_VERSION}.${EIGEN_MINOR_VERSION}.${EIGEN_PATCH_VERSION})
 
-		#First download and extract the source code.
-		file(DOWNLOAD http://bitbucket.org/eigen/eigen/get/${EIGEN_VERSION}.zip "${CMAKE_CURRENT_BINARY_DIR}/eigen.zip")
-		execute_process(
-			COMMAND ${CMAKE_COMMAND} -E tar x "${CMAKE_CURRENT_BINARY_DIR}/eigen.zip"
-			WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+		include(ExternalProject)
+		ExternalProject_Add(Eigen
+			URL http://bitbucket.org/eigen/eigen/get/${EIGEN_VERSION}.tar.gz
+			CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
+			CMAKE_COMMAND "" #Just include the headers.
+			CONFIGURE_COMMAND "" #No need to find the installation directory or detect compiler features. Just include the headers.
+			BUILD_COMMAND "" #Please, just include the headers.
+			INSTALL_COMMAND "" #Don't install it. We just need to include the headers.
 		)
-		#Eigen packages these zips with their commit ID, which is unknown. Use glob to figure out what the folder is there.
-		file(GLOB _eigen_recogniser "${CMAKE_CURRENT_BINARY_DIR}/eigen-eigen-*/eigen3.pc.in")
-		list(GET _eigen_recogniser 0 _eigen_recogniser)
-		get_filename_component(EIGEN_INCLUDE_DIRS, ${_eigen_recogniser} DIRECTORY)
+		set(EIGEN_INCLUDE_DIRS "${CMAKE_CURRENT_BINARY_DIR}/Eigen-prefix/src/Eigen")
 		set(EIGEN_FOUND TRUE)
 		message(STATUS "Found Eigen version: ${EIGEN_VERSION}")
 	else() #Don't want us to build it for you either? Fine, screw you then.
