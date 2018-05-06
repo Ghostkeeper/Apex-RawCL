@@ -26,6 +26,7 @@ find_path(EIGEN_INCLUDE_DIRS Eigen/Core
 )
 
 include(FindPackageHandleStandardArgs)
+set(eigen3_FIND_QUIETLY TRUE)
 find_package_handle_standard_args(eigen3 DEFAULT_MSG EIGEN_INCLUDE_DIRS)
 
 mark_as_advanced(EIGEN_INCLUDE_DIRS)
@@ -34,7 +35,6 @@ if(EIGEN_FOUND) #Found an existing installation.
 	#Getting Eigen's version number from their source code!
 	#Take the macro file that contains the version number and append a program to it that outputs the values of the macro.
 	file(READ "${EIGEN_INCLUDE_DIRS}/Eigen/src/Core/util/Macros.h" _eigen_macros_file)
-	file(READ "${CMAKE_MODULE_PATH}/GetEigenVersion/GetEigenVersion.cpp" _get_eigen_version_original)
 	file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/GetEigenVersionPatched.cpp" "#define EIGEN_DEVICE_FUNC\n\n${_eigen_macros_file}\n\n#include <iostream>\nint main(int argc, char** argv) {std::cout << EIGEN_WORLD_VERSION << \";\" << EIGEN_MAJOR_VERSION << \";\" << EIGEN_MINOR_VERSION;}") #Append a simple program to one of the macro files.
 	#Compile this program, get its result.
 	try_run(RUN_RESULT COMPILE_RESULT
