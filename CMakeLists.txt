@@ -15,11 +15,6 @@ else()
 	set(CMAKE_CXX_FLAGS "-std=c++11")
 endif()
 
-#Dependencies.
-find_package(OpenCL REQUIRED)
-include_directories(${OpenCL_INCLUDE_DIRS})
-link_directories(${OpenCL_LIBRARIES})
-
 #Source files.
 set(sources
 	src/ParallelogramException.cpp
@@ -39,6 +34,10 @@ add_library(parallelogram SHARED ${sources})
 target_include_directories(parallelogram PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_include_directories(parallelogram PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include_private)
 target_include_directories(parallelogram PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/benchmark) #To make the benchmarker a friend class.
+
+#Dependencies.
+find_package(OpenCL REQUIRED)
+target_include_directories(parallelogram PRIVATE ${OpenCL_INCLUDE_DIRS})
 target_link_libraries(parallelogram ${OpenCL_LIBRARIES})
 
 #Tests.
@@ -90,7 +89,9 @@ if(BUILD_BENCHMARKER)
 	target_include_directories(benchmarker PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/benchmark)
 	target_include_directories(benchmarker PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 	target_include_directories(benchmarker PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include_private) #The benchmarker has access to private headers to call specific implementations.
+	target_include_directories(benchmarker PRIVATE ${OpenCL_INCLUDE_DIRS})
 	target_link_libraries(benchmarker parallelogram)
+	target_link_libraries(benchmarker ${OpenCL_LIBRARIES})
 endif()
 
 #Installation.
