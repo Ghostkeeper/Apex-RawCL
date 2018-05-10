@@ -101,7 +101,7 @@ void Benchmarker::device_statistics() const {
 		if(device_to_request->getInfo(request.second, &result) != CL_SUCCESS) {
 			throw ParallelogramException((std::string("Couldn't get information on device ") + identity + std::string(": ") + request.first).c_str());
 		}
-		std::cout << "device[\"" << identity << "\"][\"" << request.first << "\"] = " << result << ";" << std::endl;
+		std::cout << "devices[\"" << identity << "\"][\"" << request.first << "\"] = " << result << ";" << std::endl;
 	}
 }
 

@@ -52,7 +52,7 @@ std::unordered_map<std::pair<std::string, size_t>, double, pair_hash> area_openc
  * not known to us, we can interpolate between the known devices using their
  * device statistics.
  */
-std::unordered_map<std::string, std::unordered_map<std::string, cl_ulong>> device;
+std::unordered_map<std::string, std::unordered_map<std::string, cl_ulong>> devices;
 
 }
 }
