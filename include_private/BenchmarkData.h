@@ -12,6 +12,7 @@
 #include <string> //To use as device identifiers.
 #include <unordered_map> //Data structure that holds the benchmark data.
 #include <utility> //For std::pair, for using multiple keys in a mapping.
+#include "OpenCL.h" //For cl_ulong, the data type for device data.
 
 namespace parallelogram {
 namespace benchmarks {
