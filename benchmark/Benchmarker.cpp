@@ -89,12 +89,12 @@ void Benchmarker::benchmark_area() const {
 
 void Benchmarker::compute_interpolation() const {
 	load_benchmarks();
+	const std::vector<size_t> sizes = {1, 10, 100, 1000, 10000, 20000, 40000, 80000, 160000, 320000, 640000, 1000000, 2000000, 4000000, 8000000};
 
 	Eigen::Matrix<double, Eigen::Dynamic, 8> fit_data; //8 columns for the input size, our 6 device data points and one constant offset. Just linear for now.
-	fit_data.resize(parallelogram::benchmarks::devices.size(), 8);
+	fit_data.resize(parallelogram::benchmarks::devices.size() * sizes.size(), 8);
 	Eigen::VectorXd time_data;
-	time_data.resize(parallelogram::benchmarks::devices.size());
-	const std::vector<size_t> sizes = {1, 10, 100, 1000, 10000, 20000, 40000, 80000, 160000, 320000, 640000, 1000000, 2000000, 4000000, 8000000};
+	time_data.resize(parallelogram::benchmarks::devices.size() * sizes.size());
 	size_t entry_id = 0;
 	for(std::pair<std::string, std::unordered_map<std::string, cl_ulong>> device_metadata : parallelogram::benchmarks::devices) {
 		for(size_t size : sizes) {
