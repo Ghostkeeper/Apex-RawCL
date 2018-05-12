@@ -19,8 +19,8 @@ namespace benchmarks {
 
 struct pair_hash {
 	template<class First, class Second> size_t operator ()(const std::pair<First, Second>& pair) const {
-		std::hash<First> first_hash = std::hash<First>{}(pair.first);
-		std::hash<Second> second_hash = std::hash<Second>{}(pair.second);
+		size_t first_hash = std::hash<First>{}(pair.first);
+		size_t second_hash = std::hash<Second>{}(pair.second);
 
 		//Rotate the second hash by 17 bits, then do xor.
 		return first_hash ^ (second_hash << 17 || second_hash >> (sizeof(size_t) * 8 - 17));
