@@ -91,8 +91,8 @@ void Benchmarker::compute_interpolation() const {
 	load_benchmarks();
 	const std::vector<size_t> sizes = {1, 10, 100, 1000, 10000, 20000, 40000, 80000, 160000, 320000, 640000, 1000000, 2000000, 4000000, 8000000};
 
-	Eigen::Matrix<double, Eigen::Dynamic, 8> fit_data; //8 columns for the input size, our 6 device data points and one constant offset. Just linear for now.
-	fit_data.resize(parallelogram::benchmarks::devices.size() * sizes.size(), 8);
+	Eigen::Matrix<double, Eigen::Dynamic, 13> fit_data; //13 columns for the input size, our 6 device data points (some squared) and one constant offset. Just linear for now.
+	fit_data.resize(parallelogram::benchmarks::devices.size() * sizes.size(), 13);
 	Eigen::VectorXd time_data;
 	time_data.resize(parallelogram::benchmarks::devices.size() * sizes.size());
 	size_t entry_id = 0;
@@ -100,12 +100,17 @@ void Benchmarker::compute_interpolation() const {
 		for(size_t size : sizes) {
 			fit_data(entry_id, 0) = device_metadata.second["device_type"];
 			fit_data(entry_id, 1) = device_metadata.second["compute_units"];
-			fit_data(entry_id, 2) = device_metadata.second["items_per_compute_unit"];
-			fit_data(entry_id, 3) = device_metadata.second["clock_frequency"];
-			fit_data(entry_id, 4) = device_metadata.second["global_memory"];
-			fit_data(entry_id, 5) = device_metadata.second["local_memory"];
-			fit_data(entry_id, 6) = size;
-			fit_data(entry_id, 7) = 1.0; //Constant offset.
+			fit_data(entry_id, 2) = device_metadata.second["compute_units"] * device_metadata.second["compute_units"];
+			fit_data(entry_id, 3) = device_metadata.second["items_per_compute_unit"];
+			fit_data(entry_id, 4) = device_metadata.second["items_per_compute_unit"] * device_metadata.second["items_per_compute_unit"];
+			fit_data(entry_id, 5) = device_metadata.second["clock_frequency"];
+			fit_data(entry_id, 6) = device_metadata.second["global_memory"];
+			fit_data(entry_id, 7) = device_metadata.second["global_memory"] * device_metadata.second["global_memory"];
+			fit_data(entry_id, 8) = device_metadata.second["local_memory"];
+			fit_data(entry_id, 9) = device_metadata.second["local_memory"] * device_metadata.second["local_memory"];
+			fit_data(entry_id, 10) = size;
+			fit_data(entry_id, 11) = size * size;
+			fit_data(entry_id, 12) = 1.0; //Constant offset.
 			time_data(entry_id) = area_opencl_time[std::make_pair(device_metadata.first, size)];
 			entry_id++;
 		}
@@ -113,12 +118,17 @@ void Benchmarker::compute_interpolation() const {
 	Eigen::VectorXd solution = fit_data.fullPivHouseholderQr().solve(time_data);
 	std::cout << "area_opencl_predictor[\"device_type\"] = " << solution(0) << ";" << std::endl;
 	std::cout << "area_opencl_predictor[\"compute_units\"] = " << solution(1) << ";" << std::endl;
-	std::cout << "area_opencl_predictor[\"items_per_compute_unit\"] = " << solution(2) << ";" << std::endl;
-	std::cout << "area_opencl_predictor[\"clock_frequency\"] = " << solution(3) << ";" << std::endl;
-	std::cout << "area_opencl_predictor[\"global_memory\"] = " << solution(4) << ";" << std::endl;
-	std::cout << "area_opencl_predictor[\"local_memory\"] = " << solution(5) << ";" << std::endl;
-	std::cout << "area_opencl_predictor[\"size\"] = " << solution(6) << ";" << std::endl;
-	std::cout << "area_opencl_predictor[\"constant\"] = " << solution(7) << ";" << std::endl;
+	std::cout << "area_opencl_predictor[\"compute_units^2\"] = " << solution(2) << ";" << std::endl;
+	std::cout << "area_opencl_predictor[\"items_per_compute_unit\"] = " << solution(3) << ";" << std::endl;
+	std::cout << "area_opencl_predictor[\"items_per_compute_unit^2\"] = " << solution(4) << ";" << std::endl;
+	std::cout << "area_opencl_predictor[\"clock_frequency\"] = " << solution(5) << ";" << std::endl;
+	std::cout << "area_opencl_predictor[\"global_memory\"] = " << solution(6) << ";" << std::endl;
+	std::cout << "area_opencl_predictor[\"global_memory^2\"] = " << solution(7) << ";" << std::endl;
+	std::cout << "area_opencl_predictor[\"local_memory\"] = " << solution(8) << ";" << std::endl;
+	std::cout << "area_opencl_predictor[\"local_memory^2\"] = " << solution(9) << ";" << std::endl;
+	std::cout << "area_opencl_predictor[\"size\"] = " << solution(10) << ";" << std::endl;
+	std::cout << "area_opencl_predictor[\"size^2\"] = " << solution(11) << ";" << std::endl;
+	std::cout << "area_opencl_predictor[\"constant\"] = " << solution(12) << ";" << std::endl;
 }
 
 void Benchmarker::device_statistics() const {
@@ -177,12 +187,12 @@ int main(int argc, char** argv) {
 		parallelogram::benchmarks::Benchmarker benchmarker(&device);
 		std::cerr << "Benchmarking: " << benchmarker.identifier() << std::endl;
 		benchmarker.device_statistics();
-		//benchmarker.run();
+		benchmarker.run();
 	}
 
 	parallelogram::benchmarks::Benchmarker benchmarker(nullptr);
 	std::cerr << "Benchmarking: Host" << std::endl;
-	//benchmarker.run();
+	benchmarker.run();
 
 	std::cerr << "Interpolating data." << std::endl;
 	benchmarker.compute_interpolation();
