@@ -55,6 +55,18 @@ std::unordered_map<std::pair<std::string, size_t>, double, pair_hash> area_openc
  */
 std::unordered_map<std::string, std::unordered_map<std::string, cl_ulong>> devices;
 
+/*
+ * Prediction vector for the time it'll take to compute area on an OpenCL
+ * device.
+ *
+ * This predictor gets filled with several properties of OpenCL devices as keys.
+ * If you then multiply the value of your OpenCL device for each of these keys
+ * with the corresponding values and add them together, you'll arrive at a
+ * prediction of how long the algorithm will take to execute based on a linear
+ * least-squares fit of the known benchmarks.
+ */
+std::unordered_map<std::string, double> area_opencl_predictor;
+
 void load_benchmarks() {
 	#include "benchmarks/IntelI72600K.h"
 	#include "benchmarks/GeforceGTX560.h"

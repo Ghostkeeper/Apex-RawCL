@@ -111,14 +111,14 @@ void Benchmarker::compute_interpolation() const {
 		}
 	}
 	Eigen::VectorXd solution = fit_data.fullPivHouseholderQr().solve(time_data);
-	std::cout << "area_predictor[\"device_type\"] = " << solution(0) << ";" << std::endl;
-	std::cout << "area_predictor[\"compute_units\"] = " << solution(1) << ";" << std::endl;
-	std::cout << "area_predictor[\"items_per_compute_unit\"] = " << solution(2) << ";" << std::endl;
-	std::cout << "area_predictor[\"clock_frequency\"] = " << solution(3) << ";" << std::endl;
-	std::cout << "area_predictor[\"global_memory\"] = " << solution(4) << ";" << std::endl;
-	std::cout << "area_predictor[\"local_memory\"] = " << solution(5) << ";" << std::endl;
-	std::cout << "area_predictor[\"size\"] = " << solution(6) << ";" << std::endl;
-	std::cout << "area_predictor[\"constant\"] = " << solution(7) << ";" << std::endl;
+	std::cout << "area_opencl_predictor[\"device_type\"] = " << solution(0) << ";" << std::endl;
+	std::cout << "area_opencl_predictor[\"compute_units\"] = " << solution(1) << ";" << std::endl;
+	std::cout << "area_opencl_predictor[\"items_per_compute_unit\"] = " << solution(2) << ";" << std::endl;
+	std::cout << "area_opencl_predictor[\"clock_frequency\"] = " << solution(3) << ";" << std::endl;
+	std::cout << "area_opencl_predictor[\"global_memory\"] = " << solution(4) << ";" << std::endl;
+	std::cout << "area_opencl_predictor[\"local_memory\"] = " << solution(5) << ";" << std::endl;
+	std::cout << "area_opencl_predictor[\"size\"] = " << solution(6) << ";" << std::endl;
+	std::cout << "area_opencl_predictor[\"constant\"] = " << solution(7) << ";" << std::endl;
 }
 
 void Benchmarker::device_statistics() const {
@@ -177,12 +177,12 @@ int main(int argc, char** argv) {
 		parallelogram::benchmarks::Benchmarker benchmarker(&device);
 		std::cerr << "Benchmarking: " << benchmarker.identifier() << std::endl;
 		benchmarker.device_statistics();
-		benchmarker.run();
+		//benchmarker.run();
 	}
 
 	parallelogram::benchmarks::Benchmarker benchmarker(nullptr);
 	std::cerr << "Benchmarking: Host" << std::endl;
-	benchmarker.run();
+	//benchmarker.run();
 
 	std::cerr << "Interpolating data." << std::endl;
 	benchmarker.compute_interpolation();
