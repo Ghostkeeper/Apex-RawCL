@@ -55,6 +55,10 @@ std::unordered_map<std::pair<std::string, size_t>, double, pair_hash> area_openc
  */
 std::unordered_map<std::string, std::unordered_map<std::string, cl_ulong>> devices;
 
+void load_benchmarks() {
+	#include "benchmarks/IntelI72600K.h"
+}
+
 }
 }
 
