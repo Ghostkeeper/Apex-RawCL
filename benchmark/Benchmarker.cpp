@@ -88,6 +88,8 @@ void Benchmarker::benchmark_area() const {
 }
 
 void Benchmarker::compute_interpolation() const {
+	load_benchmarks();
+
 	Eigen::Matrix<double, Eigen::Dynamic, 8> fit_data; //8 columns for the input size, our 6 device data points and one constant offset. Just linear for now.
 	fit_data.resize(parallelogram::benchmarks::devices.size(), 8);
 	Eigen::VectorXd time_data;
