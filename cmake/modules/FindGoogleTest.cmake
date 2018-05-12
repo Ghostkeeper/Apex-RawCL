@@ -38,6 +38,7 @@ else() #GTest was not found.
 		ExternalProject_Add(GoogleTest
 			GIT_REPOSITORY https://github.com/google/googletest
 			CMAKE_ARGS -DCMAKE_INSTALL_PREFIX="${CMAKE_INSTALL_PREFIX}"
+			UPDATE_COMMAND "" #Don't update at all after building once. This speeds up compilation considerably while developing.
 			INSTALL_COMMAND "" #If we want to build it just for this project, no need to install it.
 		)
 		set(GOOGLETEST_FOUND TRUE)
