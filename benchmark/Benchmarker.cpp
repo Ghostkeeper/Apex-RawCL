@@ -79,8 +79,10 @@ void Benchmarker::benchmark_area() const {
 	std::string device_identifier = identifier();
 	for(size_t size_index = 0; size_index < sizes.size(); size_index++) {
 		if(!device) {
+			area_host_time[std::make_pair(device_identifier, sizes[size_index])] = times[size_index];
 			std::cout << "area_host_time[std::make_pair(\"" << device_identifier << "\", " << sizes[size_index] << ")] = " << times[size_index] << ";" << std::endl;
 		} else {
+			area_opencl_time[std::make_pair(device_identifier, sizes[size_index])] = times[size_index];
 			std::cout << "area_opencl_time[std::make_pair(\"" << device_identifier << "\", " << sizes[size_index] << ")] = " << times[size_index] << ";" << std::endl;
 		}
 	}
