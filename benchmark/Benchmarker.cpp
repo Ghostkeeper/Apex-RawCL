@@ -106,6 +106,7 @@ void Benchmarker::compute_interpolation() const {
 			fit_data(entry_id, 5) = device_metadata.second["local_memory"];
 			fit_data(entry_id, 6) = size;
 			fit_data(entry_id, 7) = 1.0; //Constant offset.
+			time_data(entry_id) = area_opencl_time[std::make_pair(device_metadata.first, size)];
 			entry_id++;
 		}
 	}
