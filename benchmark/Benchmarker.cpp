@@ -217,6 +217,7 @@ std::string Benchmarker::identifier() const {
 			}
 			return "unknown";
 		}
+		return "unknown"; //Unknown operating system. I don't know how to query.
 	}
 }
 
