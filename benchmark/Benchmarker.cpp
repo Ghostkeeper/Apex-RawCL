@@ -156,7 +156,7 @@ void Benchmarker::device_statistics() const {
 	} else { //Querying the host.
 		std::cout << "devices[\"" << identity << "\"][\"device_type\"] = 2;" << std::endl; //Always a CPU.
 		std::cout << "devices[\"" << identity << "\"][\"items_per_compute_unit\"] = 1;" << std::endl; //Only one item per compute unit.
-		std::cout << "devices[\"" << identity << "\"][\"global_memory\"] = " << std::numeric_limits<size_t>::max() << std::endl; //Allow infinite memory. The application will crash before it gets a chance to split the data up anyway.
+		std::cout << "devices[\"" << identity << "\"][\"global_memory\"] = " << std::numeric_limits<size_t>::max() << ";" << std::endl; //Allow infinite memory. The application will crash before it gets a chance to split the data up anyway.
 		std::ifstream cpuinfo("/proc/cpuinfo"); //First try /proc/cpuinfo on Linux systems.
 		if(cpuinfo.is_open()) { //Yes, is Linux!
 			std::string line;
