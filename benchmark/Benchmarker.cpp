@@ -9,6 +9,7 @@
 #include <algorithm> //For find_if to trim whitespace.
 #include "Eigen/Core" //To perform calculations for interpolation between data points.
 #include "Eigen/QR" //To perform QR resolution for linear least squares.
+#include <fstream> //To read CPU information on Linux.
 #include <functional> //For cref to trim whitespace.
 #include <iostream> //To output the benchmark data to stdout.
 #include <time.h> //For high-resolution timers to measure benchmarks.
@@ -135,33 +136,82 @@ void Benchmarker::compute_interpolation() const {
 
 void Benchmarker::device_statistics() const {
 	std::string identity = identifier();
-	const cl::Device* device_to_request = device ? device : &OpenCLDevices::getInstance().getCPUs()[0]; //Assume that the host is the first CPU.
-	const std::vector<std::pair<std::string, cl_device_info>> information_to_request = { //Which info to request.
-		{"device_type", CL_DEVICE_TYPE},
-		{"compute_units", CL_DEVICE_MAX_COMPUTE_UNITS},
-		{"items_per_compute_unit", CL_DEVICE_MAX_WORK_GROUP_SIZE},
-		{"clock_frequency", CL_DEVICE_MAX_CLOCK_FREQUENCY},
-		{"global_memory", CL_DEVICE_GLOBAL_MEM_SIZE},
-		{"local_memory", CL_DEVICE_LOCAL_MEM_SIZE}
-	};
+	if(device) {
+		const std::vector<std::pair<std::string, cl_device_info>> information_to_request = { //Which info to request.
+			{"device_type", CL_DEVICE_TYPE},
+			{"compute_units", CL_DEVICE_MAX_COMPUTE_UNITS},
+			{"items_per_compute_unit", CL_DEVICE_MAX_WORK_GROUP_SIZE},
+			{"clock_frequency", CL_DEVICE_MAX_CLOCK_FREQUENCY},
+			{"global_memory", CL_DEVICE_GLOBAL_MEM_SIZE},
+			{"local_memory", CL_DEVICE_LOCAL_MEM_SIZE}
+		};
 
-	for(const std::pair<std::string, cl_device_info>& request : information_to_request) {
-		cl_ulong result;
-		if(device_to_request->getInfo(request.second, &result) != CL_SUCCESS) {
-			throw ParallelogramException((std::string("Couldn't get information on device ") + identity + std::string(": ") + request.first).c_str());
+		for(const std::pair<std::string, cl_device_info>& request : information_to_request) {
+			cl_ulong result;
+			if(device->getInfo(request.second, &result) != CL_SUCCESS) {
+				throw ParallelogramException((std::string("Couldn't get information on device ") + identity + std::string(": ") + request.first).c_str());
+			}
+			std::cout << "devices[\"" << identity << "\"][\"" << request.first << "\"] = " << result << ";" << std::endl;
 		}
-		std::cout << "devices[\"" << identity << "\"][\"" << request.first << "\"] = " << result << ";" << std::endl;
+	} else { //Querying the host.
+		std::cout << "devices[\"" << identity << "\"][\"device_type\"] = 2;" << std::endl; //Always a CPU.
+		std::cout << "devices[\"" << identity << "\"][\"items_per_compute_unit\"] = 1;" << std::endl; //Only one item per compute unit.
+		std::cout << "devices[\"" << identity << "\"][\"global_memory\"] = " << std::numeric_limits<size_t>::max() << std::endl; //Allow infinite memory. The application will crash before it gets a chance to split the data up anyway.
+		std::ifstream cpuinfo("/proc/cpuinfo"); //First try /proc/cpuinfo on Linux systems.
+		if(cpuinfo.is_open()) { //Yes, is Linux!
+			std::string line;
+			bool found_siblings = false; //Find each item only once, even if there are multiple cores on this computer.
+			bool found_cpu_mhz = false;
+			bool found_cache_size = false;
+			while(std::getline(cpuinfo, line)) {
+				const size_t start_pos = line.find(":") + 2; //Only valid on lines with a colon in it.
+				if(!found_siblings && line.find("siblings") == 0) {
+					line = line.substr(start_pos);
+					trim(line);
+					std::cout << "devices[\"" << identity << "\"][\"compute_units\"] = " << line << ";" << std::endl;
+					found_siblings = true;
+				}
+				if(!found_cpu_mhz && line.find("cpu MHz") == 0) {
+					line = line.substr(start_pos);
+					trim(line);
+					std::cout << "devices[\"" << identity << "\"][\"clock_frequency\"] = " << line << ";" << std::endl;
+					found_cpu_mhz = true;
+				}
+				if(!found_cache_size && line.find("cache size") == 0) {
+					const size_t kb_pos = line.find("KB");
+					line = line.substr(start_pos, kb_pos - start_pos - 1);
+					trim(line);
+					std::cout << "devices[\"" << identity << "\"][\"local_memory\"] = " << line << ";" << std::endl;
+					found_cache_size = true;
+				}
+			}
+		}
 	}
 }
 
 std::string Benchmarker::identifier() const {
-	std::string result;
-	const cl::Device* device_to_identify = device ? device : &OpenCLDevices::getInstance().getCPUs()[0]; //Assume that the host is the first CPU.
-	if(device_to_identify->getInfo(CL_DEVICE_NAME, &result) != CL_SUCCESS) {
-		return std::string("unknown");
+	if(device) {
+		std::string result;
+		if(device->getInfo(CL_DEVICE_NAME, &result) != CL_SUCCESS) {
+			return std::string("unknown");
+		}
+		trim(result);
+		return result;
+	} else { //Querying the host.
+		std::ifstream cpuinfo("/proc/cpuinfo"); //First try /proc/cpuinfo on Linux systems.
+		if(cpuinfo.is_open()) { //Yes, is Linux!
+			std::string line;
+			while(std::getline(cpuinfo, line)) {
+				if(line.find("model name") == 0) {
+					const size_t start_pos = line.find(":") + 2;
+					line = line.substr(start_pos);
+					trim(line);
+					return line;
+				}
+			}
+			return "unknown";
+		}
 	}
-	trim(result);
-	return result;
 }
 
 void Benchmarker::run() const {
