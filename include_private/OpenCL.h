@@ -12,11 +12,7 @@
 //This is a shortcut for correctly importing OpenCL headers.
 #define CL_HPP_MINIMUM_OPENCL_VERSION 110
 #define CL_HPP_TARGET_OPENCL_VERSION 110
-#ifdef __APPLE__
-	#include "OpenCL/cl.hpp"
-#else
-	#include OPENCL_CPP_BINDINGS
-#endif
+#include OPENCL_CPP_BINDINGS //CMake sets this variable to the correct path, such as "CL/cl.hpp" or "OpenCL/cl2.hpp".
 
 #endif //OPENCL_H
 
