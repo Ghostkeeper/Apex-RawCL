@@ -111,6 +111,9 @@ if(BUILD_BENCHMARKER)
 	target_include_directories(benchmarker PRIVATE ${OpenCL_INCLUDE_DIRS})
 	target_link_libraries(benchmarker parallelogram)
 	target_link_libraries(benchmarker ${OpenCL_LIBRARIES})
+	if(BUILD_EIGEN)
+		add_dependencies(benchmarker Eigen)
+	endif()
 endif()
 
 #Installation.
