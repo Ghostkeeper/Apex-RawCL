@@ -68,8 +68,11 @@ std::unordered_map<std::string, std::unordered_map<std::string, cl_ulong>> devic
 std::unordered_map<std::string, double> area_opencl_predictor;
 
 void load_benchmarks() {
+	#include "benchmarks/GeForceGTX560.h"
+	#include "benchmarks/GeForceGTX660M.h"
 	#include "benchmarks/IntelI72600K.h"
-	#include "benchmarks/GeforceGTX560.h"
+	#include "benchmarks/IntelI73610QM.h"
+	#include "benchmarks/IntelIvyBridgeMGT2.h"
 }
 
 }
