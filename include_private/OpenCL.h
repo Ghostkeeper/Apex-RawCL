@@ -15,7 +15,7 @@
 #ifdef __APPLE__
 	#include "OpenCL/cl.hpp"
 #else
-	#include "CL/cl.hpp"
+	#include OPENCL_CPP_BINDINGS
 #endif
 
 #endif //OPENCL_H
