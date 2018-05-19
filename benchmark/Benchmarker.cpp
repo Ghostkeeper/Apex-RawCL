@@ -244,6 +244,7 @@ int main(int argc, char** argv) {
 
 	parallelogram::benchmarks::Benchmarker benchmarker(nullptr);
 	std::cerr << "Benchmarking: Host" << std::endl;
+	benchmarker.device_statistics();
 	benchmarker.run();
 
 	std::cerr << "Interpolating data." << std::endl;
