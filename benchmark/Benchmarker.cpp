@@ -151,12 +151,12 @@ void Benchmarker::device_statistics() const {
 			if(device->getInfo(request.second, &result) != CL_SUCCESS) {
 				throw ParallelogramException((std::string("Couldn't get information on device ") + identity + std::string(": ") + request.first).c_str());
 			}
-			std::cout << "devices[\"" << identity << "\"][\"" << request.first << "\"] = " << result << ";" << std::endl;
+			std::cout << "devices[\"" << identity << "\"][\"" << request.first << "\"] = " << result << "u;" << std::endl;
 		}
 	} else { //Querying the host.
-		std::cout << "devices[\"" << identity << "\"][\"device_type\"] = 2;" << std::endl; //Always a CPU.
-		std::cout << "devices[\"" << identity << "\"][\"items_per_compute_unit\"] = 1;" << std::endl; //Only one item per compute unit.
-		std::cout << "devices[\"" << identity << "\"][\"global_memory\"] = " << std::numeric_limits<size_t>::max() << ";" << std::endl; //Allow infinite memory. The application will crash before it gets a chance to split the data up anyway.
+		std::cout << "devices[\"" << identity << "\"][\"device_type\"] = 2u;" << std::endl; //Always a CPU.
+		std::cout << "devices[\"" << identity << "\"][\"items_per_compute_unit\"] = 1u;" << std::endl; //Only one item per compute unit.
+		std::cout << "devices[\"" << identity << "\"][\"global_memory\"] = " << std::numeric_limits<size_t>::max() << "u;" << std::endl; //Allow infinite memory. The application will crash before it gets a chance to split the data up anyway.
 		std::ifstream cpuinfo("/proc/cpuinfo"); //First try /proc/cpuinfo on Linux systems.
 		if(cpuinfo.is_open()) { //Yes, is Linux!
 			std::string line;
@@ -168,20 +168,20 @@ void Benchmarker::device_statistics() const {
 				if(!found_siblings && line.find("siblings") == 0) {
 					line = line.substr(start_pos);
 					trim(line);
-					std::cout << "devices[\"" << identity << "\"][\"compute_units\"] = " << line << ";" << std::endl;
+					std::cout << "devices[\"" << identity << "\"][\"compute_units\"] = " << line << "u;" << std::endl;
 					found_siblings = true;
 				}
 				if(!found_cpu_mhz && line.find("cpu MHz") == 0) {
 					line = line.substr(start_pos);
 					trim(line);
-					std::cout << "devices[\"" << identity << "\"][\"clock_frequency\"] = " << line << ";" << std::endl;
+					std::cout << "devices[\"" << identity << "\"][\"clock_frequency\"] = " << line << "u;" << std::endl;
 					found_cpu_mhz = true;
 				}
 				if(!found_cache_size && line.find("cache size") == 0) {
 					const size_t kb_pos = line.find("KB");
 					line = line.substr(start_pos, kb_pos - start_pos - 1);
 					trim(line);
-					std::cout << "devices[\"" << identity << "\"][\"local_memory\"] = " << line << ";" << std::endl;
+					std::cout << "devices[\"" << identity << "\"][\"local_memory\"] = " << line << "u;" << std::endl;
 					found_cache_size = true;
 				}
 			}
