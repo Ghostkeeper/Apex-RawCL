@@ -173,6 +173,9 @@ void Benchmarker::device_statistics() const {
 				}
 				if(!found_cpu_mhz && line.find("cpu MHz") == 0) {
 					line = line.substr(start_pos);
+					if(line.find(".") != std::string::npos) {
+						line = line.substr(0, line.find("."));
+					}
 					trim(line);
 					std::cout << "devices[\"" << identity << "\"][\"clock_frequency\"] = " << line << "u;" << std::endl;
 					found_cpu_mhz = true;
@@ -180,6 +183,9 @@ void Benchmarker::device_statistics() const {
 				if(!found_cache_size && line.find("cache size") == 0) {
 					const size_t kb_pos = line.find("KB");
 					line = line.substr(start_pos, kb_pos - start_pos - 1);
+					if(line.find(".") != std::string::npos) {
+						line = line.substr(0, line.find("."));
+					}
 					trim(line);
 					std::cout << "devices[\"" << identity << "\"][\"local_memory\"] = " << line << "u;" << std::endl;
 					found_cache_size = true;
