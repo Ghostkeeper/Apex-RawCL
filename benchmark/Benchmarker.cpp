@@ -14,6 +14,9 @@
 #include <iostream> //To output the benchmark data to stdout.
 #include <time.h> //For high-resolution timers to measure benchmarks.
 #include <vector> //Lists of problem sizes to test with.
+#ifdef _WIN32
+	#include <windows.h> //To detect device information.
+#endif
 #include "BenchmarkData.h" //To use the pre-existing benchmark data to generate interpolation vectors.
 #include "OpenCL.h" //To get device information.
 #include "OpenCLDevices.h" //To find the identifiers of the devices the benchmark is performed on.
@@ -191,6 +194,35 @@ void Benchmarker::device_statistics() const {
 					found_cache_size = true;
 				}
 			}
+		} else {
+#ifdef _WIN32
+			SYSTEM_INFO system_info;
+			GetNativeSystemInfo(&system_info);
+			std::cout << "devices[\"" << identity << "\"][\"compute_units\"] = " << system_info.dwNumberOfProcessors << "u;" << std::endl;
+
+			HKEY hkey = 0;
+			if(RegOpenKeyEx(HKEY_LOCAL_MACHINE, TEXT("HARDWARE\\DESCRIPTION\\SYSTEM\\CentralProcessor\\0"), 0, KEY_READ, &hkey) != ERROR_SUCCESS) {
+				std::cerr << "Could not open registry key to query the processor for clock frequency." << std::endl;
+				exit(1); //Could not open registry key. This is required.
+			}
+			DWORD buffer_size = 4;
+			DWORD clock_frequency;
+			if(RegQueryValueEx(hkey, TEXT("~MHz"), NULL, NULL, (LPBYTE)&clock_frequency, (LPDWORD)&buffer_size) != ERROR_SUCCESS) {
+				std::cerr << "Could not read registry value to query the processor for clock frequency." << std::endl;
+				RegCloseKey(hkey);
+				exit(1); //Could not read registry key. This is required.
+			}
+			RegCloseKey(hkey);
+			std::cout << "devices[\"" << identity << "\"][\"clock_frequency\"] = " << clock_frequency << "u;" << std::endl;
+
+			unsigned int ecx = 0;
+			__asm__ volatile(
+				"cpuid;"
+				:"=c"(ecx)
+				:"a"(0x80000005) //CPUID instruction to get Extended Set 5: L1 cache.
+			);
+			std::cout << "devices[\"" << identity << "\"][\"local_memory\"] = " << (ecx & 0xFF) << "u;" << std::endl;
+#endif
 		}
 	}
 }
@@ -217,6 +249,20 @@ std::string Benchmarker::identifier() const {
 			}
 			return "unknown";
 		}
+#ifdef _WIN32
+		HKEY hkey = 0;
+		if(RegOpenKeyEx(HKEY_LOCAL_MACHINE, TEXT("HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0"), 0, KEY_READ, &hkey) != ERROR_SUCCESS) {
+			return "unknown"; //Could not open registry key.
+		}
+		DWORD buffer_size = 255;
+		char value[255];
+		if(RegQueryValueEx(hkey, TEXT("ProcessorNameString"), NULL, NULL, (LPBYTE)value, &buffer_size) != ERROR_SUCCESS) {
+			RegCloseKey(hkey);
+			return "unknown"; //Could not read registry value.
+		}
+		RegCloseKey(hkey);
+		return value;
+#endif
 		return "unknown"; //Unknown operating system. I don't know how to query.
 	}
 }
