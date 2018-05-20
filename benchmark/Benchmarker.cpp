@@ -190,7 +190,9 @@ void Benchmarker::device_statistics() const {
 						line = line.substr(0, line.find("."));
 					}
 					trim(line);
-					std::cout << "devices[\"" << identity << "\"][\"local_memory\"] = " << line << "u;" << std::endl;
+					size_t local_memory_size = atoi(line.c_str());
+					local_memory_size *= 1024; //Because the file lists kilobytes.
+					std::cout << "devices[\"" << identity << "\"][\"local_memory\"] = " << local_memory_size << "u;" << std::endl;
 					found_cache_size = true;
 				}
 			}
@@ -221,7 +223,7 @@ void Benchmarker::device_statistics() const {
 				:"=c"(ecx)
 				:"a"(0x80000005) //CPUID instruction to get Extended Set 5: L1 cache.
 			);
-			std::cout << "devices[\"" << identity << "\"][\"local_memory\"] = " << (ecx & 0xFF) << "u;" << std::endl;
+			std::cout << "devices[\"" << identity << "\"][\"local_memory\"] = " << (ecx & 0xFF) * 1024 << "u;" << std::endl;
 #endif
 		}
 	}
