@@ -38,6 +38,11 @@ public:
 	 * Constructs a new benchmark.
 	 *
 	 * You can supply the parameters for the benchmark here.
+	 * \param run A function that executes the method you wish to benchmark. The
+	 * function must accept one input `SimplePolygon` instance. Any other
+	 * parameters must be generated before the function. Keep in mind that this
+	 * is the function that we benchmark, so keep overhead to an absolute
+	 * minimum.
 	 * \param input_sizes The sizes to run the benchmark on, in order to test
 	 * performance at various complexities of input. It is assumed that the
 	 * algorithm runs in at most quadratic time to this input size (for
@@ -45,7 +50,7 @@ public:
 	 * \param construct_polygon The function to use to construct the input
 	 * polygons of the provided input sizes.
 	 */
-	SimplePolygonBenchmark(const std::vector<size_t> input_sizes, const SimplePolygon(*construct_polygon)(const size_t));
+	SimplePolygonBenchmark(const void(*run)(SimplePolygon), const std::vector<size_t> input_sizes, const SimplePolygon(*construct_polygon)(const size_t));
 
 private:
 	/*
@@ -57,6 +62,11 @@ private:
 	 * The sizes to run the benchmark on.
 	 */
 	const std::vector<size_t> input_sizes;
+
+	/*
+	 * The function that runs one test with a pre-generated polygon.
+	 */
+	const void(*run)(SimplePolygon);
 };
 
 }
