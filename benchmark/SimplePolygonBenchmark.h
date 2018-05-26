@@ -35,6 +35,16 @@ public:
 	unsigned int repeats = 50;
 
 	/*
+	 * The sizes to run the benchmark on, in order to test performance at
+	 * various complexities of input.
+	 *
+	 * It is assumed that the algorithm runs in at most quadratic time to this
+	 * input size. If it is more complex, then the polynomial that predicts the
+	 * duration of a function call will not fit the data well.
+	 */
+	std::vector<size_t> input_sizes = {1, 10, 100, 1000, 10000, 20000, 40000, 80000, 160000, 320000, 640000, 1000000, 2000000, 4000000, 8000000};
+
+	/*
 	 * Constructs a regular n-gon.
 	 *
 	 * Use this as parameter for the constructor of `SimplePolygonBenchmark` to
@@ -53,14 +63,10 @@ public:
 	 * parameters must be generated before the function. Keep in mind that this
 	 * is the function that we benchmark, so keep overhead to an absolute
 	 * minimum.
-	 * \param input_sizes The sizes to run the benchmark on, in order to test
-	 * performance at various complexities of input. It is assumed that the
-	 * algorithm runs in at most quadratic time to this input size (for
-	 * predicting the performance on different devices).
 	 * \param construct_polygon The function to use to construct the input
 	 * polygons of the provided input sizes.
 	 */
-	SimplePolygonBenchmark(const std::string name, const void(*run)(SimplePolygon), const std::vector<size_t> input_sizes, const SimplePolygon(*construct_polygon)(const size_t));
+	SimplePolygonBenchmark(const std::string name, const void(*run)(SimplePolygon), const SimplePolygon(*construct_polygon)(const size_t));
 
 private:
 	/*
