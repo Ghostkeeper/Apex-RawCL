@@ -9,7 +9,8 @@
 #ifndef SIMPLEPOLYGONBENCHMARK_H
 #define SIMPLEPOLYGONBENCHMARK_H
 
-#include <vector>
+#include <time.h> //For high-resolution timers to measure benchmarks.
+#include <vector> //To have multiple input sizes.
 #include "SimplePolygon.h"
 
 namespace parallelogram {
@@ -72,6 +73,15 @@ public:
 	 * minimum.
 	 */
 	SimplePolygonBenchmark(const std::string name, const void(*run)(SimplePolygon));
+
+	/*
+	 * Starts benchmarking.
+	 *
+	 * The results of the benchmark are output to cout.
+	 * \param device_identifier The device that the benchmarker is currently
+	 * running on. This is what the results are keyed at in the output.
+	 */
+	void benchmark(const std::string device_identifier) const;
 
 private:
 	/*
