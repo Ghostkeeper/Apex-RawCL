@@ -102,6 +102,7 @@ if(BUILD_BENCHMARKER)
 	find_package(Eigen REQUIRED)
 	set(benchmark_sources
 		benchmark/Benchmarker.cpp
+		benchmark/SimplePolygonBenchmark.cpp
 	)
 	add_executable(benchmarker ${benchmark_sources})
 	target_include_directories(benchmarker PRIVATE ${EIGEN_INCLUDE_DIRS})
