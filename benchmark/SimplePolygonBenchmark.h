@@ -32,7 +32,7 @@ public:
 	 * Use this as parameter for the constructor of `SimplePolygonBenchmark` to
 	 * use regular n-gons as input for the benchmarks.
 	 */
-	static parallelogram::SimplePolygon regularNGon(const size_t size);
+	static SimplePolygon regularNGon(const size_t size);
 
 	/*
 	 * Constructs a new benchmark.
@@ -45,13 +45,13 @@ public:
 	 * \param construct_polygon The function to use to construct the input
 	 * polygons of the provided input sizes.
 	 */
-	SimplePolygonBenchmark(const std::vector<size_t> input_sizes, const parallelogram::SimplePolygon(*construct_polygon)(const size_t));
+	SimplePolygonBenchmark(const std::vector<size_t> input_sizes, const SimplePolygon(*construct_polygon)(const size_t));
 
 private:
 	/*
 	 * The function to use to construct the input polygons.
 	 */
-	const parallelogram::SimplePolygon(*construct_polygon)(const size_t);
+	const SimplePolygon(*construct_polygon)(const size_t);
 
 	/*
 	 * The sizes to run the benchmark on.
