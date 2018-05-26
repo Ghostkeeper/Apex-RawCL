@@ -8,6 +8,14 @@
 
 #include "SimplePolygonBenchmark.h"
 
+namespace parallelogram {
+
+namespace benchmark {
+
 SimplePolygonBenchmark::SimplePolygonBenchmark(std::vector<size_t> input_sizes) : input_sizes(input_sizes) {
 	//Simply store all input parameters in the fields.
+}
+
+}
+
 }
