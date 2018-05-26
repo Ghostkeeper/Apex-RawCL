@@ -27,12 +27,11 @@ namespace benchmark {
 class SimplePolygonBenchmark {
 public:
 	/*
-	 * How many times to repeat the experiment.
+	 * The function to use to construct the input polygons.
 	 *
-	 * Repeating more often will result in more accurate measurements, but will
-	 * take longer to benchmark.
+	 * It is suggested that you use one of the static methods in this class.
 	 */
-	unsigned int repeats = 50;
+	const SimplePolygon(*construct_polygon)(const size_t);
 
 	/*
 	 * The sizes to run the benchmark on, in order to test performance at
@@ -43,6 +42,14 @@ public:
 	 * duration of a function call will not fit the data well.
 	 */
 	std::vector<size_t> input_sizes = {1, 10, 100, 1000, 10000, 20000, 40000, 80000, 160000, 320000, 640000, 1000000, 2000000, 4000000, 8000000};
+
+	/*
+	 * How many times to repeat the experiment.
+	 *
+	 * Repeating more often will result in more accurate measurements, but will
+	 * take longer to benchmark.
+	 */
+	unsigned int repeats = 50;
 
 	/*
 	 * Constructs a regular n-gon.
@@ -63,22 +70,10 @@ public:
 	 * parameters must be generated before the function. Keep in mind that this
 	 * is the function that we benchmark, so keep overhead to an absolute
 	 * minimum.
-	 * \param construct_polygon The function to use to construct the input
-	 * polygons of the provided input sizes.
 	 */
-	SimplePolygonBenchmark(const std::string name, const void(*run)(SimplePolygon), const SimplePolygon(*construct_polygon)(const size_t));
+	SimplePolygonBenchmark(const std::string name, const void(*run)(SimplePolygon));
 
 private:
-	/*
-	 * The function to use to construct the input polygons.
-	 */
-	const SimplePolygon(*construct_polygon)(const size_t);
-
-	/*
-	 * The sizes to run the benchmark on.
-	 */
-	const std::vector<size_t> input_sizes;
-
 	/*
 	 * The name of the benchmark.
 	 *
