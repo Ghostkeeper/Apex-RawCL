@@ -27,6 +27,14 @@ namespace benchmark {
 class SimplePolygonBenchmark {
 public:
 	/*
+	 * How many times to repeat the experiment.
+	 *
+	 * Repeating more often will result in more accurate measurements, but will
+	 * take longer to benchmark.
+	 */
+	unsigned int repeats = 50;
+
+	/*
 	 * Constructs a regular n-gon.
 	 *
 	 * Use this as parameter for the constructor of `SimplePolygonBenchmark` to
