@@ -12,7 +12,9 @@ namespace parallelogram {
 
 namespace benchmark {
 
-SimplePolygonBenchmark::SimplePolygonBenchmark(std::vector<size_t> input_sizes) : input_sizes(input_sizes) {
+SimplePolygonBenchmark::SimplePolygonBenchmark(std::vector<size_t> input_sizes, SimplePolygon(*construct_polygon)(size_t))
+: input_sizes(input_sizes)
+, construct_polygon(construct_polygon) {
 	//Simply store all input parameters in the fields.
 }
 

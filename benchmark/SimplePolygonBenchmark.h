@@ -10,6 +10,11 @@
 #define SIMPLEPOLYGONBENCHMARK_H
 
 #include <vector>
+#include "SimplePolygon.h"
+
+namespace parallelogram {
+
+namespace benchmark {
 
 /*
  * This class holds the parameters to run a benchmark to measure the performance
@@ -29,14 +34,25 @@ public:
 	 * performance at various complexities of input. It is assumed that the
 	 * algorithm runs in at most quadratic time to this input size (for
 	 * predicting the performance on different devices).
+	 * \param construct_polygon The function to use to construct the input
+	 * polygons of the provided input sizes.
 	 */
-	SimplePolygonBenchmark(std::vector<size_t> input_sizes);
+	SimplePolygonBenchmark(std::vector<size_t> input_sizes, parallelogram::SimplePolygon(*construct_polygon)(size_t));
 
 private:
+	/*
+	 * The function to use to construct the input polygons.
+	 */
+	parallelogram::SimplePolygon(*construct_polygon)(size_t);
+
 	/*
 	 * The sizes to run the benchmark on.
 	 */
 	std::vector<size_t> input_sizes;
 };
+
+}
+
+}
 
 #endif //SIMPLEPOLYGONBENCHMARK_H
