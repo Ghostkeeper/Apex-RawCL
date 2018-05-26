@@ -31,7 +31,7 @@ public:
 	 *
 	 * It is suggested that you use one of the static methods in this class.
 	 */
-	const SimplePolygon(*construct_polygon)(const size_t);
+	SimplePolygon(*construct_polygon)(const size_t) = regularNGon;
 
 	/*
 	 * The sizes to run the benchmark on, in order to test performance at
