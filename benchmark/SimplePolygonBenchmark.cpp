@@ -16,7 +16,7 @@ namespace parallelogram {
 
 namespace benchmark {
 
-SimplePolygon SimplePolygonBenchmark::regularNGon(size_t size) {
+SimplePolygon SimplePolygonBenchmark::regularNGon(const size_t size) {
 	SimplePolygon polygon;
 	for(size_t vertex = 0; vertex < size; vertex++) {
 		const coord_t x = std::lround(std::cos(PI * 2 / size * vertex) * size);
@@ -25,7 +25,7 @@ SimplePolygon SimplePolygonBenchmark::regularNGon(size_t size) {
 	}
 }
 
-SimplePolygonBenchmark::SimplePolygonBenchmark(std::vector<size_t> input_sizes, SimplePolygon(*construct_polygon)(size_t))
+SimplePolygonBenchmark::SimplePolygonBenchmark(const std::vector<size_t> input_sizes, const SimplePolygon(*construct_polygon)(const size_t))
 : input_sizes(input_sizes)
 , construct_polygon(construct_polygon) {
 	//Simply store all input parameters in the fields.
