@@ -6,11 +6,24 @@
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
  */
 
+#include <cmath> //To construct a regular n-gon.
+#include "Coordinate.h" //Creating vertices for polygons.
 #include "SimplePolygonBenchmark.h"
+
+#define PI 3.14159265358979
 
 namespace parallelogram {
 
 namespace benchmark {
+
+SimplePolygon SimplePolygonBenchmark::regularNGon(size_t size) {
+	SimplePolygon polygon;
+	for(size_t vertex = 0; vertex < size; vertex++) {
+		const coord_t x = std::lround(std::cos(PI * 2 / size * vertex) * size);
+		const coord_t y = std::lround(std::sin(PI * 2 / size * vertex) * size);
+		polygon.emplace_back(x, y);
+	}
+}
 
 SimplePolygonBenchmark::SimplePolygonBenchmark(std::vector<size_t> input_sizes, SimplePolygon(*construct_polygon)(size_t))
 : input_sizes(input_sizes)

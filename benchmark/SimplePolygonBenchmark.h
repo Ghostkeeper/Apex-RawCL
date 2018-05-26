@@ -27,6 +27,14 @@ namespace benchmark {
 class SimplePolygonBenchmark {
 public:
 	/*
+	 * Constructs a regular n-gon.
+	 *
+	 * Use this as parameter for the constructor of `SimplePolygonBenchmark` to
+	 * use regular n-gons as input for the benchmarks.
+	 */
+	static parallelogram::SimplePolygon regularNGon(size_t size);
+
+	/*
 	 * Constructs a new benchmark.
 	 *
 	 * You can supply the parameters for the benchmark here.
