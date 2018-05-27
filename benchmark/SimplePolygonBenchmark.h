@@ -9,6 +9,7 @@
 #ifndef SIMPLEPOLYGONBENCHMARK_H
 #define SIMPLEPOLYGONBENCHMARK_H
 
+#include <functional> //To pass a function to run the benchmark with.
 #include <time.h> //For high-resolution timers to measure benchmarks.
 #include <vector> //To have multiple input sizes.
 #include "SimplePolygon.h"
@@ -72,7 +73,7 @@ public:
 	 * is the function that we benchmark, so keep overhead to an absolute
 	 * minimum.
 	 */
-	SimplePolygonBenchmark(const std::string name, const void(*run)(SimplePolygon));
+	SimplePolygonBenchmark(const std::string name, std::function<void(SimplePolygon&)> run);
 
 	/*
 	 * Starts benchmarking.
@@ -97,7 +98,7 @@ private:
 	/*
 	 * The function that runs one test with a pre-generated polygon.
 	 */
-	const void(*run)(SimplePolygon);
+	std::function<void(SimplePolygon&)> run;
 };
 
 }

@@ -27,7 +27,7 @@ SimplePolygon SimplePolygonBenchmark::regularNGon(const size_t size) {
 	return polygon;
 }
 
-SimplePolygonBenchmark::SimplePolygonBenchmark(const std::string name, const void(*run)(SimplePolygon)): name(name), run(run) {
+SimplePolygonBenchmark::SimplePolygonBenchmark(const std::string name, std::function<void(SimplePolygon&)> run): name(name), run(run) {
 	//Simply store all input parameters in the fields.
 }
 
