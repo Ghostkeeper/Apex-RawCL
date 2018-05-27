@@ -15,7 +15,7 @@
 
 namespace parallelogram {
 
-namespace benchmark {
+namespace benchmarks {
 
 /*
  * This class holds the parameters to run a benchmark to measure the performance

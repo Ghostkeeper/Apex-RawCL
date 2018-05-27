@@ -15,7 +15,7 @@
 
 namespace parallelogram {
 
-namespace benchmark {
+namespace benchmarks {
 
 SimplePolygon SimplePolygonBenchmark::regularNGon(const size_t size) {
 	SimplePolygon polygon;
