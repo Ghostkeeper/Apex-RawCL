@@ -24,6 +24,7 @@ SimplePolygon SimplePolygonBenchmark::regularNGon(const size_t size) {
 		const coord_t y = std::lround(std::sin(PI * 2 / size * vertex) * size);
 		polygon.emplace_back(x, y);
 	}
+	return polygon;
 }
 
 SimplePolygonBenchmark::SimplePolygonBenchmark(const std::string name, const void(*run)(SimplePolygon)): name(name), run(run) {
