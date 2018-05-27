@@ -23,6 +23,7 @@
 #include "ParallelogramException.h"
 #include "Point2.h" //To construct vertices for polygons.
 #include "SimplePolygon.h" //A class of which we're benchmarking performance.
+#include "SimplePolygonBenchmark.h" //The benchmark runners.
 
 namespace parallelogram {
 namespace benchmarks {
@@ -270,7 +271,13 @@ std::string Benchmarker::identifier() const {
 }
 
 void Benchmarker::run() const {
-	benchmark_area();
+	if(!device) {
+		SimplePolygonBenchmark area_host("area_host", [](SimplePolygon& polygon) {polygon.area_host();});
+		area_host.benchmark(identifier());
+	} else {
+		SimplePolygonBenchmark area_opencl("area_opencl", [this](SimplePolygon& polygon) {polygon.area_opencl(*device);});
+		area_opencl.benchmark(identifier());
+	}
 }
 
 inline void Benchmarker::trim(std::string& input) const {
