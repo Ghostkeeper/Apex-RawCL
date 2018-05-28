@@ -22,7 +22,7 @@ void kernel area(global const int2* input_data_points, const long total_vertices
 	const int2 previous = input_data_points[global_id];
 	const int2 next = input_data_points[global_id + 1];
 	const uint local_id = get_local_id(0);
-	sums[local_id] = (long)previous.x * (long)next.y - (long)previous.y * (long)next.x;
+	sums[local_id] = (long)previous.x * (long)next.y - (long)previous.y * (long)next.x; //Shoelace formula.
 
 	//Aggregate sum on the memory in this work group.
 	const uint local_size = get_local_size(0);

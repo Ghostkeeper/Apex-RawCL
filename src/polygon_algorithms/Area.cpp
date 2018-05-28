@@ -102,7 +102,7 @@ area_t SimplePolygon::area_opencl(const cl::Device& device) const {
 }
 
 area_t SimplePolygon::area_host() const {
-	//Apothem method to compute the area.
+	//Shoelace formula to compute the area.
 	area_t area = 0;
 	for(size_t vertex = 0, previous = size() - 1; vertex < size(); vertex++) {
 		area += (area_t)(*this)[previous].x * (area_t)(*this)[vertex].y - (area_t)(*this)[previous].y * (area_t)(*this)[vertex].x;
