@@ -48,11 +48,6 @@ public:
 	Benchmarker(const cl::Device* device);
 
 	/*
-	 * Performs a benchmark on computing the area of a polygon.
-	 */
-	void benchmark_area() const;
-
-	/*
 	 * Prints the statistics of the device that can be detected via OpenGL.
 	 *
 	 * This will output computational statistics such as clock speed and number
