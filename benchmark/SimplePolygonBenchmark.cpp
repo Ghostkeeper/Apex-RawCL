@@ -27,11 +27,11 @@ SimplePolygon SimplePolygonBenchmark::regularNGon(const size_t size) {
 	return polygon;
 }
 
-SimplePolygonBenchmark::SimplePolygonBenchmark(const std::string name, std::function<void(SimplePolygon&)> run): name(name), run(run) {
+SimplePolygonBenchmark::SimplePolygonBenchmark(const std::string name, std::function<void(const cl::Device*, SimplePolygon&)> run): name(name), run(run) {
 	//Simply store all input parameters in the fields.
 }
 
-void SimplePolygonBenchmark::benchmark(const std::string device_identifier) const {
+void SimplePolygonBenchmark::benchmark(const cl::Device* device, const std::string device_identifier) const {
 	//Debug output for progress reporting goes through std::cerr.
 	std::cerr << name << ":   0%";
 
@@ -50,7 +50,7 @@ void SimplePolygonBenchmark::benchmark(const std::string device_identifier) cons
 		unsigned long end_time = 0;
 		for(unsigned int repeat = 0; repeat < repeats; repeat++) {
 			start_time = clock();
-			run(polygon); //Perform the benchmark!
+			run(device, polygon); //Perform the benchmark!
 			end_time = clock();
 			total_time += end_time - start_time;
 

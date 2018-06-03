@@ -10,6 +10,8 @@
 #define BENCHMARKER_H
 
 #include <string> //To return the device identifiers.
+#include <vector> //To store multiple benchmarks.
+#include "SimplePolygonBenchmark.h" //The benchmark runners.
 
 namespace cl {
 
@@ -32,6 +34,18 @@ namespace benchmarks {
  */
 class Benchmarker {
 public:
+	/*
+	 * Each of these benchmarks will be run on all devices.
+	 *
+	 * We initialize these once and reuse them for every device.
+	 */
+	static const std::vector<SimplePolygonBenchmark> device_benchmarks;
+
+	/*
+	 * Each of these benchmarks will be run on the host.
+	 */
+	static const std::vector<SimplePolygonBenchmark> host_benchmarks;
+
 	/*
 	 * The device that this benchmarker is measuring.
 	 *

@@ -12,10 +12,10 @@
 #include <functional> //To pass a function to run the benchmark with.
 #include <time.h> //For high-resolution timers to measure benchmarks.
 #include <vector> //To have multiple input sizes.
+#include "OpenCL.h" //For the OpenCL device to run the benchmark on.
 #include "SimplePolygon.h"
 
 namespace parallelogram {
-
 namespace benchmarks {
 
 /*
@@ -73,7 +73,7 @@ public:
 	 * is the function that we benchmark, so keep overhead to an absolute
 	 * minimum.
 	 */
-	SimplePolygonBenchmark(const std::string name, std::function<void(SimplePolygon&)> run);
+	SimplePolygonBenchmark(const std::string name, std::function<void(const cl::Device*, SimplePolygon&)> run);
 
 	/*
 	 * Starts benchmarking.
@@ -82,7 +82,7 @@ public:
 	 * \param device_identifier The device that the benchmarker is currently
 	 * running on. This is what the results are keyed at in the output.
 	 */
-	void benchmark(const std::string device_identifier) const;
+	void benchmark(const cl::Device* device, const std::string device_identifier) const;
 
 private:
 	/*
@@ -98,7 +98,7 @@ private:
 	/*
 	 * The function that runs one test with a pre-generated polygon.
 	 */
-	std::function<void(SimplePolygon&)> run;
+	std::function<void(const cl::Device*, SimplePolygon&)> run;
 };
 
 }
