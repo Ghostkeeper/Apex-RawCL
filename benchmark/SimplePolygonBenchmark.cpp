@@ -69,7 +69,7 @@ void SimplePolygonBenchmark::benchmark(const std::string device_identifier) cons
 	for(size_t size_index = 0; size_index < input_sizes.size(); size_index++) {
 		std::cout << name << "[std::make_pair(\"" << device_identifier << "\", " << input_sizes[size_index] << ")] = " << times[size_index] << ";" << std::endl;
 	}
-	std::cerr << "\b\b\b\b100%" << std::endl;
+	std::cerr << "\b\b\b\b100%" << std::endl; //Otherwise it ends up at 99% at the end.
 }
 
 }
