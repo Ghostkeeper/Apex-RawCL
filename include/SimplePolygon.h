@@ -10,11 +10,16 @@
 #define SIMPLEPOLYGON_H
 
 #include <vector> //To store the vertices.
-#include "Benchmarker.h" //To give the benchmarker access to private members to benchmark them.
 #include "OpenCL.h" //To communicate devices for OpenCL-enabled functions.
 #include "Point2.h" //The type to represent a vertex.
 
 namespace parallelogram {
+
+namespace benchmarks {
+
+class Benchmarker; //Forward declaration of Benchmarker so that the benchmarker can use SimplePolygons as well.
+
+}
 
 /*
  * Represents a simple polygon.
