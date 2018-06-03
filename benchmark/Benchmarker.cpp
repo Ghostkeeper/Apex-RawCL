@@ -18,6 +18,7 @@
 	#include <windows.h> //To detect device information.
 #endif
 #include "BenchmarkData.h" //To use the pre-existing benchmark data to generate interpolation vectors.
+#include "Benchmarker.h" //The header we're implementing.
 #include "OpenCL.h" //To get device information.
 #include "OpenCLDevices.h" //To find the identifiers of the devices the benchmark is performed on.
 #include "ParallelogramException.h"
