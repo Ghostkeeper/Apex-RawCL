@@ -7,6 +7,8 @@
  */
 
 #include <cmath> //To construct a regular n-gon.
+#include "Eigen/Core" //To perform calculations for interpolation between data points.
+#include "Eigen/QR" //To perform QR resolution for linear least squares.
 #include <iostream> //To output the benchmark results to cout and progress data to cerr.
 #include "Coordinate.h" //Creating vertices for polygons.
 #include "SimplePolygonBenchmark.h"
@@ -70,6 +72,49 @@ void SimplePolygonBenchmark::benchmark(const cl::Device* device, const std::stri
 		std::cout << name << "[std::make_pair(\"" << device_identifier << "\", " << input_sizes[size_index] << ")] = " << times[size_index] << ";" << std::endl;
 	}
 	std::cerr << "\b\b\b\b100%" << std::endl; //Otherwise it ends up at 99% at the end.
+}
+
+std::vector<double> SimplePolygonBenchmark::compute_interpolation() const {
+	load_benchmarks();
+
+	Eigen::Matrix<double, Eigen::Dynamic, 13> fit_data; //13 columns for the input size, our 6 device data points (some squared) and one constant offset. Just linear for now.
+	fit_data.resize(parallelogram::benchmarks::devices.size() * input_sizes.size(), 13);
+	Eigen::VectorXd time_data;
+	time_data.resize(parallelogram::benchmarks::devices.size() * input_sizes.size());
+	size_t entry_id = 0;
+	for(std::pair<std::string, std::unordered_map<std::string, cl_ulong>> device_metadata : parallelogram::benchmarks::devices) {
+		for(size_t size : input_sizes) {
+			fit_data(entry_id, 0) = device_metadata.second["device_type"];
+			fit_data(entry_id, 1) = device_metadata.second["compute_units"];
+			fit_data(entry_id, 2) = device_metadata.second["compute_units"] * device_metadata.second["compute_units"];
+			fit_data(entry_id, 3) = device_metadata.second["items_per_compute_unit"];
+			fit_data(entry_id, 4) = device_metadata.second["items_per_compute_unit"] * device_metadata.second["items_per_compute_unit"];
+			fit_data(entry_id, 5) = device_metadata.second["clock_frequency"];
+			fit_data(entry_id, 6) = device_metadata.second["global_memory"];
+			fit_data(entry_id, 7) = device_metadata.second["global_memory"] * device_metadata.second["global_memory"];
+			fit_data(entry_id, 8) = device_metadata.second["local_memory"];
+			fit_data(entry_id, 9) = device_metadata.second["local_memory"] * device_metadata.second["local_memory"];
+			fit_data(entry_id, 10) = size;
+			fit_data(entry_id, 11) = size * size;
+			fit_data(entry_id, 12) = 1.0; //Constant offset.
+			time_data(entry_id) = area_opencl_time[std::make_pair(device_metadata.first, size)];
+			entry_id++;
+		}
+	}
+	Eigen::VectorXd solution = fit_data.fullPivHouseholderQr().solve(time_data);
+	std::cout << "area_opencl_predictor[\"device_type\"] = " << solution(0) << ";" << std::endl;
+	std::cout << "area_opencl_predictor[\"compute_units\"] = " << solution(1) << ";" << std::endl;
+	std::cout << "area_opencl_predictor[\"compute_units^2\"] = " << solution(2) << ";" << std::endl;
+	std::cout << "area_opencl_predictor[\"items_per_compute_unit\"] = " << solution(3) << ";" << std::endl;
+	std::cout << "area_opencl_predictor[\"items_per_compute_unit^2\"] = " << solution(4) << ";" << std::endl;
+	std::cout << "area_opencl_predictor[\"clock_frequency\"] = " << solution(5) << ";" << std::endl;
+	std::cout << "area_opencl_predictor[\"global_memory\"] = " << solution(6) << ";" << std::endl;
+	std::cout << "area_opencl_predictor[\"global_memory^2\"] = " << solution(7) << ";" << std::endl;
+	std::cout << "area_opencl_predictor[\"local_memory\"] = " << solution(8) << ";" << std::endl;
+	std::cout << "area_opencl_predictor[\"local_memory^2\"] = " << solution(9) << ";" << std::endl;
+	std::cout << "area_opencl_predictor[\"size\"] = " << solution(10) << ";" << std::endl;
+	std::cout << "area_opencl_predictor[\"size^2\"] = " << solution(11) << ";" << std::endl;
+	std::cout << "area_opencl_predictor[\"constant\"] = " << solution(12) << ";" << std::endl;
 }
 
 }

@@ -12,6 +12,7 @@
 #include <functional> //To pass a function to run the benchmark with.
 #include <time.h> //For high-resolution timers to measure benchmarks.
 #include <vector> //To have multiple input sizes.
+#include "BenchmarkData.h" //To use the pre-existing benchmark data to generate interpolation vectors.
 #include "OpenCL.h" //For the OpenCL device to run the benchmark on.
 #include "SimplePolygon.h"
 
@@ -83,6 +84,15 @@ public:
 	 * running on. This is what the results are keyed at in the output.
 	 */
 	void benchmark(const cl::Device* device, const std::string device_identifier) const;
+
+	/*
+	 * Computes the interpolation parameters for this test.
+	 *
+	 * This results in a vector containing the multipliers of the polynomial
+	 * that approximates the computation time through the multi-dimensional
+	 * problem space.
+	 */
+	std::vector<double> compute_interpolation() const;
 
 private:
 	/*
