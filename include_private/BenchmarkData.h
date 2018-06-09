@@ -18,64 +18,58 @@ namespace parallelogram {
 namespace benchmarks {
 
 /*
- * Hash function that can be used to store triplet tuples as keys in mappings.
- *
- * This combines the three hashes of the triplet's values in a way that spreads
- * out the hashes reasonably to minimise collisions. It's not cryptographically
- * safe but it does the job fast.
+ * Holds the results of benchmarks so that they may be used to determine the
+ * best strategy for solving a task.
  */
-struct triplet_hash {
-	template<class First, class Second, class Third> size_t operator ()(const std::tuple<First, Second, Third>& triplet) const {
-		size_t first_hash = std::hash<First>{}(std::get<0>(triplet));
-		size_t second_hash = std::hash<Second>{}(std::get<1>(triplet));
-		size_t third_hash = std::hash<Third>{}(std::get<2>(triplet));
+class BenchmarkData {
+private:
+	/*
+	 * Hash function that can be used to store triplet tuples as keys in mappings.
+	 *
+	 * This combines the three hashes of the triplet's values in a way that spreads
+	 * out the hashes reasonably to minimise collisions. It's not cryptographically
+	 * safe but it does the job fast.
+	 */
+	struct triplet_hash {
+		template<class First, class Second, class Third> size_t operator ()(const std::tuple<First, Second, Third>& triplet) const;
+	};
 
-		second_hash = second_hash << 17 || second_hash >> (sizeof(size_t) * 8 - 17); //Rotate the second hash by 17 bits.
-		third_hash = third_hash << 6 || third_hash >> (sizeof(size_t) * 8 - 6); //Rotate the third hash by 6 bits.
-		return first_hash ^ second_hash ^ third_hash; //Combine all with xor.
-	}
+public:
+	/*
+	 * Stores for each benchmark test the time that it took to run that benchmark.
+	 *
+	 * This stores for each test (first argument of the tuple key) for each device
+	 * (second argument) and for each test size (third argument) how long it took to
+	 * run that test (the values of the dictionary).
+	 */
+	static std::unordered_map<std::tuple<std::string, std::string, size_t>, double, triplet_hash> bench_data;
+
+	/*
+	 * Statistics on the known devices.
+	 *
+	 * Each device that we've performed benchmarks for will have some statistics
+	 * logged. When the user has a device that we have precise benchmarks for, we
+	 * can give precise benchmark results that empirically determine which device is
+	 * faster to execute an algorithm with. But when the user has a device that is
+	 * not known to us, we can interpolate between the known devices using their
+	 * device statistics.
+	 */
+	static std::unordered_map<std::string, std::unordered_map<std::string, cl_ulong>> devices;
+
+	/*
+	 * Prediction vector for the time it'll take to compute area on an OpenCL
+	 * device.
+	 *
+	 * This predictor gets filled with several properties of OpenCL devices as keys.
+	 * If you then multiply the value of your OpenCL device for each of these keys
+	 * with the corresponding values and add them together, you'll arrive at a
+	 * prediction of how long the algorithm will take to execute based on a linear
+	 * least-squares fit of the known benchmarks.
+	 */
+	static std::unordered_map<std::string, double> area_opencl_predictor;
+
+	static void load_benchmarks();
 };
-
-/*
- * Stores for each benchmark test the time that it took to run that benchmark.
- *
- * This stores for each test (first argument of the tuple key) for each device
- * (second argument) and for each test size (third argument) how long it took to
- * run that test (the values of the dictionary).
- */
-std::unordered_map<std::tuple<std::string, std::string, size_t>, double, triplet_hash> bench_data;
-
-/*
- * Statistics on the known devices.
- *
- * Each device that we've performed benchmarks for will have some statistics
- * logged. When the user has a device that we have precise benchmarks for, we
- * can give precise benchmark results that empirically determine which device is
- * faster to execute an algorithm with. But when the user has a device that is
- * not known to us, we can interpolate between the known devices using their
- * device statistics.
- */
-std::unordered_map<std::string, std::unordered_map<std::string, cl_ulong>> devices;
-
-/*
- * Prediction vector for the time it'll take to compute area on an OpenCL
- * device.
- *
- * This predictor gets filled with several properties of OpenCL devices as keys.
- * If you then multiply the value of your OpenCL device for each of these keys
- * with the corresponding values and add them together, you'll arrive at a
- * prediction of how long the algorithm will take to execute based on a linear
- * least-squares fit of the known benchmarks.
- */
-std::unordered_map<std::string, double> area_opencl_predictor;
-
-void load_benchmarks() {
-	#include "benchmarks/GeForceGTX560.h"
-	#include "benchmarks/GeForceGTX660M.h"
-	#include "benchmarks/IntelI72600K.h"
-	#include "benchmarks/IntelI73610QM.h"
-	#include "benchmarks/IntelIvyBridgeMGT2.h"
-}
 
 }
 }
