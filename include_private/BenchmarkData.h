@@ -17,31 +17,33 @@
 namespace parallelogram {
 namespace benchmarks {
 
-struct pair_hash {
-	template<class First, class Second> size_t operator ()(const std::pair<First, Second>& pair) const {
-		size_t first_hash = std::hash<First>{}(pair.first);
-		size_t second_hash = std::hash<Second>{}(pair.second);
+/*
+ * Hash function that can be used to store triplet tuples as keys in mappings.
+ *
+ * This combines the three hashes of the triplet's values in a way that spreads
+ * out the hashes reasonably to minimise collisions. It's not cryptographically
+ * safe but it does the job fast.
+ */
+struct triplet_hash {
+	template<class First, class Second, class Third> size_t operator ()(const std::tuple<First, Second, Third>& triplet) const {
+		size_t first_hash = std::hash<First>{}(std::get<0>(triplet));
+		size_t second_hash = std::hash<Second>{}(std::get<1>(triplet));
+		size_t third_hash = std::hash<Third>{}(std::get<2>(triplet));
 
-		//Rotate the second hash by 17 bits, then do xor.
-		return first_hash ^ (second_hash << 17 || second_hash >> (sizeof(size_t) * 8 - 17));
+		second_hash = second_hash << 17 || second_hash >> (sizeof(size_t) * 8 - 17); //Rotate the second hash by 17 bits.
+		third_hash = third_hash << 6 || third_hash >> (sizeof(size_t) * 8 - 6); //Rotate the third hash by 6 bits.
+		return first_hash ^ second_hash ^ third_hash; //Combine all with xor.
 	}
 };
 
 /*
- * Stores the benchmark data for computing the area of a polygon on the host.
+ * Stores for each benchmark test the time that it took to run that benchmark.
  *
- * The keys of this map are pairs of the host CPU model and the problem size.
- * The values are the time it took to compute, in seconds.
+ * This stores for each test (first argument of the tuple key) for each device
+ * (second argument) and for each test size (third argument) how long it took to
+ * run that test (the values of the dictionary).
  */
-std::unordered_map<std::pair<std::string, size_t>, double, pair_hash> area_host_time;
-
-/*
- * Stores the benchmark data for computing the area of a polygon via OpenCL.
- *
- * The keys of this map are pairs of the OpenCL device model and the problem
- * size. The values are the time it took to compute, in seconds.
- */
-std::unordered_map<std::pair<std::string, size_t>, double, pair_hash> area_opencl_time;
+std::unordered_map<std::tuple<std::string, std::string, size_t>, double, triplet_hash> bench_data;
 
 /*
  * Statistics on the known devices.

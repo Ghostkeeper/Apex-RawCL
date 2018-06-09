@@ -12,7 +12,6 @@
 #include <functional> //To pass a function to run the benchmark with.
 #include <time.h> //For high-resolution timers to measure benchmarks.
 #include <vector> //To have multiple input sizes.
-#include "BenchmarkData.h" //To use the pre-existing benchmark data to generate interpolation vectors.
 #include "OpenCL.h" //For the OpenCL device to run the benchmark on.
 #include "SimplePolygon.h"
 
@@ -103,7 +102,7 @@ private:
 	 * retrieved during runtime when a call to a function needs to evaluate the
 	 * benchmark data in order to determine which implementation to call.
 	 */
-	const std::string name;
+	std::string name;
 
 	/*
 	 * The function that runs one test with a pre-generated polygon.

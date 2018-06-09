@@ -75,8 +75,6 @@ public:
 	 */
 	std::string identifier() const;
 
-	void compute_interpolation() const;
-
 	/*
 	 * Runs all benchmarks for the current device.
 	 */

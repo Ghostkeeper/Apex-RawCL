@@ -10,6 +10,7 @@
 #include "Eigen/Core" //To perform calculations for interpolation between data points.
 #include "Eigen/QR" //To perform QR resolution for linear least squares.
 #include <iostream> //To output the benchmark results to cout and progress data to cerr.
+#include "BenchmarkData.h" //To use the pre-existing benchmark data to generate interpolation vectors.
 #include "Coordinate.h" //Creating vertices for polygons.
 #include "SimplePolygonBenchmark.h"
 
@@ -69,7 +70,7 @@ void SimplePolygonBenchmark::benchmark(const cl::Device* device, const std::stri
 
 	//Output the results to cout.
 	for(size_t size_index = 0; size_index < input_sizes.size(); size_index++) {
-		std::cout << name << "[std::make_pair(\"" << device_identifier << "\", " << input_sizes[size_index] << ")] = " << times[size_index] << ";" << std::endl;
+		std::cout << "bench_data[std::make_tuple<std::string, std::string, size_t>(\"" << name << "\", \"" << device_identifier << "\", " << input_sizes[size_index] << ")] = " << times[size_index] << ";" << std::endl;
 	}
 	std::cerr << "\b\b\b\b100%" << std::endl; //Otherwise it ends up at 99% at the end.
 }
@@ -97,7 +98,7 @@ std::vector<double> SimplePolygonBenchmark::compute_interpolation() const {
 			fit_data(entry_id, 10) = size;
 			fit_data(entry_id, 11) = size * size;
 			fit_data(entry_id, 12) = 1.0; //Constant offset.
-			time_data(entry_id) = area_opencl_time[std::make_pair(device_metadata.first, size)];
+			time_data(entry_id) = bench_data[std::tuple<std::string, std::string, size_t>(name, device_metadata.first, size)];
 			entry_id++;
 		}
 	}
