@@ -103,19 +103,19 @@ std::vector<double> SimplePolygonBenchmark::compute_interpolation() const {
 		}
 	}
 	Eigen::VectorXd solution = fit_data.fullPivHouseholderQr().solve(time_data);
-	std::cout << "area_opencl_predictor[\"device_type\"] = " << solution(0) << ";" << std::endl;
-	std::cout << "area_opencl_predictor[\"compute_units\"] = " << solution(1) << ";" << std::endl;
-	std::cout << "area_opencl_predictor[\"compute_units^2\"] = " << solution(2) << ";" << std::endl;
-	std::cout << "area_opencl_predictor[\"items_per_compute_unit\"] = " << solution(3) << ";" << std::endl;
-	std::cout << "area_opencl_predictor[\"items_per_compute_unit^2\"] = " << solution(4) << ";" << std::endl;
-	std::cout << "area_opencl_predictor[\"clock_frequency\"] = " << solution(5) << ";" << std::endl;
-	std::cout << "area_opencl_predictor[\"global_memory\"] = " << solution(6) << ";" << std::endl;
-	std::cout << "area_opencl_predictor[\"global_memory^2\"] = " << solution(7) << ";" << std::endl;
-	std::cout << "area_opencl_predictor[\"local_memory\"] = " << solution(8) << ";" << std::endl;
-	std::cout << "area_opencl_predictor[\"local_memory^2\"] = " << solution(9) << ";" << std::endl;
-	std::cout << "area_opencl_predictor[\"size\"] = " << solution(10) << ";" << std::endl;
-	std::cout << "area_opencl_predictor[\"size^2\"] = " << solution(11) << ";" << std::endl;
-	std::cout << "area_opencl_predictor[\"constant\"] = " << solution(12) << ";" << std::endl;
+	std::cout << "predictor[std::tuple<std::string, std::string>(\"" << name << "\", \"device_type\")] = " << solution(0) << ";" << std::endl;
+	std::cout << "predictor[std::tuple<std::string, std::string>(\"" << name << "\", \"compute_units\")] = " << solution(1) << ";" << std::endl;
+	std::cout << "predictor[std::tuple<std::string, std::string>(\"" << name << "\", \"compute_units^2\")] = " << solution(2) << ";" << std::endl;
+	std::cout << "predictor[std::tuple<std::string, std::string>(\"" << name << "\", \"items_per_compute_unit\")] = " << solution(3) << ";" << std::endl;
+	std::cout << "predictor[std::tuple<std::string, std::string>(\"" << name << "\", \"items_per_compute_unit^2\")] = " << solution(4) << ";" << std::endl;
+	std::cout << "predictor[std::tuple<std::string, std::string>(\"" << name << "\", \"clock_frequency\")] = " << solution(5) << ";" << std::endl;
+	std::cout << "predictor[std::tuple<std::string, std::string>(\"" << name << "\", \"global_memory\")] = " << solution(6) << ";" << std::endl;
+	std::cout << "predictor[std::tuple<std::string, std::string>(\"" << name << "\", \"global_memory^2\")] = " << solution(7) << ";" << std::endl;
+	std::cout << "predictor[std::tuple<std::string, std::string>(\"" << name << "\", \"local_memory\")] = " << solution(8) << ";" << std::endl;
+	std::cout << "predictor[std::tuple<std::string, std::string>(\"" << name << "\", \"local_memory^2\")] = " << solution(9) << ";" << std::endl;
+	std::cout << "predictor[std::tuple<std::string, std::string>(\"" << name << "\", \"size\")] = " << solution(10) << ";" << std::endl;
+	std::cout << "predictor[std::tuple<std::string, std::string>(\"" << name << "\", \"size^2\")] = " << solution(11) << ";" << std::endl;
+	std::cout << "predictor[std::tuple<std::string, std::string>(\"" << name << "\", \"constant\")] = " << solution(12) << ";" << std::endl;
 }
 
 }

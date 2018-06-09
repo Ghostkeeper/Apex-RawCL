@@ -11,7 +11,7 @@
 
 #include <string> //To use as device identifiers.
 #include <unordered_map> //Data structure that holds the benchmark data.
-#include <utility> //For std::pair, for using multiple keys in a mapping.
+#include <utility> //For std::pair and std::tuple, for using multiple keys in a mapping.
 #include "OpenCL.h" //For cl_ulong, the data type for device data.
 
 namespace parallelogram {
@@ -24,14 +24,34 @@ namespace benchmarks {
 class BenchmarkData {
 private:
 	/*
-	 * Hash function that can be used to store triplet tuples as keys in mappings.
+	 * Hash function that can be used to store triplet tuples as keys in
+	 * mappings.
 	 *
-	 * This combines the three hashes of the triplet's values in a way that spreads
-	 * out the hashes reasonably to minimise collisions. It's not cryptographically
-	 * safe but it does the job fast.
+	 * This combines the three hashes of the triplet's values in a way that
+	 * spreads out the hashes reasonably to minimise collisions. It's not
+	 * cryptographically safe but it does the job fast.
 	 */
 	struct triplet_hash {
+		/*
+		 * Create the hash.
+		 * \param triplet The tuple to create the hash for.
+		 */
 		template<class First, class Second, class Third> size_t operator ()(const std::tuple<First, Second, Third>& triplet) const;
+	};
+
+	/*
+	 * Hash function that can be used to store pairs as keys in mappings.
+	 *
+	 * This combines the two hashes of the pair's values in a way that spreads
+	 * out the hashes reasonably to minimise collisions. It's not
+	 * cryptographically safe but it does the job fast.
+	 */
+	struct pair_hash {
+		/*
+		 * Create the hash.
+		 * \param pair The pair to create the hash for.
+		 */
+		template<class First, class Second> size_t operator ()(const std::pair<First, Second>& pair) const;
 	};
 
 public:
@@ -66,7 +86,7 @@ public:
 	 * prediction of how long the algorithm will take to execute based on a linear
 	 * least-squares fit of the known benchmarks.
 	 */
-	static std::unordered_map<std::string, double> area_opencl_predictor;
+	static std::unordered_map<std::pair<std::string, std::string>, double, pair_hash> predictor;
 
 	/*
 	 * Loads the data of all the benchmarks.

@@ -11,7 +11,7 @@
 namespace parallelogram {
 namespace benchmarks {
 
-template<class First, class Second, class Third> size_t BenchmarkData::triplet_hash::operator ()(const std::tuple<First,Second,Third>& triplet) const {
+template<class First, class Second, class Third> size_t BenchmarkData::triplet_hash::operator ()(const std::tuple<First, Second, Third>& triplet) const {
 	size_t first_hash = std::hash<First>{}(std::get<0>(triplet));
 	size_t second_hash = std::hash<Second>{}(std::get<1>(triplet));
 	size_t third_hash = std::hash<Third>{}(std::get<2>(triplet));
@@ -19,6 +19,14 @@ template<class First, class Second, class Third> size_t BenchmarkData::triplet_h
 	second_hash = second_hash << 17 || second_hash >> (sizeof(size_t) * 8 - 17); //Rotate the second hash by 17 bits.
 	third_hash = third_hash << 6 || third_hash >> (sizeof(size_t) * 8 - 6); //Rotate the third hash by 6 bits.
 	return first_hash ^ second_hash ^ third_hash; //Combine all with xor.
+}
+
+template<class First, class Second> size_t BenchmarkData::pair_hash::operator ()(const std::pair<First, Second>& pair) const {
+	size_t first_hash = std::hash<First>{}(pair.first);
+	size_t second_hash = std::hash<Second>{}(pair.second);
+
+	second_hash = second_hash << 17 || second_hash >> (sizeof(size_t) * 8 - 17); //Rotate the second hash by 17 bits.
+	return first_hash ^ second_hash; //Combine the rotated hash with xor.
 }
 
 void BenchmarkData::load_benchmarks() {
@@ -33,7 +41,7 @@ std::unordered_map<std::tuple<std::string, std::string, size_t>, double, Benchma
 
 std::unordered_map<std::string, std::unordered_map<std::string, cl_ulong>> BenchmarkData::devices;
 
-std::unordered_map<std::string, double> BenchmarkData::area_opencl_predictor;
+std::unordered_map<std::pair<std::string, std::string>, double, BenchmarkData::pair_hash> BenchmarkData::predictor;
 
 }
 }
