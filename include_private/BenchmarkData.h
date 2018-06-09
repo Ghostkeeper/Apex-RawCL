@@ -68,6 +68,12 @@ public:
 	 */
 	static std::unordered_map<std::string, double> area_opencl_predictor;
 
+	/*
+	 * Loads the data of all the benchmarks.
+	 *
+	 * After running this, the bench_data map contains the data of all
+	 * benchmarks included with this application.
+	 */
 	static void load_benchmarks();
 };
 
