@@ -212,5 +212,12 @@ int main(int argc, char** argv) {
 	benchmarker.device_statistics();
 	benchmarker.run();
 
+	for(const parallelogram::benchmarks::SimplePolygonBenchmark& benchmark : parallelogram::benchmarks::Benchmarker::device_benchmarks) {
+		benchmark.compute_interpolation();
+	}
+	for(const parallelogram::benchmarks::SimplePolygonBenchmark& benchmark : parallelogram::benchmarks::Benchmarker::host_benchmarks) {
+		benchmark.compute_interpolation();
+	}
+
 	return 0;
 }
