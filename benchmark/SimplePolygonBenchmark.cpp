@@ -75,7 +75,7 @@ void SimplePolygonBenchmark::benchmark(const cl::Device* device, const std::stri
 	std::cerr << "\b\b\b\b100%" << std::endl; //Otherwise it ends up at 99% at the end.
 }
 
-std::vector<double> SimplePolygonBenchmark::compute_interpolation() const {
+void SimplePolygonBenchmark::compute_interpolation() const {
 	BenchmarkData::load_benchmarks();
 
 	Eigen::Matrix<double, Eigen::Dynamic, 13> fit_data; //13 columns for the input size, our 6 device data points (some squared) and one constant offset. Just linear for now.

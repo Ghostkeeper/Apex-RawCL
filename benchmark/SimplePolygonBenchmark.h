@@ -91,7 +91,7 @@ public:
 	 * that approximates the computation time through the multi-dimensional
 	 * problem space.
 	 */
-	std::vector<double> compute_interpolation() const;
+	void compute_interpolation() const;
 
 private:
 	/*
