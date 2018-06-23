@@ -16,6 +16,9 @@ namespace parallelogram {
 
 /*
  * A complex polygon.
+ *
+ * Complex polygons represent shapes that can be represented using vertices and
+ * straight line segments between them.
  */
 class Polygon : private std::vector<SimplePolygon> {
 public:
