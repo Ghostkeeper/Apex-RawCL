@@ -28,8 +28,8 @@ OpenCLDevices::OpenCLDevices() {
 		std::vector<cl::Device> cpus;
 		platform.getDevices(CL_DEVICE_TYPE_CPU, &cpus);
 		for(cl::Device& cpu : cpus) {
-			cpu_devices.push_back(cpu);
 			all_devices.push_back(cpu);
+			cpu_devices.push_back(&all_devices.back());
 
 			std::string identifier;
 			if(cpu.getInfo(CL_DEVICE_NAME, &identifier) != CL_SUCCESS) {
@@ -42,8 +42,8 @@ OpenCLDevices::OpenCLDevices() {
 		std::vector<cl::Device> gpus;
 		platform.getDevices(CL_DEVICE_TYPE_GPU, &gpus);
 		for(cl::Device& gpu : gpus) {
-			gpu_devices.push_back(gpu);
 			all_devices.push_back(gpu);
+			gpu_devices.push_back(&all_devices.back());
 
 			std::string identifier;
 			if(gpu.getInfo(CL_DEVICE_NAME, &identifier) != CL_SUCCESS) {
@@ -67,11 +67,11 @@ const std::vector<cl::Device>& OpenCLDevices::getAll() const {
 	return all_devices;
 }
 
-const std::vector<cl::Device>& OpenCLDevices::getCPUs() const {
+const std::vector<cl::Device*>& OpenCLDevices::getCPUs() const {
 	return cpu_devices;
 }
 
-const std::vector<cl::Device>& OpenCLDevices::getGPUs() const {
+const std::vector<cl::Device*>& OpenCLDevices::getGPUs() const {
 	return gpu_devices;
 }
 

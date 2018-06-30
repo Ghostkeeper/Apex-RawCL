@@ -22,9 +22,9 @@ area_t SimplePolygon::area() const {
 		OpenCLDevices& device_manager = OpenCLDevices::getInstance();
 		cl::Device device;
 		if(!device_manager.getGPUs().empty()) {
-			device = device_manager.getGPUs()[0];
+			device = *device_manager.getGPUs()[0];
 		} else if(!device_manager.getCPUs().empty()) {
-			device = device_manager.getCPUs()[0];
+			device = *device_manager.getCPUs()[0];
 		} else {
 			throw ParallelogramException("No supported OpenCL devices!");
 		}

@@ -9,6 +9,7 @@
 #ifndef OPENCLDEVICES_H
 #define OPENCLDEVICES_H
 
+#include <functional> //For reference_wrapper to make the cpu_devices and gpu_devices link to all_devices.
 #include <unordered_map> //To store the device identifier for each device.
 #include <vector> //To store the platforms.
 #include "OpenCL.h" //To call the OpenCL API.
@@ -42,13 +43,17 @@ public:
 
 	/*
 	 * Get the CPU devices available to compute with.
+	 *
+	 * These pointers are referencing to the array returned by getAll().
 	 */
-	const std::vector<cl::Device>& getCPUs() const;
+	const std::vector<cl::Device*>& getCPUs() const;
 
 	/*
 	 * Get the GPU devices available to compute with.
+	 *
+	 * These pointers are referencing to the array returned by getAll().
 	 */
-	const std::vector<cl::Device>& getGPUs() const;
+	const std::vector<cl::Device*>& getGPUs() const;
 
 	/*
 	 * Get a device identifier, chosen by the manufacturer of the device.
@@ -99,7 +104,7 @@ protected:
 	 * a CPU-type device, for instance if the task is not well parallelised, or
 	 * requires lots of branching.
 	 */
-	std::vector<cl::Device> cpu_devices;
+	std::vector<cl::Device*> cpu_devices;
 
 	/*
 	 * All detected GPU-type devices.
@@ -108,7 +113,7 @@ protected:
 	 * a GPU-type device, for instance if the task parallelises well and doesn't
 	 * have a lot of branching.
 	 */
-	std::vector<cl::Device> gpu_devices;
+	std::vector<cl::Device*> gpu_devices;
 
 	/*
 	 * For each device as well as the host (nullptr) device, an identifier
