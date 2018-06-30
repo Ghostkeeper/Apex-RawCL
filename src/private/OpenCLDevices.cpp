@@ -37,7 +37,7 @@ OpenCLDevices::OpenCLDevices() {
 			} else {
 				trim(identifier);
 			}
-			identifiers[&cpu] = identifier;
+			identifiers[&all_devices.back()] = identifier;
 		}
 		std::vector<cl::Device> gpus;
 		platform.getDevices(CL_DEVICE_TYPE_GPU, &gpus);
@@ -51,7 +51,7 @@ OpenCLDevices::OpenCLDevices() {
 			} else {
 				trim(identifier);
 			}
-			identifiers[&gpu] = identifier;
+			identifiers[&all_devices.back()] = identifier;
 		}
 	}
 
