@@ -9,8 +9,7 @@
 #ifndef BENCHMARKS_H
 #define BENCHMARKS_H
 
-#include "OpenCL.h" //To call the OpenCL API.
-#include "BenchmarkData.h" //File that groups the actual benchmark data in compile time.
+#include "OpenCL.h" //For cl::Device.
 
 namespace parallelogram {
 namespace benchmarks { //Contain all benchmark data and the ``choose`` function in a sub-namespace.
@@ -56,8 +55,21 @@ namespace benchmarks { //Contain all benchmark data and the ``choose`` function 
  *
  * The result of the choice is a tuple containing the chosen function's unique
  * identifier, and the chosen most salient OpenCL device it needs to run on.
+ * \param options The names of the algorithms that we can choose from.
+ * \param problem_size A multi-dimensional problem size. Some problems may just
+ * have a fixed size (for example the size of the polygon that the algorithm is
+ * applied to), but some may have multiple sizes that the algorithm depends on,
+ * such as when multiple polygons are involved. The number of dimensions in the
+ * problem size must be the same for all algorithms to choose among, and must be
+ * the same for those algorithms every time. If an algorithm accepts an
+ * arbitrary number of polygons, for instance, the problem size may not be the
+ * individual vertex counts of each of the polygons, but must be either the
+ * total count of vertices in all of them or the number of polygons.
+ * \return A pair consisting of:
+ * * The name of the most efficient algorithm to run in this case.
+ * * The device to run this algorithm on, or nullptr if it should be the host.
  */
-std::pair<std::string, cl::Device*> choose(std::vector<std::string> options, std::vector<long> problem_size);
+std::pair<std::string, cl::Device*> choose(const std::vector<std::string> options, const std::vector<size_t> problem_size);
 
 }
 }
