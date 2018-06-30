@@ -27,17 +27,35 @@ OpenCLDevices::OpenCLDevices() {
 	for(const cl::Platform& platform : platforms) {
 		std::vector<cl::Device> cpus;
 		platform.getDevices(CL_DEVICE_TYPE_CPU, &cpus);
-		for(const cl::Device& cpu : cpus) {
+		for(cl::Device& cpu : cpus) {
 			cpu_devices.push_back(cpu);
 			all_devices.push_back(cpu);
+
+			std::string identifier;
+			if(cpu.getInfo(CL_DEVICE_NAME, &identifier) != CL_SUCCESS) {
+				identifier = "unknown";
+			} else {
+				trim(identifier);
+			}
+			identifiers[&cpu] = identifier;
 		}
 		std::vector<cl::Device> gpus;
 		platform.getDevices(CL_DEVICE_TYPE_GPU, &gpus);
-		for(const cl::Device& gpu : gpus) {
+		for(cl::Device& gpu : gpus) {
 			gpu_devices.push_back(gpu);
 			all_devices.push_back(gpu);
+
+			std::string identifier;
+			if(gpu.getInfo(CL_DEVICE_NAME, &identifier) != CL_SUCCESS) {
+				identifier = "unknown";
+			} else {
+				trim(identifier);
+			}
+			identifiers[&gpu] = identifier;
 		}
 	}
+
+	identifiers[nullptr] = getHostIdentifier();
 }
 
 OpenCLDevices& OpenCLDevices::getInstance() {
