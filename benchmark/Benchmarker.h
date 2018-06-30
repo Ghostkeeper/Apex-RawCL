@@ -71,14 +71,10 @@ public:
 	void device_statistics() const;
 
 	/*
-	 * Returns a string identifying the device.
-	 */
-	std::string identifier() const;
-
-	/*
 	 * Runs all benchmarks for the current device.
 	 */
 	void run() const;
+
 private:
 	/*
 	 * Trims whitespace at the beginning and ending of a string.

@@ -40,7 +40,7 @@ const std::vector<SimplePolygonBenchmark> Benchmarker::host_benchmarks = {
 Benchmarker::Benchmarker(const cl::Device* device) : device(device) { }
 
 void Benchmarker::device_statistics() const {
-	std::string identity = identifier();
+	std::string identity = OpenCLDevices::getInstance().getIdentifier(device);
 	if(device) {
 		const std::vector<std::pair<std::string, cl_device_info>> information_to_request = { //Which info to request.
 			{"device_type", CL_DEVICE_TYPE},
@@ -131,54 +131,15 @@ void Benchmarker::device_statistics() const {
 	}
 }
 
-std::string Benchmarker::identifier() const {
-	if(device) {
-		std::string result;
-		if(device->getInfo(CL_DEVICE_NAME, &result) != CL_SUCCESS) {
-			return std::string("unknown");
-		}
-		trim(result);
-		return result;
-	} else { //Querying the host.
-		std::ifstream cpuinfo("/proc/cpuinfo"); //First try /proc/cpuinfo on Linux systems.
-		if(cpuinfo.is_open()) { //Yes, is Linux!
-			std::string line;
-			while(std::getline(cpuinfo, line)) {
-				if(line.find("model name") == 0) { //Parse this line.
-					const size_t start_pos = line.find(":") + 2;
-					line = line.substr(start_pos);
-					trim(line);
-					return line;
-				}
-			}
-			return "unknown";
-		}
-#ifdef _WIN32
-		HKEY hkey = 0;
-		if(RegOpenKeyEx(HKEY_LOCAL_MACHINE, TEXT("HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0"), 0, KEY_READ, &hkey) != ERROR_SUCCESS) { //Read the first core of the first processor. Assuming that's the host.
-			return "unknown"; //Could not open registry key.
-		}
-		DWORD buffer_size = 255;
-		char value[255];
-		if(RegQueryValueEx(hkey, TEXT("ProcessorNameString"), NULL, NULL, (LPBYTE)value, &buffer_size) != ERROR_SUCCESS) {
-			RegCloseKey(hkey);
-			return "unknown"; //Could not read registry value.
-		}
-		RegCloseKey(hkey);
-		return value;
-#endif
-		return "unknown"; //Unknown operating system. I don't know how to query.
-	}
-}
-
 void Benchmarker::run() const {
+	OpenCLDevices& devices = OpenCLDevices::getInstance();
 	if(device) {
 		for(const SimplePolygonBenchmark& benchmark : device_benchmarks) {
-			benchmark.benchmark(device, identifier());
+			benchmark.benchmark(device, devices.getIdentifier(device));
 		}
 	} else {
 		for(const SimplePolygonBenchmark& benchmark : host_benchmarks) {
-			benchmark.benchmark(nullptr, identifier());
+			benchmark.benchmark(nullptr, devices.getIdentifier(nullptr));
 		}
 	}
 }
@@ -202,7 +163,7 @@ int main(int argc, char** argv) {
 	parallelogram::OpenCLDevices& devices = parallelogram::OpenCLDevices::getInstance();
 	for(const cl::Device& device : devices.getAll()) {
 		parallelogram::benchmarks::Benchmarker benchmarker(&device);
-		std::cerr << "Benchmarking: " << benchmarker.identifier() << std::endl;
+		std::cerr << "Benchmarking: " << devices.getIdentifier(&device) << std::endl;
 		benchmarker.device_statistics();
 		benchmarker.run();
 	}

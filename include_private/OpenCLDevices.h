@@ -9,6 +9,7 @@
 #ifndef OPENCLDEVICES_H
 #define OPENCLDEVICES_H
 
+#include <unordered_map> //To store the device identifier for each device.
 #include <vector> //To store the platforms.
 #include "OpenCL.h" //To call the OpenCL API.
 
@@ -48,6 +49,23 @@ public:
 	 * Get the GPU devices available to compute with.
 	 */
 	const std::vector<cl::Device>& getGPUs() const;
+
+	/*
+	 * Get a device identifier, chosen by the manufacturer of the device.
+	 *
+	 * Devices should be uniquely identified by this identifier, but the string
+	 * is chosen by the manufacturer so conflicts are theoretically possible. In
+	 * practice, manufacturers tend to put their brand name in this identifier,
+	 * so it should not occur.
+	 *
+	 * The identifier should be a human-readable string.
+	 *
+	 * If we can't detect the device identifier, ``unknown`` will be returned.
+	 * \param device The device to get the identifier of. Use nullptr to obtain
+	 * the identifier of the host CPU device.
+	 * \return A device identifier for the specified device.
+	 */
+	const std::string getIdentifier(const cl::Device* device) const;
 
 	/*
 	 * Since this is a singleton, the copy constructor should not be
@@ -91,6 +109,33 @@ protected:
 	 * have a lot of branching.
 	 */
 	std::vector<cl::Device> gpu_devices;
+
+	/*
+	 * For each device as well as the host (nullptr) device, an identifier
+	 * to identify the device with.
+	 */
+	std::unordered_map<const cl::Device*, std::string> identifiers;
+
+private:
+	/*
+	 * Gets the identifier of the host CPU.
+	 *
+	 * This is an operation that is quite dependant on the operating system.
+	 * Currently, the following operating systems are supported:
+	 * * Linux, using /proc/cpuinfo.
+	 * * Windows, using the HARDWARE/DESCRIPTION/System/CentralProcessor/0
+	 *   registry key.
+	 */
+	std::string getHostIdentifier() const;
+
+	/*
+	 * Trims whitespace at the beginning and ending of a string.
+	 *
+	 * This is a helper function to canonicalise CPU and GPU names. The string
+	 * is modified in-place.
+	 * \return The input but with the whitespace at the start and end removed.
+	 */
+	inline void trim(std::string& input) const;
 };
 
 }
