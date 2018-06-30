@@ -135,11 +135,11 @@ void Benchmarker::run() const {
 	OpenCLDevices& devices = OpenCLDevices::getInstance();
 	if(device) {
 		for(const SimplePolygonBenchmark& benchmark : device_benchmarks) {
-			benchmark.benchmark(device, devices.getIdentifier(device));
+			benchmark.benchmark(device);
 		}
 	} else {
 		for(const SimplePolygonBenchmark& benchmark : host_benchmarks) {
-			benchmark.benchmark(nullptr, devices.getIdentifier(nullptr));
+			benchmark.benchmark(nullptr);
 		}
 	}
 }

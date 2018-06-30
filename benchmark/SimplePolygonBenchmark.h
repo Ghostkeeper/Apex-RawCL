@@ -76,13 +76,12 @@ public:
 	SimplePolygonBenchmark(const std::string name, std::function<void(const cl::Device*, SimplePolygon&)> run);
 
 	/*
-	 * Starts benchmarking.
+	 * Starts benchmarking for a specific device.
 	 *
 	 * The results of the benchmark are output to cout.
-	 * \param device_identifier The device that the benchmarker is currently
-	 * running on. This is what the results are keyed at in the output.
+	 * \param device The device that the benchmarker must be run on.
 	 */
-	void benchmark(const cl::Device* device, const std::string device_identifier) const;
+	void benchmark(const cl::Device* device) const;
 
 	/*
 	 * Computes the interpolation parameters for this test.

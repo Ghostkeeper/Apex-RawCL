@@ -12,6 +12,7 @@
 #include <iostream> //To output the benchmark results to cout and progress data to cerr.
 #include "BenchmarkData.h" //To use the pre-existing benchmark data to generate interpolation vectors.
 #include "Coordinate.h" //Creating vertices for polygons.
+#include "OpenCLDevices.h" //To get device identifiers to store the results properly.
 #include "SimplePolygonBenchmark.h"
 
 #define PI 3.14159265358979
@@ -34,7 +35,7 @@ SimplePolygonBenchmark::SimplePolygonBenchmark(const std::string name, std::func
 	//Simply store all input parameters in the fields.
 }
 
-void SimplePolygonBenchmark::benchmark(const cl::Device* device, const std::string device_identifier) const {
+void SimplePolygonBenchmark::benchmark(const cl::Device* device) const {
 	//Debug output for progress reporting goes through std::cerr.
 	std::cerr << name << ":   0%";
 
@@ -69,6 +70,7 @@ void SimplePolygonBenchmark::benchmark(const cl::Device* device, const std::stri
 	}
 
 	//Output the results to cout.
+	const std::string device_identifier = OpenCLDevices::getInstance().getIdentifier(device);
 	for(size_t size_index = 0; size_index < input_sizes.size(); size_index++) {
 		std::cout << "bench_data[std::tuple<std::string, std::string, size_t>(\"" << name << "\", \"" << device_identifier << "\", " << input_sizes[size_index] << ")] = " << times[size_index] << ";" << std::endl;
 	}
