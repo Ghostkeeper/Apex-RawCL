@@ -21,38 +21,39 @@ OpenCLDevices::OpenCLDevices() {
 	std::vector<cl::Platform> platforms;
 	cl::Platform::get(&platforms);
 
-	/* We're only really interested in the devices.
+	/* We're only really interested in the devices, so concatenate them all.
 	 * Platforms may have additional limitations (e.g. if they are remote and
-	 * the bandwidth is limited. But this is not modelled here. */
+	 * the bandwidth is limited). But this is not modelled here. */
 	for(const cl::Platform& platform : platforms) {
-		std::vector<cl::Device> cpus;
-		platform.getDevices(CL_DEVICE_TYPE_CPU, &cpus);
-		for(cl::Device& cpu : cpus) {
-			all_devices.push_back(cpu);
-			cpu_devices.push_back(&all_devices.back());
-
-			std::string identifier;
-			if(cpu.getInfo(CL_DEVICE_NAME, &identifier) != CL_SUCCESS) {
-				identifier = "unknown";
-			} else {
-				trim(identifier);
-			}
-			identifiers[&all_devices.back()] = identifier;
+		std::vector<cl::Device> devices;
+		if(platform.getDevices(CL_DEVICE_TYPE_CPU | CL_DEVICE_TYPE_GPU, &devices) != CL_SUCCESS) {
+			continue; //No devices found, most likely.
 		}
-		std::vector<cl::Device> gpus;
-		platform.getDevices(CL_DEVICE_TYPE_GPU, &gpus);
-		for(cl::Device& gpu : gpus) {
-			all_devices.push_back(gpu);
-			gpu_devices.push_back(&all_devices.back());
-
-			std::string identifier;
-			if(gpu.getInfo(CL_DEVICE_NAME, &identifier) != CL_SUCCESS) {
-				identifier = "unknown";
-			} else {
-				trim(identifier);
-			}
-			identifiers[&all_devices.back()] = identifier;
+		all_devices.reserve(all_devices.size() + devices.size());
+		for(cl::Device& device : devices) {
+			all_devices.push_back(device);
 		}
+	}
+	//Split the devices list into CPUs vs. GPUs.
+	for(std::vector<cl::Device>::iterator device = all_devices.begin(); device != all_devices.end(); device++) {
+		cl_device_type device_type;
+		if(device->getInfo(CL_DEVICE_TYPE, &device_type) != CL_SUCCESS) {
+			all_devices.erase(device); //Invalidates all pointers after the device, but luckily this is still allowed until we put the devices in the CPUs or GPUs lists.
+			continue; //Skip this device. It seems to be broken.
+		}
+		if(device_type == CL_DEVICE_TYPE_CPU) {
+			cpu_devices.push_back(&*device);
+		} else {
+			gpu_devices.push_back(&*device);
+		}
+		//Get the identifier of the device while we're at it.
+		std::string identifier;
+		if(device->getInfo(CL_DEVICE_NAME, &identifier) != CL_SUCCESS) {
+			identifier = "unknown";
+		} else {
+			trim(identifier);
+		}
+		identifiers[&*device] = identifier;
 	}
 
 	identifiers[nullptr] = getHostIdentifier();
