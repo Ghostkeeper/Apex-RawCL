@@ -19,12 +19,12 @@ SimplePolygon::SimplePolygon() {
 area_t SimplePolygon::area() const {
 	//TODO: Use benchmarks to choose between implementations.
 	if(size() >= 60000) { //For now, use a measured threshold from a single benchmark. About here the GPU starts to become faster.
-		OpenCLDevices& devices = OpenCLDevices::getInstance();
+		OpenCLDevices& device_manager = OpenCLDevices::getInstance();
 		cl::Device device;
-		if(!devices.getGPUs().empty()) {
-			device = devices.getGPUs()[0];
-		} else if(!devices.getCPUs().empty()) {
-			device = devices.getCPUs()[0];
+		if(!device_manager.getGPUs().empty()) {
+			device = device_manager.getGPUs()[0];
+		} else if(!device_manager.getCPUs().empty()) {
+			device = device_manager.getCPUs()[0];
 		} else {
 			throw ParallelogramException("No supported OpenCL devices!");
 		}
