@@ -144,7 +144,7 @@ std::string Benchmarker::identifier() const {
 		if(cpuinfo.is_open()) { //Yes, is Linux!
 			std::string line;
 			while(std::getline(cpuinfo, line)) {
-				if(line.find("model name") == 0) {
+				if(line.find("model name") == 0) { //Parse this line.
 					const size_t start_pos = line.find(":") + 2;
 					line = line.substr(start_pos);
 					trim(line);
@@ -155,7 +155,7 @@ std::string Benchmarker::identifier() const {
 		}
 #ifdef _WIN32
 		HKEY hkey = 0;
-		if(RegOpenKeyEx(HKEY_LOCAL_MACHINE, TEXT("HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0"), 0, KEY_READ, &hkey) != ERROR_SUCCESS) {
+		if(RegOpenKeyEx(HKEY_LOCAL_MACHINE, TEXT("HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0"), 0, KEY_READ, &hkey) != ERROR_SUCCESS) { //Read the first core of the first processor. Assuming that's the host.
 			return "unknown"; //Could not open registry key.
 		}
 		DWORD buffer_size = 255;
