@@ -56,11 +56,12 @@ private:
 
 public:
 	/*
-	 * Stores for each benchmark test the time that it took to run that benchmark.
+	 * Stores for each benchmark test the time that it took to run that
+	 * benchmark.
 	 *
-	 * This stores for each test (first argument of the tuple key) for each device
-	 * (second argument) and for each test size (third argument) how long it took to
-	 * run that test (the values of the dictionary).
+	 * This stores for each test (first argument of the tuple key) for each
+	 * device (second argument) and for each test size (third argument) how long
+	 * it took to run that test (the values of the dictionary).
 	 */
 	static std::unordered_map<std::tuple<std::string, std::string, size_t>, double, triplet_hash> bench_data;
 
@@ -68,11 +69,11 @@ public:
 	 * Statistics on the known devices.
 	 *
 	 * Each device that we've performed benchmarks for will have some statistics
-	 * logged. When the user has a device that we have precise benchmarks for, we
-	 * can give precise benchmark results that empirically determine which device is
-	 * faster to execute an algorithm with. But when the user has a device that is
-	 * not known to us, we can interpolate between the known devices using their
-	 * device statistics.
+	 * logged. When the user has a device that we have precise benchmarks for,
+	 * we can give precise benchmark results that empirically determine which
+	 * device is faster to execute an algorithm with. But when the user has a
+	 * device that is not known to us, we can interpolate between the known
+	 * devices using their device statistics.
 	 */
 	static std::unordered_map<std::string, std::unordered_map<std::string, cl_ulong>> devices;
 
@@ -80,11 +81,11 @@ public:
 	 * Prediction vector for the time it'll take to compute area on an OpenCL
 	 * device.
 	 *
-	 * This predictor gets filled with several properties of OpenCL devices as keys.
-	 * If you then multiply the value of your OpenCL device for each of these keys
-	 * with the corresponding values and add them together, you'll arrive at a
-	 * prediction of how long the algorithm will take to execute based on a linear
-	 * least-squares fit of the known benchmarks.
+	 * This predictor gets filled with several properties of OpenCL devices as
+	 * keys. If you then multiply the value of your OpenCL device for each of
+	 * these keys with the corresponding values and add them together, you'll
+	 * arrive at a prediction of how long the algorithm will take to execute
+	 * based on a linear least-squares fit of the known benchmarks.
 	 */
 	static std::unordered_map<std::pair<std::string, std::string>, double, pair_hash> predictor;
 
