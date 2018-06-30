@@ -35,6 +35,7 @@ void BenchmarkData::load_benchmarks() {
 	#include "benchmarks/IntelI72600K.h"
 	#include "benchmarks/IntelI73610QM.h"
 	#include "benchmarks/IntelIvyBridgeMGT2.h"
+	#include "benchmarks/Predictor.h"
 }
 
 std::unordered_map<std::tuple<std::string, std::string, size_t>, double, BenchmarkData::triplet_hash> BenchmarkData::bench_data;
