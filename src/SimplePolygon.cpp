@@ -6,6 +6,7 @@
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
  */
 
+#include "Benchmarks.h" //To choose the preferred algorithm and device.
 #include "OpenCLDevices.h" //To choose the preferred device.
 #include "ParallelogramException.h"
 #include "SimplePolygon.h"
@@ -17,20 +18,13 @@ SimplePolygon::SimplePolygon() {
 }
 
 area_t SimplePolygon::area() const {
-	//TODO: Use benchmarks to choose between implementations.
-	if(size() >= 60000) { //For now, use a measured threshold from a single benchmark. About here the GPU starts to become faster.
-		OpenCLDevices& device_manager = OpenCLDevices::getInstance();
-		cl::Device device;
-		if(!device_manager.getGPUs().empty()) {
-			device = *device_manager.getGPUs()[0];
-		} else if(!device_manager.getCPUs().empty()) {
-			device = *device_manager.getCPUs()[0];
-		} else {
-			throw ParallelogramException("No supported OpenCL devices!");
-		}
-		return area_opencl(device);
-	} else {
+	const std::vector<std::string> options = {"area_opencl", "area_host"};
+	const std::vector<size_t> problem_size = {size()};
+	const std::pair<std::string, const cl::Device*> best_choice = benchmarks::choose(options, problem_size);
+	if(best_choice.first == "area_host" || !best_choice.second) {
 		return area_host();
+	} else {
+		return area_opencl(*best_choice.second);
 	}
 }
 
