@@ -22,37 +22,9 @@ namespace benchmarks {
  * best strategy for solving a task.
  */
 class BenchmarkData {
-private:
-	/*
-	 * Hash function that can be used to store triplet tuples as keys in
-	 * mappings.
-	 *
-	 * This combines the three hashes of the triplet's values in a way that
-	 * spreads out the hashes reasonably to minimise collisions. It's not
-	 * cryptographically safe but it does the job fast.
-	 */
-	struct triplet_hash {
-		/*
-		 * Create the hash.
-		 * \param triplet The tuple to create the hash for.
-		 */
-		template<class First, class Second, class Third> size_t operator ()(const std::tuple<First, Second, Third>& triplet) const;
-	};
-
-	/*
-	 * Hash function that can be used to store pairs as keys in mappings.
-	 *
-	 * This combines the two hashes of the pair's values in a way that spreads
-	 * out the hashes reasonably to minimise collisions. It's not
-	 * cryptographically safe but it does the job fast.
-	 */
-	struct pair_hash {
-		/*
-		 * Create the hash.
-		 * \param pair The pair to create the hash for.
-		 */
-		template<class First, class Second> size_t operator ()(const std::pair<First, Second>& pair) const;
-	};
+private: //Forward declaration because we need these types in our public types.
+	struct triplet_hash;
+	struct pair_hash;
 
 public:
 	/*
@@ -100,6 +72,38 @@ public:
 	 * benchmarks included with this application.
 	 */
 	static void load_benchmarks();
+
+private:
+	/*
+	 * Hash function that can be used to store triplet tuples as keys in
+	 * mappings.
+	 *
+	 * This combines the three hashes of the triplet's values in a way that
+	 * spreads out the hashes reasonably to minimise collisions. It's not
+	 * cryptographically safe but it does the job fast.
+	 */
+	struct triplet_hash {
+		/*
+		 * Create the hash.
+		 * \param triplet The tuple to create the hash for.
+		 */
+		template<class First, class Second, class Third> size_t operator ()(const std::tuple<First, Second, Third>& triplet) const;
+	};
+
+	/*
+	 * Hash function that can be used to store pairs as keys in mappings.
+	 *
+	 * This combines the two hashes of the pair's values in a way that spreads
+	 * out the hashes reasonably to minimise collisions. It's not
+	 * cryptographically safe but it does the job fast.
+	 */
+	struct pair_hash {
+		/*
+		 * Create the hash.
+		 * \param pair The pair to create the hash for.
+		 */
+		template<class First, class Second> size_t operator ()(const std::pair<First, Second>& pair) const;
+	};
 };
 
 }
