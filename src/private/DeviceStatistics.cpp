@@ -111,6 +111,11 @@ DeviceStatistics::DeviceStatistics(const cl::Device* device) {
 				:"a"(0x80000005) //CPUID instruction to get Extended Set 5: L1 cache.
 			);
 			local_memory = (ecx & 0xFF) * 1024;
+#else
+			//Unknown.
+			compute_units = 1;
+			clock_frequency = 0;
+			local_memory = 0;
 #endif
 		}
 	}
