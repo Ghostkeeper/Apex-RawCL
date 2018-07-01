@@ -32,24 +32,25 @@ std::pair<std::string, const cl::Device*> choose(const std::vector<std::string> 
 	double best_time = std::numeric_limits<double>::infinity();
 	std::string best_option = "";
 	const cl::Device* best_device = nullptr;
+	const BenchmarkData& data = BenchmarkData::getInstance();
 	for(std::string option : options) {
 		for(const cl::Device* device : available_devices) {
 			DeviceStatistics statistics = device_manager.getStatistics(device);
-			if(BenchmarkData::predictor.find(std::pair<std::string, std::string>(option, "constant")) == BenchmarkData::predictor.end()) {
+			if(data.predictor.find(std::pair<std::string, std::string>(option, "constant")) == data.predictor.end()) {
 				continue; //No data on this algorithm.
 			}
-			double prediction = BenchmarkData::predictor[std::pair<std::string, std::string>(option, "constant")];
-			prediction += BenchmarkData::predictor[std::pair<std::string, std::string>(option, "compute_units")] * statistics.compute_units;
-			prediction += BenchmarkData::predictor[std::pair<std::string, std::string>(option, "compute_units^2")] * statistics.compute_units * statistics.compute_units;
-			prediction += BenchmarkData::predictor[std::pair<std::string, std::string>(option, "items_per_compute_unit")] * statistics.items_per_compute_unit;
-			prediction += BenchmarkData::predictor[std::pair<std::string, std::string>(option, "items_per_compute_unit^2")] * statistics.items_per_compute_unit * statistics.items_per_compute_unit;
-			prediction += BenchmarkData::predictor[std::pair<std::string, std::string>(option, "clock_frequency")] * statistics.clock_frequency;
-			prediction += BenchmarkData::predictor[std::pair<std::string, std::string>(option, "global_memory")] * statistics.global_memory;
-			prediction += BenchmarkData::predictor[std::pair<std::string, std::string>(option, "global_memory^2")] * statistics.global_memory * statistics.global_memory;
-			prediction += BenchmarkData::predictor[std::pair<std::string, std::string>(option, "local_memory")] * statistics.local_memory;
-			prediction += BenchmarkData::predictor[std::pair<std::string, std::string>(option, "local_memory^2")] * statistics.local_memory * statistics.local_memory;
-			prediction += BenchmarkData::predictor[std::pair<std::string, std::string>(option, "size")] * problem_size[0]; //TODO: Allow for problem sizes of higher dimensions.
-			prediction += BenchmarkData::predictor[std::pair<std::string, std::string>(option, "size^2")] * problem_size[0] * problem_size[0];
+			double prediction = data.predictor.find(std::pair<std::string, std::string>(option, "constant"))->second;
+			prediction += data.predictor.find(std::pair<std::string, std::string>(option, "compute_units"))->second * statistics.compute_units;
+			prediction += data.predictor.find(std::pair<std::string, std::string>(option, "compute_units^2"))->second * statistics.compute_units * statistics.compute_units;
+			prediction += data.predictor.find(std::pair<std::string, std::string>(option, "items_per_compute_unit"))->second * statistics.items_per_compute_unit;
+			prediction += data.predictor.find(std::pair<std::string, std::string>(option, "items_per_compute_unit^2"))->second * statistics.items_per_compute_unit * statistics.items_per_compute_unit;
+			prediction += data.predictor.find(std::pair<std::string, std::string>(option, "clock_frequency"))->second * statistics.clock_frequency;
+			prediction += data.predictor.find(std::pair<std::string, std::string>(option, "global_memory"))->second * statistics.global_memory;
+			prediction += data.predictor.find(std::pair<std::string, std::string>(option, "global_memory^2"))->second * statistics.global_memory * statistics.global_memory;
+			prediction += data.predictor.find(std::pair<std::string, std::string>(option, "local_memory"))->second * statistics.local_memory;
+			prediction += data.predictor.find(std::pair<std::string, std::string>(option, "local_memory^2"))->second * statistics.local_memory * statistics.local_memory;
+			prediction += data.predictor.find(std::pair<std::string, std::string>(option, "size"))->second * problem_size[0]; //TODO: Allow for problem sizes of higher dimensions.
+			prediction += data.predictor.find(std::pair<std::string, std::string>(option, "size^2"))->second * problem_size[0] * problem_size[0];
 			if(prediction < best_time) {
 				best_time = prediction;
 				best_option = option;

@@ -22,57 +22,6 @@ namespace benchmarks {
  * best strategy for solving a task.
  */
 class BenchmarkData {
-private: //Forward declaration because we need these types in our public types.
-	struct triplet_hash;
-	struct pair_hash;
-
-public:
-	/*
-	 * Stores for each benchmark test the time that it took to run that
-	 * benchmark.
-	 *
-	 * This stores for each test (first argument of the tuple key) for each
-	 * device (second argument) and for each test size (third argument) how long
-	 * it took to run that test (the values of the dictionary).
-	 */
-	static std::unordered_map<std::tuple<std::string, std::string, size_t>, double, triplet_hash> bench_data;
-
-	/*
-	 * Statistics on the known devices.
-	 *
-	 * Each device that we've performed benchmarks for will have some statistics
-	 * logged. When the user has a device that we have precise benchmarks for,
-	 * we can give precise benchmark results that empirically determine which
-	 * device is faster to execute an algorithm with. But when the user has a
-	 * device that is not known to us, we can interpolate between the known
-	 * devices using their device statistics.
-	 */
-	static std::unordered_map<std::string, std::unordered_map<std::string, cl_ulong>> devices;
-
-	/*
-	 * Prediction vector for the time it'll take to compute area on an OpenCL
-	 * device.
-	 *
-	 * This predictor gets filled with several properties of OpenCL devices as
-	 * keys. If you then multiply the value of your OpenCL device for each of
-	 * these keys with the corresponding values and add them together, you'll
-	 * arrive at a prediction of how long the algorithm will take to execute
-	 * based on a linear least-squares fit of the known benchmarks.
-	 *
-	 * The key in this map is a pair consisting of, firstly, the algorithm that
-	 * it predicts the runtime of, and secondly the property of the device that
-	 * it scales with. The values are the scaling differentials.
-	 */
-	static std::unordered_map<std::pair<std::string, std::string>, double, pair_hash> predictor;
-
-	/*
-	 * Loads the data of all the benchmarks.
-	 *
-	 * After running this, the bench_data map contains the data of all
-	 * benchmarks included with this application.
-	 */
-	static void load_benchmarks();
-
 private:
 	/*
 	 * Hash function that can be used to store triplet tuples as keys in
@@ -104,6 +53,73 @@ private:
 		 */
 		template<class First, class Second> size_t operator ()(const std::pair<First, Second>& pair) const;
 	};
+
+public:
+	/*
+	 * Stores for each benchmark test the time that it took to run that
+	 * benchmark.
+	 *
+	 * This stores for each test (first argument of the tuple key) for each
+	 * device (second argument) and for each test size (third argument) how long
+	 * it took to run that test (the values of the dictionary).
+	 */
+	std::unordered_map<std::tuple<std::string, std::string, size_t>, double, triplet_hash> bench_data;
+
+	/*
+	 * Statistics on the known devices.
+	 *
+	 * Each device that we've performed benchmarks for will have some statistics
+	 * logged. When the user has a device that we have precise benchmarks for,
+	 * we can give precise benchmark results that empirically determine which
+	 * device is faster to execute an algorithm with. But when the user has a
+	 * device that is not known to us, we can interpolate between the known
+	 * devices using their device statistics.
+	 */
+	std::unordered_map<std::string, std::unordered_map<std::string, cl_ulong>> devices;
+
+	/*
+	 * Prediction vector for the time it'll take to compute area on an OpenCL
+	 * device.
+	 *
+	 * This predictor gets filled with several properties of OpenCL devices as
+	 * keys. If you then multiply the value of your OpenCL device for each of
+	 * these keys with the corresponding values and add them together, you'll
+	 * arrive at a prediction of how long the algorithm will take to execute
+	 * based on a linear least-squares fit of the known benchmarks.
+	 *
+	 * The key in this map is a pair consisting of, firstly, the algorithm that
+	 * it predicts the runtime of, and secondly the property of the device that
+	 * it scales with. The values are the scaling differentials.
+	 */
+	std::unordered_map<std::pair<std::string, std::string>, double, pair_hash> predictor;
+
+	/*
+	 * Statically gets the instance of this class.
+	 *
+	 * Since this class is a singleton, there can be only one instance of this
+	 * class.
+	 *
+	 * Upon first calling this function, the benchmark data will be loaded.
+	 */
+	static BenchmarkData& getInstance();
+
+	/*
+	 * Loads the data of all the benchmarks.
+	 *
+	 * After running this, the bench_data map contains the data of all
+	 * benchmarks included with this application.
+	 */
+	static void load_benchmarks();
+
+private:
+	/*
+	 * Constructs the singleton instance of BenchmarkData.
+	 *
+	 * This loads the pre-generated benchmark data. After running this, the
+	 * fields of the class are filled with data of all benchmarks included with
+	 * this application.
+	 */
+	BenchmarkData();
 };
 
 }

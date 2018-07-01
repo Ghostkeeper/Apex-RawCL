@@ -29,7 +29,12 @@ template<class First, class Second> size_t BenchmarkData::pair_hash::operator ()
 	return first_hash ^ second_hash; //Combine the rotated hash with xor.
 }
 
-void BenchmarkData::load_benchmarks() {
+BenchmarkData& BenchmarkData::getInstance() {
+	static BenchmarkData instance; //Constructs using the default constructor.
+	return instance;
+}
+
+BenchmarkData::BenchmarkData() {
 	#include "benchmarks/GeForceGTX560.h"
 	#include "benchmarks/GeForceGTX660M.h"
 	#include "benchmarks/IntelI72600K.h"
@@ -37,12 +42,6 @@ void BenchmarkData::load_benchmarks() {
 	#include "benchmarks/IntelIvyBridgeMGT2.h"
 	#include "benchmarks/Predictor.h"
 }
-
-std::unordered_map<std::tuple<std::string, std::string, size_t>, double, BenchmarkData::triplet_hash> BenchmarkData::bench_data;
-
-std::unordered_map<std::string, std::unordered_map<std::string, cl_ulong>> BenchmarkData::devices;
-
-std::unordered_map<std::pair<std::string, std::string>, double, BenchmarkData::pair_hash> BenchmarkData::predictor;
 
 }
 }

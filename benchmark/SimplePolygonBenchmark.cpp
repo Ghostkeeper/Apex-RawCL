@@ -78,14 +78,14 @@ void SimplePolygonBenchmark::benchmark(const cl::Device* device) const {
 }
 
 void SimplePolygonBenchmark::compute_interpolation() const {
-	BenchmarkData::load_benchmarks();
+	BenchmarkData& data = BenchmarkData::getInstance();
 
 	Eigen::Matrix<double, Eigen::Dynamic, 13> fit_data; //13 columns for the input size, our 6 device data points (some squared) and one constant offset. Just linear for now.
-	fit_data.resize(BenchmarkData::devices.size() * input_sizes.size(), 13);
+	fit_data.resize(data.devices.size() * input_sizes.size(), 13);
 	Eigen::VectorXd time_data;
-	time_data.resize(BenchmarkData::devices.size() * input_sizes.size());
+	time_data.resize(data.devices.size() * input_sizes.size());
 	size_t entry_id = 0;
-	for(std::pair<std::string, std::unordered_map<std::string, cl_ulong>> device_metadata : BenchmarkData::devices) {
+	for(std::pair<std::string, std::unordered_map<std::string, cl_ulong>> device_metadata : data.devices) {
 		for(size_t size : input_sizes) {
 			fit_data(entry_id, 0) = device_metadata.second["device_type"];
 			fit_data(entry_id, 1) = device_metadata.second["compute_units"];
@@ -100,7 +100,7 @@ void SimplePolygonBenchmark::compute_interpolation() const {
 			fit_data(entry_id, 10) = size;
 			fit_data(entry_id, 11) = size * size;
 			fit_data(entry_id, 12) = 1.0; //Constant offset.
-			time_data(entry_id) = BenchmarkData::bench_data[std::tuple<std::string, std::string, size_t>(name, device_metadata.first, size)];
+			time_data(entry_id) = data.bench_data[std::tuple<std::string, std::string, size_t>(name, device_metadata.first, size)];
 			entry_id++;
 		}
 	}
