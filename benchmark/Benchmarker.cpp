@@ -75,6 +75,9 @@ void Benchmarker::device_statistics() const {
 					trim(line);
 					std::cout << "devices[\"" << identity << "\"][\"compute_units\"] = " << line << "u;" << std::endl;
 					found_siblings = true;
+					if(found_cpu_mhz && found_cache_size) {
+						break; //Found everything.
+					}
 				}
 				if(!found_cpu_mhz && line.find("cpu MHz") == 0) {
 					line = line.substr(start_pos);
@@ -84,6 +87,9 @@ void Benchmarker::device_statistics() const {
 					trim(line);
 					std::cout << "devices[\"" << identity << "\"][\"clock_frequency\"] = " << line << "u;" << std::endl;
 					found_cpu_mhz = true;
+					if(found_siblings && found_cache_size) {
+						break; //Found everything.
+					}
 				}
 				if(!found_cache_size && line.find("cache size") == 0) {
 					const size_t kb_pos = line.find("KB");
@@ -96,6 +102,9 @@ void Benchmarker::device_statistics() const {
 					local_memory_size *= 1024; //Because the file lists kilobytes.
 					std::cout << "devices[\"" << identity << "\"][\"local_memory\"] = " << local_memory_size << "u;" << std::endl;
 					found_cache_size = true;
+					if(found_siblings && found_cpu_mhz) {
+						break; //Found everything.
+					}
 				}
 			}
 		} else {
