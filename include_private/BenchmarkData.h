@@ -86,6 +86,10 @@ public:
 	 * these keys with the corresponding values and add them together, you'll
 	 * arrive at a prediction of how long the algorithm will take to execute
 	 * based on a linear least-squares fit of the known benchmarks.
+	 *
+	 * The key in this map is a pair consisting of, firstly, the algorithm that
+	 * it predicts the runtime of, and secondly the property of the device that
+	 * it scales with. The values are the scaling differentials.
 	 */
 	static std::unordered_map<std::pair<std::string, std::string>, double, pair_hash> predictor;
 
