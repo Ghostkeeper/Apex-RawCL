@@ -26,6 +26,7 @@ set(sources
 
 	src/private/BenchmarkData.cpp
 	src/private/Benchmarks.cpp
+	src/private/DeviceStatistics.cpp
 	src/private/OpenCLContext.cpp
 	src/private/OpenCLDevices.cpp
 )

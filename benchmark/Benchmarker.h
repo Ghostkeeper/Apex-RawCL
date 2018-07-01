@@ -74,16 +74,6 @@ public:
 	 * Runs all benchmarks for the current device.
 	 */
 	void run() const;
-
-private:
-	/*
-	 * Trims whitespace at the beginning and ending of a string.
-	 *
-	 * This is a helper function to canonicalise CPU and GPU names. The string
-	 * is modified in-place.
-	 * \return The input but with the whitespace at the start and end removed.
-	 */
-	inline void trim(std::string& input) const;
 };
 
 }
