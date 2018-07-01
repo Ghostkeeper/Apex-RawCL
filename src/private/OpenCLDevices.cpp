@@ -46,7 +46,7 @@ OpenCLDevices::OpenCLDevices() {
 		} else {
 			gpu_devices.push_back(&*device);
 		}
-		//Get the identifier of the device while we're at it.
+		//Get the identifier and statistics of the device while we're at it.
 		std::string identifier;
 		if(device->getInfo(CL_DEVICE_NAME, &identifier) != CL_SUCCESS) {
 			identifier = "unknown";
@@ -54,9 +54,11 @@ OpenCLDevices::OpenCLDevices() {
 			trim(identifier);
 		}
 		identifiers[&*device] = identifier;
+		statistics.insert(std::unordered_map<const cl::Device*, DeviceStatistics>::value_type(&*device, DeviceStatistics(&*device)));
 	}
 
 	identifiers[nullptr] = getHostIdentifier();
+	statistics.insert(std::unordered_map<const cl::Device*, DeviceStatistics>::value_type(nullptr, DeviceStatistics(nullptr)));
 }
 
 OpenCLDevices& OpenCLDevices::getInstance() {
@@ -76,8 +78,12 @@ const std::vector<cl::Device*>& OpenCLDevices::getGPUs() const {
 	return gpu_devices;
 }
 
-const std::string OpenCLDevices::getIdentifier(const cl::Device* device) const {
+const std::string& OpenCLDevices::getIdentifier(const cl::Device* device) const {
 	return identifiers.find(device)->second;
+}
+
+const DeviceStatistics& OpenCLDevices::getStatistics(const cl::Device* device) const {
+	return statistics.find(device)->second;
 }
 
 std::string OpenCLDevices::getHostIdentifier() const {

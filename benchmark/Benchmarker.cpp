@@ -36,7 +36,7 @@ Benchmarker::Benchmarker(const cl::Device* device) : device(device) { }
 
 void Benchmarker::device_statistics() const {
 	const std::string identity = OpenCLDevices::getInstance().getIdentifier(device);
-	const DeviceStatistics statistics = DeviceStatistics(device);
+	const DeviceStatistics statistics = OpenCLDevices::getInstance().getStatistics(device);
 	std::cout << "devices[\"" << identity << "\"][\"device_type\"] = " << statistics.device_type << "u;" << std::endl;
 	std::cout << "devices[\"" << identity << "\"][\"compute_units\"] = " << statistics.compute_units << "u;" << std::endl;
 	std::cout << "devices[\"" << identity << "\"][\"items_per_compute_unit\"] = " << statistics.items_per_compute_unit << "u;" << std::endl;

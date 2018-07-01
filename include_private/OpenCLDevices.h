@@ -12,6 +12,7 @@
 #include <functional> //For reference_wrapper to make the cpu_devices and gpu_devices link to all_devices.
 #include <unordered_map> //To store the device identifier for each device.
 #include <vector> //To store the platforms.
+#include "DeviceStatistics.h" //To get the statistics on the devices.
 #include "OpenCL.h" //To call the OpenCL API.
 
 namespace parallelogram {
@@ -70,7 +71,19 @@ public:
 	 * the identifier of the host CPU device.
 	 * \return A device identifier for the specified device.
 	 */
-	const std::string getIdentifier(const cl::Device* device) const;
+	const std::string& getIdentifier(const cl::Device* device) const;
+
+	/*
+	 * Gets the device statistics of the specified device.
+	 *
+	 * These device statistics are obtained when the devices are first detected
+	 * and then cached.
+	 * \param The device to get the statistics of. Use nullptr to obtain the
+	 * statistics of the host CPU device.
+	 * \return A ``DeviceStatistics`` object containing some statistics on the
+	 * specified device.
+	 */
+	const DeviceStatistics& getStatistics(const cl::Device* device) const;
 
 	/*
 	 * Since this is a singleton, the copy constructor should not be
@@ -120,6 +133,13 @@ protected:
 	 * to identify the device with.
 	 */
 	std::unordered_map<const cl::Device*, std::string> identifiers;
+
+	/*
+	 * For each device as well as the host (nullptr) device, some relevant
+	 * statistics about the device that could indicate what sort of performance
+	 * to expect from the device.
+	 */
+	std::unordered_map<const cl::Device*, DeviceStatistics> statistics;
 
 private:
 	/*
