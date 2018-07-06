@@ -68,6 +68,7 @@ if(BUILD_TESTS)
 	set(test_names
 		TestPolygonArea
 		TestPolygonTranslate
+		TestSimplePolygonArea
 		private.TestOpenCLDevices
 	)
 
