@@ -11,7 +11,7 @@
 
 #include <cmath> //To construct a circle.
 #include <gtest/gtest.h>
-#include "Polygon.h"
+#include "Polygon.h" //To construct polygons to test on.
 
 #define PI 3.14159265358979
 
@@ -156,6 +156,10 @@ TEST_F(TestPolygonArea, SquareWithHole) {
 	EXPECT_EQ(100 * 100 - 20 * 20, square_with_hole.area());
 }
 
+/*
+ * Tests the area of a complex polygon that is nested: A square with a hole in
+ * the middle and a peg in the middle of the hole.
+ */
 TEST_F(TestPolygonArea, NestedSquares) {
 	Polygon nested_squares; //100 by 100 square with a 50 by 50 hole in the middle with a 10 by 10 peg in the hole.
 	nested_squares.emplace_back();
@@ -177,6 +181,9 @@ TEST_F(TestPolygonArea, NestedSquares) {
 	EXPECT_EQ(100 * 100 - 50 * 50 + 10 * 10, nested_squares.area());
 }
 
+/*
+ * Tests the area of a self-intersecting polygon.
+ */
 TEST_F(TestPolygonArea, SelfIntersecting) {
 	Polygon hourglass; //An hourglass figure where two of the edges of the polygon intersect.
 	hourglass.emplace_back();
@@ -248,6 +255,9 @@ TEST_F(TestPolygonArea, Circle) {
 
 }
 
+/*
+ * Run all tests.
+ */
 int main(int argc, char* argv[]) {
 	testing::InitGoogleTest(&argc, argv);
 	return RUN_ALL_TESTS();
