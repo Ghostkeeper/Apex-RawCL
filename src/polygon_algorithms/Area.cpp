@@ -10,9 +10,8 @@
 #include "OpenCL.h" //To call the OpenCL API.
 
 #include "OpenCLContext.h" //To get the OpenCL context to run on.
-#include "OpenCLDevices.h" //To get the OpenCL devices we can run on.
 #include "ParallelogramException.h"
-#include "SimplePolygon.h" //We're implementing functions from this header.
+#include "SimplePolygon.h" //The class we're implementing.
 
 namespace parallelogram {
 
