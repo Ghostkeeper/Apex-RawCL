@@ -104,13 +104,53 @@ DeviceStatistics::DeviceStatistics(const cl::Device* device) {
 			RegCloseKey(hkey);
 			clock_frequency = clock_frequency_word;
 
-			unsigned int ecx = 0;
-			__asm__ volatile(
-				"cpuid;"
-				:"=c"(ecx)
-				:"a"(0x80000005) //CPUID instruction to get Extended Set 5: L1 cache.
+			uint32_t l1_cache_size = 0; //Try AMD first, because it's the simplest.
+			asm volatile(
+				"cpuid;" : "=c"(l1_cache_size) : "a"(0x80000005) //CPUID instruction to get Extended Set 5: L1 cache.
 			);
-			local_memory = (ecx & 0xFF) * 1024;
+			l1_cache_size = (l1_cache_size & 0xFF) * 1024;
+			if(l1_cache_size == 0) { //Not AMD. Try Intel.
+				//Intel lists their cache sizes under the ecx register of 0x4.
+				//It has an arbitrary number of subleafs for an arbitrary number of caches.
+				//We have to keep trying until we find the correct one.
+				for(unsigned int cache_index = 0; cache_index < 255; cache_index++) { //Keep reading CPUID entries until we find the L1 cache (limit of 255 for safety).
+					uint32_t eax;
+					uint32_t ebx;
+					uint32_t ecx;
+					asm volatile (
+						"cpuid;" : "=a"(eax), "=b"(ebx), "=c"(ecx) : "a"(0x4), "c"(cache_index) : "edx"
+					);
+					/* The EAX register looks like this. Unmarked bits are irrelevant.
+					 * 00011100000000000100000100100001
+					 *                                ^ Intel identifier.
+					 *                             ^^^ Cache sharing strategy identifier.
+					 *                         ^^^ Cache level. Lower tends to be faster and smaller.
+					 *                       ^ Associativity flag.
+					 *       ^^^^^^^^^^^^ Thread count.
+					 * EBX contains the line size and partition count.
+					 * ECX contains the line count.
+					 */
+					if(eax & 0x1F == 0) { //No more cache levels to read. We couldn't find it.
+						break;
+					}
+					const uint32_t level = ((eax >> 5) & 7) - 1;
+					if(level == 0) { //Found the level that we're searching for!
+						const uint32_t threads = (eax >> 14) & 0xFFF;
+						if(threads == 0) { //Thread count is invalid.
+							break;
+						}
+						const uint32_t associativity = (eax & 0x200) ? 0xFF : ((ebx >> 22) + 1);
+						const uint32_t line_size = (ebx & 0xFFF) + 1;
+						const uint32_t line_partitions = ((ebx >> 12) & 0x3FF) + 1;
+						l1_cache_size = ((associativity < 0xFF) ? (ecx + 1) * associativity : (ecx + 1)) * line_size * line_partitions / threads;
+						if((eax & 0xF) == 3) { //Cache is unified with other cores. Then only half of the cache is actually ours.
+							l1_cache_size /= 2;
+						}
+						break;
+					}
+				}
+			}
+			local_memory = l1_cache_size;
 #else
 			//Unknown.
 			compute_units = 1;
