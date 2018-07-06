@@ -11,7 +11,6 @@
 
 #include <cmath> //To construct a circle.
 #include <gtest/gtest.h>
-#include <Coordinate.h> //Constructing vertices for the polygon.
 #include "Polygon.h"
 
 #define PI 3.14159265358979
