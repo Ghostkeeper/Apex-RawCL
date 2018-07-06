@@ -142,11 +142,11 @@ DeviceStatistics::DeviceStatistics(const cl::Device* device) {
 						const uint32_t associativity = (eax & 0x200) ? 0xFF : ((ebx >> 22) + 1);
 						const uint32_t line_size = (ebx & 0xFFF) + 1;
 						const uint32_t line_partitions = ((ebx >> 12) & 0x3FF) + 1;
-						l1_cache_size = ((associativity < 0xFF) ? (ecx + 1) * associativity : (ecx + 1)) * line_size * line_partitions / threads;
+						uint32_t this_cache_size = ((associativity < 0xFF) ? (ecx + 1) * associativity : (ecx + 1)) * line_size * line_partitions / threads;
 						if((eax & 0xF) == 3) { //Cache is unified with other cores. Then only half of the cache is actually ours.
-							l1_cache_size /= 2;
+							this_cache_size /= 2;
 						}
-						break;
+						l1_cache_size += this_cache_size;
 					}
 				}
 			}
