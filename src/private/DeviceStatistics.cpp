@@ -6,7 +6,6 @@
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
  */
 
-#include <iostream> //DEBUG!
 #include <algorithm> //For find_if to trim whitespace.
 #include <functional> //For cref to trim whitespace.
 #include <fstream> //To read CPU information on Linux.
