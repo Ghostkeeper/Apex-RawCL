@@ -135,10 +135,7 @@ DeviceStatistics::DeviceStatistics(const cl::Device* device) {
 					}
 					const uint32_t level = ((eax >> 5) & 7) - 1;
 					if(level == 0) { //Found the level that we're searching for!
-						const uint32_t threads = (eax >> 14) & 0xFFF;
-						if(threads == 0) { //Thread count is invalid.
-							break;
-						}
+						const uint32_t threads = ((eax >> 14) & 0xFFF) + 1;
 						const uint32_t associativity = (eax & 0x200) ? 0xFF : ((ebx >> 22) + 1);
 						const uint32_t line_size = (ebx & 0xFFF) + 1;
 						const uint32_t line_partitions = ((ebx >> 12) & 0x3FF) + 1;
