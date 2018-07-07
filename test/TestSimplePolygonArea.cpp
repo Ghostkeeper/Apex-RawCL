@@ -105,7 +105,11 @@ TEST_F(TestSimplePolygonArea, Square1000NegativeY) {
  */
 TEST_F(TestSimplePolygonArea, Square1000AroundOrigin) {
 	square_1000.translate(-512, -512);
-	EXPECT_EQ(1000 * 1000, square_1000.area());
+	groper.tested_simple_polygon = &square_1000;
+	for(const cl::Device& device : devices) {
+		EXPECT_EQ(1000 * 1000, groper.area_opencl(device));
+	}
+	EXPECT_EQ(1000 * 1000, groper.area_host());
 }
 
 /*
