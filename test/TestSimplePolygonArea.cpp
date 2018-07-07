@@ -158,7 +158,11 @@ TEST_F(TestSimplePolygonArea, Concave) {
 	concave.emplace_back(110, 10);
 	concave.emplace_back(60, 110);
 
-	EXPECT_EQ(100 * 100 / 2 - 100 * 50 / 2, concave.area());
+	groper.tested_simple_polygon = &concave;
+	for(const cl::Device& device : devices) {
+		EXPECT_EQ(100 * 100 / 2 - 100 * 50 / 2, groper.area_opencl(device));
+	}
+	EXPECT_EQ(100 * 100 / 2 - 100 * 50 / 2, groper.area_host());
 }
 
 /*
