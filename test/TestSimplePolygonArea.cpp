@@ -66,7 +66,11 @@ TEST_F(TestSimplePolygonArea, InitialAreaIsZero) {
  * Test the area of a 1000 by 1000 square.
  */
 TEST_F(TestSimplePolygonArea, Square1000) {
-	EXPECT_EQ(1000 * 1000, square_1000.area());
+	groper.tested_simple_polygon = &square_1000;
+	for(const cl::Device& device : devices) {
+		EXPECT_EQ(1000 * 1000, groper.area_opencl(device));
+	}
+	EXPECT_EQ(1000 * 1000, groper.area_host());
 }
 
 /*
