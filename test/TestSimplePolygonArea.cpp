@@ -210,7 +210,11 @@ TEST_F(TestSimplePolygonArea, Line) {
 	line.emplace_back(0, 0);
 	line.emplace_back(100, 100);
 
-	EXPECT_EQ(0, line.area()); //Lines have no area.
+	groper.tested_simple_polygon = &line;
+	for(const cl::Device& device : devices) {
+		EXPECT_EQ(0, groper.area_opencl(device));
+	}
+	EXPECT_EQ(0, groper.area_host()); //Lines have no area.
 }
 
 /*
