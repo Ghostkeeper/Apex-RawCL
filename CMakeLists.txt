@@ -71,6 +71,9 @@ if(BUILD_TESTS)
 		TestSimplePolygonArea
 		private.TestOpenCLDevices
 	)
+	set(test_helpers
+		test/SimplePolygonTestGroper.cpp
+	)
 
 	#To make sure that the tests are built before running them, add the building of these tests as an additional test.
 	add_custom_target(build_all_tests)
@@ -84,8 +87,9 @@ if(BUILD_TESTS)
 
 		find_package(Threads REQUIRED)
 
-		add_executable(${test_case} test/${test_path}.cpp)
+		add_executable(${test_case} test/${test_path}.cpp ${test_helpers})
 		target_link_libraries(${test_case} ${GOOGLETEST_BOTH_LIBRARIES} ${OpenCL_LIBRARIES} Threads::Threads parallelogram) #Link with GoogleTest, OpenCL and the main Parallelogram library.
+		target_include_directories(${test_case} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test)
 		target_include_directories(${test_case} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/benchmark)
 		target_include_directories(${test_case} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include_private) #This test has access to private headers.
 		target_include_directories(${test_case} PRIVATE ${GOOGLETEST_INCLUDE_DIRS})

@@ -13,6 +13,7 @@
 #include <gtest/gtest.h>
 #include "OpenCLDevices.h" //To get the OpenCL devices.
 #include "SimplePolygon.h" //To construct simple polygons to test on.
+#include "SimplePolygonTestGroper.h" //To get access to SimplePolygon's private members.
 
 #define PI 3.14159265358979
 
@@ -23,17 +24,29 @@ namespace parallelogram {
  */
 class TestSimplePolygonArea : public testing::Test {
 protected:
-	//A few polygons to test with.
+	/*
+	 * A few polygons to test with.
+	 */
 	SimplePolygon square_1000;
 
-	//The devices to run tests on.
+	/*
+	 * The devices to run tests on.
+	 */
 	std::vector<cl::Device> devices;
+
+	/*
+	 * Provides access to ``SimplePolygon``'s private members in order to test
+	 * them.
+	 */
+	SimplePolygonTestGroper groper;
 
 	virtual void SetUp() {
 		square_1000.emplace_back(0, 0);
 		square_1000.emplace_back(1000, 0);
 		square_1000.emplace_back(1000, 1000);
 		square_1000.emplace_back(0, 1000);
+
+		devices = OpenCLDevices::getInstance().getAll();
 	}
 };
 
@@ -42,7 +55,11 @@ protected:
  */
 TEST_F(TestSimplePolygonArea, InitialAreaIsZero) {
 	SimplePolygon empty_polygon;
-	EXPECT_EQ(0, empty_polygon.area());
+	groper.tested_simple_polygon = &empty_polygon;
+	for(const cl::Device& device : devices) {
+		EXPECT_EQ(0, groper.area_opencl(device));
+	}
+	EXPECT_EQ(0, groper.area_host());
 }
 
 /*

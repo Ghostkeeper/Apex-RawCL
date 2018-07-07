@@ -16,10 +16,9 @@
 namespace parallelogram {
 
 namespace benchmarks {
-
 class Benchmarker; //Forward declaration of Benchmarker so that the benchmarker can use SimplePolygons as well.
-
 }
+class SimplePolygonTestGroper; //Forward declaration of a class that can grope the privates of this class to test them.
 
 /*
  * Represents a simple polygon.
@@ -30,6 +29,7 @@ class Benchmarker; //Forward declaration of Benchmarker so that the benchmarker 
  */
 class SimplePolygon : private std::vector<Point2> {
 	friend class benchmarks::Benchmarker;
+	friend class SimplePolygonTestGroper;
 public:
 	/*
 	 * Constructs an empty simple polygon.
