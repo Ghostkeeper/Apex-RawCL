@@ -178,7 +178,11 @@ TEST_F(TestSimplePolygonArea, NegativeSquare) {
 	negative_square_1000.emplace_back(1000, 1000);
 	negative_square_1000.emplace_back(1000, 0);
 
-	EXPECT_EQ(-square_1000.area(), negative_square_1000.area());
+	groper.tested_simple_polygon = &negative_square_1000;
+	for(const cl::Device& device : devices) {
+		EXPECT_EQ(-square_1000.area(), groper.area_opencl(device));
+	}
+	EXPECT_EQ(-square_1000.area(), groper.area_host());
 }
 
 /*
