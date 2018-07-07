@@ -40,6 +40,12 @@ protected:
 	 */
 	SimplePolygonTestGroper groper;
 
+	/*
+	 * Prepares for running a test.
+	 *
+	 * Before every test, a new instance of this class is created and this test
+	 * is ran.
+	 */
 	virtual void SetUp() {
 		square_1000.emplace_back(0, 0);
 		square_1000.emplace_back(1000, 0);
