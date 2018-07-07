@@ -10,8 +10,11 @@
 #define SIMPLEPOLYGON_H
 
 #include <vector> //To store the vertices.
-#include "OpenCL.h" //To communicate devices for OpenCL-enabled functions.
 #include "Point2.h" //The type to represent a vertex.
+
+namespace cl {
+class Device; //Forward declaration of Device so we don't have to include all of OpenCL.
+}
 
 namespace parallelogram {
 

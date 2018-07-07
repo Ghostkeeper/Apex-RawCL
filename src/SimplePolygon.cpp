@@ -9,12 +9,6 @@
 #include "Benchmarks.h" //To choose the preferred algorithm and device.
 #include "SimplePolygon.h" //The class we're implementing.
 
-namespace cl {
-
-class Device; //Forward declaration so we don't need to include OpenCL again.
-
-}
-
 namespace parallelogram {
 
 SimplePolygon::SimplePolygon() {
