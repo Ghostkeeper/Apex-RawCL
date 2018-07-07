@@ -195,7 +195,11 @@ TEST_F(TestSimplePolygonArea, SelfIntersecting) {
 	hourglass.emplace_back(25, 75); //The top of the hourglass is half as wide as the bottom, resulting in a quarter of the area!
 	hourglass.emplace_back(75, 75);
 
-	EXPECT_EQ(100 * 50 / 2 - 50 * 25 / 2, hourglass.area());
+	groper.tested_simple_polygon = &hourglass;
+	for(const cl::Device& device : devices) {
+		EXPECT_EQ(100 * 50 / 2 - 50 * 25 / 2, groper.area_opencl(device));
+	}
+	EXPECT_EQ(100 * 50 / 2 - 50 * 25 / 2, groper.area_host());
 }
 
 /*
