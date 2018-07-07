@@ -268,10 +268,18 @@ TEST_F(TestSimplePolygonArea, Circle) {
 
 }
 
+/*
+ * Starts running the tests.
+ *
+ * This calls upon GoogleTest to start testing.
+ * \param argc The number of arguments to read.
+ * \param argv The arguments provided to this application via the command.
+ * \return ``0`` if all tests ran successfully, or something else if any test
+ * failed.
+ */
 int main(int argc, char* argv[]) {
 	testing::InitGoogleTest(&argc, argv);
 	return RUN_ALL_TESTS();
 }
 
 #endif //TESTPOLYGONAREA
-
