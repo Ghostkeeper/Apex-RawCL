@@ -138,7 +138,11 @@ TEST_F(TestSimplePolygonArea, Rectangle) {
 	rectangle.emplace_back(1000, 1);
 	rectangle.emplace_back(0, 1);
 
-	EXPECT_EQ(1000 * 1, rectangle.area());
+	groper.tested_simple_polygon = &rectangle;
+	for(const cl::Device& device : devices) {
+		EXPECT_EQ(1000 * 1, groper.area_opencl(device));
+	}
+	EXPECT_EQ(1000 * 1, groper.area_host());
 }
 
 /*
