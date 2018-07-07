@@ -121,7 +121,11 @@ TEST_F(TestSimplePolygonArea, Triangle1000) {
 	triangle_1000.emplace_back(1024, 24);
 	triangle_1000.emplace_back(524, 1024);
 
-	EXPECT_EQ(1000 * 1000 / 2, triangle_1000.area());
+	groper.tested_simple_polygon = &triangle_1000;
+	for(const cl::Device& device : devices) {
+		EXPECT_EQ(1000 * 1000 / 2, groper.area_opencl(device));
+	}
+	EXPECT_EQ(1000 * 1000 / 2, groper.area_host());
 }
 
 /*
