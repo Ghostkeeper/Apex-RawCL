@@ -225,7 +225,11 @@ TEST_F(TestSimplePolygonArea, Point) {
 	SimplePolygon point;
 	point.emplace_back(25, 25);
 
-	EXPECT_EQ(0, point.area());
+	groper.tested_simple_polygon = &point;
+	for(const cl::Device& device : devices) {
+		EXPECT_EQ(0, groper.area_opencl(device));
+	}
+	EXPECT_EQ(0, groper.area_host());
 }
 
 /*
