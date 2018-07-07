@@ -251,7 +251,13 @@ TEST_F(TestSimplePolygonArea, Circle) {
 	}
 
 	constexpr area_t ground_truth = num_vertices * radius * radius * std::sin(PI * 2 / num_vertices) / 2; //Formula for area of regular polygon.
-	EXPECT_NEAR(ground_truth, circle.area(), std::sqrt(num_vertices) / num_vertices / 6 * (PI * radius * radius - PI * (radius - 1) * (radius - 1))); //Allow some error due to rounding of input coordinates.
+	constexpr area_t error_margin = std::sqrt(num_vertices) / num_vertices / 6 * (PI * radius * radius - PI * (radius - 1) * (radius - 1)); //Allow some error due to rounding of input coordinates.
+
+	groper.tested_simple_polygon = &circle;
+	for(const cl::Device& device : devices) {
+		EXPECT_NEAR(ground_truth, groper.area_opencl(device), error_margin);
+	}
+	EXPECT_NEAR(ground_truth, groper.area_host(), error_margin);
 }
 
 }
