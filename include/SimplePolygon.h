@@ -109,11 +109,22 @@ private:
 	/*
 	 * Implements the ``area`` function on the host hardware.
 	 *
-	 * This does not go via OpenCL. It may perform better for small amounts of
-	 * data.
+	 * This does not go via OpenCL. It may perform better for small polygons.
 	 * \return The area of the current polygon.
 	 */
 	area_t area_host() const;
+
+	/*
+	 * Implements the ``contains`` function on the host hardware.
+	 *
+	 * This does not go via OpenCL. It may perform better for small polygons.
+	 * \param point The point to test.
+	 * \param fill_type What areas to count as being inside this simple polygon
+	 * if the polygon is self-intersecting.
+	 * \return ``True`` if the specified point is inside this polygon, or
+	 * ``False`` if it is outside.
+	 */
+	bool contains_host(const Point2& point, const FillType& fill_type) const;
 };
 
 }

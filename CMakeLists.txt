@@ -23,6 +23,7 @@ set(sources
 	src/SimplePolygon.cpp
 
 	src/polygon_algorithms/Area.cpp
+	src/polygon_algorithms/Contains.cpp
 
 	src/private/BenchmarkData.cpp
 	src/private/Benchmarks.cpp
