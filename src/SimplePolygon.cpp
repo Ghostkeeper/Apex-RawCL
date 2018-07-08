@@ -26,6 +26,10 @@ area_t SimplePolygon::area() const {
 	}
 }
 
+bool SimplePolygon::contains(const Point2 point, const FillType fill_type) const {
+	return false; //TODO
+}
+
 void SimplePolygon::translate(const coord_t x, const coord_t y) {
 	for(size_t vertex = 0; vertex < size(); vertex++) {
 		at(vertex) += Point2(x, y);

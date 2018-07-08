@@ -10,6 +10,7 @@
 #define SIMPLEPOLYGON_H
 
 #include <vector> //To store the vertices.
+#include "FillType.h" //To specify the default fill type for contains().
 #include "Point2.h" //The type to represent a vertex.
 
 namespace cl {
@@ -77,6 +78,16 @@ public:
 	 * \return The area of the simple polygon.
 	 */
 	area_t area() const;
+
+	/*
+	 * Test whether the specified point is inside this simple polygon.
+	 * \param point The point to test.
+	 * \param fill_type What areas to count as being inside this simple polygon
+	 * if the polygon is self-intersecting.
+	 * \return ``True`` if the specified point is inside this polygon, or
+	 * ``False`` if it is outside.
+	 */
+	bool contains(const Point2 point, const FillType fill_type = FillType::EVEN_ODD) const;
 
 	/*
 	 * Move the polygon by a certain offset in each dimension.
