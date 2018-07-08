@@ -26,7 +26,7 @@ area_t SimplePolygon::area() const {
 	}
 }
 
-bool SimplePolygon::contains(const Point2 point, const FillType fill_type) const {
+bool SimplePolygon::contains(const Point2& point, const FillType& fill_type) const {
 	return false; //TODO
 }
 
