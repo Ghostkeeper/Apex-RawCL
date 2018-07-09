@@ -6,7 +6,6 @@
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
  */
 
-#include <iostream> //DEBUG!
 #include "SimplePolygon.h" //The class whose algorithms we're implementing.
 
 namespace parallelogram {
