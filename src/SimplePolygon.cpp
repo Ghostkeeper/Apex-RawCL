@@ -26,8 +26,8 @@ area_t SimplePolygon::area() const {
 	}
 }
 
-bool SimplePolygon::contains(const Point2& point, const FillType& fill_type) const {
-	return contains_host(point, fill_type);
+bool SimplePolygon::contains(const Point2& point, const FillType& fill_type, const bool include_edge) const {
+	return contains_host(point, fill_type, include_edge);
 }
 
 void SimplePolygon::translate(const coord_t x, const coord_t y) {

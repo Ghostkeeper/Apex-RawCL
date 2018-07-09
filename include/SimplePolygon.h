@@ -84,10 +84,12 @@ public:
 	 * \param point The point to test.
 	 * \param fill_type What areas to count as being inside this simple polygon
 	 * if the polygon is self-intersecting.
+	 * \param include_edge Whether the edge of the polygon should be counted as
+	 * being inside the polygon.
 	 * \return ``True`` if the specified point is inside this polygon, or
 	 * ``False`` if it is outside.
 	 */
-	bool contains(const Point2& point, const FillType& fill_type = FillType::EVEN_ODD) const;
+	bool contains(const Point2& point, const FillType& fill_type = FillType::EVEN_ODD, const bool include_edge = true) const;
 
 	/*
 	 * Move the polygon by a certain offset in each dimension.
@@ -121,10 +123,12 @@ private:
 	 * \param point The point to test.
 	 * \param fill_type What areas to count as being inside this simple polygon
 	 * if the polygon is self-intersecting.
+	 * \param include_edge Whether the edge of the polygon should be counted as
+	 * being inside the polygon.
 	 * \return ``True`` if the specified point is inside this polygon, or
 	 * ``False`` if it is outside.
 	 */
-	bool contains_host(const Point2& point, const FillType& fill_type) const;
+	bool contains_host(const Point2& point, const FillType& fill_type, const bool include_edge) const;
 };
 
 }

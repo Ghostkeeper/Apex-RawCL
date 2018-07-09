@@ -11,7 +11,7 @@
 
 namespace parallelogram {
 
-bool SimplePolygon::contains_host(const Point2& point, const FillType& fill_type) const {
+bool SimplePolygon::contains_host(const Point2& point, const FillType& fill_type, const bool include_edge) const {
 	if(size() < 3) {
 		return false; //TODO: Check edge cases for lines and points if edges are to be included. Currently they're not included.
 	}
