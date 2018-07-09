@@ -70,6 +70,7 @@ if(BUILD_TESTS)
 		TestPolygonArea
 		TestPolygonTranslate
 		TestSimplePolygonArea
+		TestSimplePolygonContains
 		private.TestOpenCLDevices
 	)
 	set(test_helpers
