@@ -25,7 +25,7 @@ namespace parallelogram {
 class TestSimplePolygonArea : public testing::Test {
 protected:
 	/*
-	 * A few polygons to test with.
+	 * A square of 1000 by 1000.
 	 */
 	SimplePolygon square_1000;
 
