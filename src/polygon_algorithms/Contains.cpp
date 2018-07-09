@@ -26,13 +26,13 @@ bool SimplePolygon::contains_host(const Point2& point, const FillType& fill_type
 		direction. */
 		if(previous.y < next.y) { //Rising edge.
 			if(point.y > previous.y && point.y < next.y) { //Crosses height of point.
-				if(point.isLeftOfLineSegment(previous, next) > 0) { //Line is right of point.
+				if(point.isLeftOfLineSegment(previous, next) > 0) { //Line is right of point. Point is left of line.
 					winding_number++;
 				}
 			}
 		} else if(previous.y > next.y) { //Falling edge (next vertex is lower than previous vertex).
 			if(point.y < previous.y && point.y > next.y) { //Crosses height of point.
-				if(point.isLeftOfLineSegment(previous, next) < 0) { //Line is left of point.
+				if(point.isLeftOfLineSegment(previous, next) < 0) { //Line is right of point. Point is right of line.
 					winding_number--;
 				}
 			}
