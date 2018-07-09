@@ -72,6 +72,20 @@ public:
 	 * \param other The point to subtract from this point.
 	 */
 	Point2& operator -=(const Point2& other);
+
+	/*
+	 * Determines whether the point is left of a line segment.
+	 *
+	 * Or more accurately, this tests whether the point is port-side of the line
+	 * going through the provided two points, when looking from the starting
+	 * position in the direction of the end position.
+	 * \param start The start of the line segment.
+	 * \param end The end of the line segment.
+	 * \return A positive number if this point is to the left of the line
+	 * segment, a negative number if this point is to the right of the line
+	 * segment, or 0 if it lies exactly on the line.
+	 */
+	coord_t isLeftOfLineSegment(const Point2& start, const Point2& end) const;
 };
 
 }
