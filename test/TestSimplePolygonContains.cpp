@@ -216,6 +216,14 @@ TEST_F(TestSimplePolygonContains, InsideStarCentreEvenOdd) {
 	EXPECT_FALSE(five_pointed_star.contains(Point2(0, 0)));
 }
 
+/*
+ * Test whether the centre of a self-intersecting five pointed star is indeed
+ * considered inside the polygon if the fill type "nonzero" is used.
+ */
+TEST_F(TestSimplePolygonContains, InsideStarCentreNonzero) {
+	EXPECT_TRUE(five_pointed_star.contains(Point2(0, 0), FillType::NONZERO));
+}
+
 }
 
 /*
