@@ -93,6 +93,17 @@ TEST_F(TestSimplePolygonContains, InsideDiamondLeftOfCentre) {
 	EXPECT_TRUE(diamond_1000.contains(Point2(-50, 0)));
 }
 
+/*
+ * Test whether a point is outside a diamond when it's next to the tip of the
+ * diamond.
+ *
+ * This is an edge case because the ray going towards the right from the point
+ * rakes the tip of the diamond.
+ */
+TEST_F(TestSimplePolygonContains, OutsideDiamondLeftOfTip) {
+	EXPECT_FALSE(diamond_1000.contains(Point2(-50, 500)));
+}
+
 }
 
 /*
