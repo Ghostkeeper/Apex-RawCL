@@ -180,6 +180,14 @@ TEST_F(TestSimplePolygonContains, OutsideHourglassNextToNegative) {
 	EXPECT_FALSE(hourglass.contains(Point2(0, 750)));
 }
 
+/*
+ * Test whether a point whose ray goes through a self-intersection of a polygon
+ * is considered outside the polygon.
+ */
+TEST_F(TestSimplePolygonContains, OutsideHourglassNextToIntersection) {
+	EXPECT_FALSE(hourglass.contains(Point2(0, 500)));
+}
+
 }
 
 /*
