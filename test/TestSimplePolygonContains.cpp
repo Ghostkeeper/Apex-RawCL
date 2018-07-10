@@ -32,6 +32,15 @@ protected:
 	SimplePolygon diamond_1000;
 
 	/*
+	 * This shape is basically a square with one edge flipped so that it becomes
+	 * the shape of an hourglass.
+	 *
+	 * The top half of the hourglass has negative area. The bottom half is
+	 * positive. The self-intersection happens at coordinate 500,500.
+	 */
+	SimplePolygon hourglass;
+
+	/*
 	 * Prepares for running a test.
 	 *
 	 * Before every test, a new instance of this class is created and this test
@@ -47,6 +56,11 @@ protected:
 		diamond_1000.emplace_back(0, -500);
 		diamond_1000.emplace_back(500, 0);
 		diamond_1000.emplace_back(0, 500);
+
+		hourglass.emplace_back(0, 0);
+		hourglass.emplace_back(1000, 0);
+		hourglass.emplace_back(0, 1000);
+		hourglass.emplace_back(1000, 1000);
 	}
 };
 
@@ -139,6 +153,13 @@ TEST_F(TestSimplePolygonContains, OutsideSquareLeftOfTop) {
  */
 TEST_F(TestSimplePolygonContains, OutsideSquareLeftOfBottom) {
 	EXPECT_FALSE(square_1000.contains(Point2(-50, 0)));
+}
+
+/*
+ * Test whether a point is inside the bottom (positive) half of an hourglass.
+ */
+TEST_F(TestSimplePolygonContains, InsideHourglassPositive) {
+	EXPECT_TRUE(square_1000.contains(Point2(500, 250)));
 }
 
 }
