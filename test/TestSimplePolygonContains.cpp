@@ -172,6 +172,14 @@ TEST_F(TestSimplePolygonContains, InsideHourglassNegative) {
 	EXPECT_TRUE(hourglass.contains(Point2(500, 750)));
 }
 
+/*
+ * Test whether a point whose ray is cast through a negative area is considered
+ * outside the polygon.
+ */
+TEST_F(TestSimplePolygonContains, OutsideHourglassNextToNegative) {
+	EXPECT_FALSE(hourglass.contains(Point2(0, 750)));
+}
+
 }
 
 /*
