@@ -83,6 +83,16 @@ TEST_F(TestSimplePolygonContains, InsideDiamondCentre) {
 	EXPECT_TRUE(diamond_1000.contains(Point2(0, 0)));
 }
 
+/*
+ * Test whether a point is inside a diamond when it's left of the centre.
+ *
+ * To a ray casting algorithm that casts purely horizontal rays, this shouldn't
+ * make any difference from the InsideDiamondCentre test.
+ */
+TEST_F(TestSimplePolygonContains, InsideDiamondLeftOfCentre) {
+	EXPECT_TRUE(diamond_1000.contains(Point2(-50, 0)));
+}
+
 }
 
 /*
