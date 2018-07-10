@@ -162,6 +162,16 @@ TEST_F(TestSimplePolygonContains, InsideHourglassPositive) {
 	EXPECT_TRUE(square_1000.contains(Point2(500, 250)));
 }
 
+/*
+ * Test whether a point is inside the top (negative) half of an hourglass.
+ *
+ * According to the even-odd rule, which is the default, a winding order of -1
+ * is odd meaning it should be considered inside.
+ */
+TEST_F(TestSimplePolygonContains, InsideHourglassNegative) {
+	EXPECT_TRUE(square_1000.contains(Point2(500, 750)));
+}
+
 }
 
 /*
