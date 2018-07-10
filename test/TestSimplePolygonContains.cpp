@@ -25,6 +25,13 @@ protected:
 	SimplePolygon square_1000;
 
 	/*
+	 * A rotated square with diagonals of length 1000.
+	 *
+	 * It is centred around 0,0 and rotated 45 degrees.
+	 */
+	SimplePolygon diamond_1000;
+
+	/*
 	 * Prepares for running a test.
 	 *
 	 * Before every test, a new instance of this class is created and this test
@@ -35,6 +42,11 @@ protected:
 		square_1000.emplace_back(1000, 0);
 		square_1000.emplace_back(1000, 1000);
 		square_1000.emplace_back(0, 1000);
+
+		diamond_1000.emplace_back(-500, 0);
+		diamond_1000.emplace_back(0, -500);
+		diamond_1000.emplace_back(500, 0);
+		diamond_1000.emplace_back(0, 500);
 	}
 };
 
@@ -50,6 +62,15 @@ TEST_F(TestSimplePolygonContains, InsideSquare) {
  */
 TEST_F(TestSimplePolygonContains, OutsideSquare) {
 	EXPECT_FALSE(square_1000.contains(Point2(-500, 500)));
+}
+
+/*
+ * Test whether a point is inside a diamond.
+ *
+ * This tests for the case where the polygon has diagonal edges.
+ */
+TEST_F(TestSimplePolygonContains, InsideDiamondNonCenter) {
+	EXPECT_TRUE(diamond_1000.contains(Point2(50, 50)));
 }
 
 }
