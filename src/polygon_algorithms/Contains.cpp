@@ -11,6 +11,7 @@
 namespace parallelogram {
 
 bool SimplePolygon::contains_host(const Point2& point, const FillType& fill_type, const bool include_edge) const {
+	//TODO: If pre-calculation is allowed, obtain the AABB of the polygon and do that check first.
 	if(size() < 3) {
 		return false; //TODO: Check edge cases for lines and points if edges are to be included. Currently they're not included.
 	}
@@ -24,13 +25,16 @@ bool SimplePolygon::contains_host(const Point2& point, const FillType& fill_type
 		the line segment between these two vertices crosses it and in which
 		direction. */
 		if(previous.y < next.y) { //Rising edge.
-			if(point.y > previous.y && point.y < next.y) { //Crosses height of point.
+			//For the edge case of the ray hitting a vertex exactly, count rays hitting the lower vertices along with this edge.
+			//Do NOT count horizontal lines at all.
+			if(point.y >= previous.y && point.y < next.y) { //Crosses height of point.
 				if(point.isLeftOfLineSegment(previous, next) > 0) { //Line is right of point. Point is left of line.
 					winding_number++;
 				}
 			}
 		} else if(previous.y > next.y) { //Falling edge (next vertex is lower than previous vertex).
-			if(point.y < previous.y && point.y > next.y) { //Crosses height of point.
+			//For the edge case of the ray hitting a vertex exactly, count rays hitting the lower vertices along with this edge.
+			if(point.y < previous.y && point.y >= next.y) { //Crosses height of point.
 				if(point.isLeftOfLineSegment(previous, next) < 0) { //Line is right of point. Point is right of line.
 					winding_number--;
 				}
