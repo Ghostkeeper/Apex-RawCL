@@ -47,7 +47,7 @@ bool SimplePolygon::contains_host(const Point2& point, const FillType& fill_type
 	switch(fill_type) {
 		default:
 		case FillType::EVEN_ODD:
-			return winding_number % 2 == 1;
+			return winding_number & 1;
 		case FillType::NONZERO:
 			return winding_number != 0;
 	}
