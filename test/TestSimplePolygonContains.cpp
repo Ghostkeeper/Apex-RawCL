@@ -128,6 +128,19 @@ TEST_F(TestSimplePolygonContains, OutsideSquareLeftOfTop) {
 	EXPECT_FALSE(square_1000.contains(Point2(-50, 1000)));
 }
 
+/*
+ * Test whether a point is outside a square when it's next to the bottom of the
+ * square.
+ *
+ * This is a literal edge case because there is now an edge of the square on top
+ * of the ray that is being shot outside of the point in question. It could be
+ * different from OutsideSquareLeftOfTop because of how the symmetry is broken
+ * when the ray crosses the tips of two edges.
+ */
+TEST_F(TestSimplePolygonContains, OutsideSquareLeftOfBottom) {
+	EXPECT_FALSE(square_1000.contains(Point2(-50, 0)));
+}
+
 }
 
 /*
