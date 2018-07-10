@@ -159,7 +159,7 @@ TEST_F(TestSimplePolygonContains, OutsideSquareLeftOfBottom) {
  * Test whether a point is inside the bottom (positive) half of an hourglass.
  */
 TEST_F(TestSimplePolygonContains, InsideHourglassPositive) {
-	EXPECT_TRUE(square_1000.contains(Point2(500, 250)));
+	EXPECT_TRUE(hourglass.contains(Point2(500, 250)));
 }
 
 /*
@@ -169,7 +169,7 @@ TEST_F(TestSimplePolygonContains, InsideHourglassPositive) {
  * is odd meaning it should be considered inside.
  */
 TEST_F(TestSimplePolygonContains, InsideHourglassNegative) {
-	EXPECT_TRUE(square_1000.contains(Point2(500, 750)));
+	EXPECT_TRUE(hourglass.contains(Point2(500, 750)));
 }
 
 }
