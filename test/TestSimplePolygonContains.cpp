@@ -19,6 +19,9 @@ namespace parallelogram {
  */
 class TestSimplePolygonContains : public testing::Test {
 protected:
+	/*
+	 * A square of 1000 by 1000 units, with one corner at 0,0.
+	 */
 	SimplePolygon square_1000;
 
 	/*
