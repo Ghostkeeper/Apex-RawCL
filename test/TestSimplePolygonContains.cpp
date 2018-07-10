@@ -10,7 +10,10 @@
 #define TESTSIMPLEPOLYGONCONTAINS
 
 #include <gtest/gtest.h>
+#include <cmath> //To construct a star.
 #include "SimplePolygon.h" //To construct simple polygons to test on.
+
+#define TAU 6.28318530717959
 
 namespace parallelogram {
 
@@ -41,6 +44,17 @@ protected:
 	SimplePolygon hourglass;
 
 	/*
+	 * A star with five points.
+	 *
+	 * This shape has self-intersections and winds multiple times around the
+	 * centre. It behaves differently with the even-odd fill rule vs. the
+	 * nonzero fill rule.
+	 *
+	 * The star is centred around 0,0 and has a radius of 500.
+	 */
+	SimplePolygon five_pointed_star;
+
+	/*
 	 * Prepares for running a test.
 	 *
 	 * Before every test, a new instance of this class is created and this test
@@ -61,6 +75,12 @@ protected:
 		hourglass.emplace_back(1000, 0);
 		hourglass.emplace_back(0, 1000);
 		hourglass.emplace_back(1000, 1000);
+
+		five_pointed_star.emplace_back(0, 500);
+		five_pointed_star.emplace_back(-std::sin(TAU / 5 * 2) * 500, std::cos(TAU / 5 * 2) * 500);
+		five_pointed_star.emplace_back(-std::sin(TAU / 5 * 4) * 500, std::cos(TAU / 5 * 4) * 500);
+		five_pointed_star.emplace_back(-std::sin(TAU / 5 * 1) * 500, std::cos(TAU / 5 * 1) * 500);
+		five_pointed_star.emplace_back(-std::sin(TAU / 5 * 3) * 500, std::cos(TAU / 5 * 3) * 500);
 	}
 };
 
@@ -186,6 +206,14 @@ TEST_F(TestSimplePolygonContains, OutsideHourglassNextToNegative) {
  */
 TEST_F(TestSimplePolygonContains, OutsideHourglassNextToIntersection) {
 	EXPECT_FALSE(hourglass.contains(Point2(0, 500)));
+}
+
+/*
+ * Test whether the centre of a self-intersecting five pointed star is indeed
+ * considered outside the polygon.
+ */
+TEST_F(TestSimplePolygonContains, InsideStarCentreEvenOdd) {
+	EXPECT_FALSE(five_pointed_star.contains(Point2(0, 0)));
 }
 
 }
