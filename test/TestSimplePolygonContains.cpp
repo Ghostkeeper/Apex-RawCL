@@ -69,8 +69,18 @@ TEST_F(TestSimplePolygonContains, OutsideSquare) {
  *
  * This tests for the case where the polygon has diagonal edges.
  */
-TEST_F(TestSimplePolygonContains, InsideDiamondNonCenter) {
+TEST_F(TestSimplePolygonContains, InsideDiamondNonCentre) {
 	EXPECT_TRUE(diamond_1000.contains(Point2(50, 50)));
+}
+
+/*
+ * Test whether a point is inside a diamond when it's exactly in the centre.
+ *
+ * This is an edge case because a ray cast exactly sideways to the right would
+ * hit two of the endpoints of edges (one vertex of the diamond).
+ */
+TEST_F(TestSimplePolygonContains, InsideDiamondCentre) {
+	EXPECT_TRUE(diamond_1000.contains(Point2(0, 0)));
 }
 
 }
