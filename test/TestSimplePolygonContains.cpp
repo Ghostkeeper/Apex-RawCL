@@ -233,6 +233,11 @@ TEST_F(TestSimplePolygonContains, InsideStarPointEvenOdd) {
 	EXPECT_TRUE(five_pointed_star.contains(Point2(-std::sin(TAU / 5) * 460, std::cos(TAU / 5) * 460), FillType::NONZERO));
 }
 
+TEST_F(TestSimplePolygonContains, LeftEdgeOfSquare) {
+	EXPECT_TRUE(square_1000.contains(Point2(0, 500), FillType::EVEN_ODD, true));
+	EXPECT_FALSE(square_1000.contains(Point2(0, 500), FillType::EVEN_ODD, false));
+}
+
 }
 
 /*
