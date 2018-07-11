@@ -251,6 +251,15 @@ TEST_F(TestSimplePolygonContains, BottomEdgeOfSquare) {
 	EXPECT_FALSE(square_1000.contains(Point2(500, 0), EdgeInclusion::OUTSIDE));
 }
 
+/*
+ * Test whether a point on a horizontal edge of a square is considered inside if
+ * the edges are counted as inside, and outside if edges are considered outside.
+ */
+TEST_F(TestSimplePolygonContains, TopEdgeOfSquare) {
+	EXPECT_TRUE(square_1000.contains(Point2(500, 1000), EdgeInclusion::INSIDE));
+	EXPECT_FALSE(square_1000.contains(Point2(500, 1000), EdgeInclusion::OUTSIDE));
+}
+
 }
 
 /*
