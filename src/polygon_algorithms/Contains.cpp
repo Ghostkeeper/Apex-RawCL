@@ -28,15 +28,25 @@ bool SimplePolygon::contains_host(const Point2& point, const EdgeInclusion& incl
 			//For the edge case of the ray hitting a vertex exactly, count rays hitting the lower vertices along with this edge.
 			//Do NOT count horizontal lines at all.
 			if(point.y >= previous.y && point.y < next.y) { //Crosses height of point.
-				if(point.isLeftOfLineSegment(previous, next) > 0) { //Line is right of point. Point is left of line.
+				const coord_t point_is_left = point.isLeftOfLineSegment(previous, next);
+				if(point_is_left > 0) { //Line is absolutely right of point. Point is relatively left of line.
 					winding_number++;
+				} else if(point_is_left == 0) { //Point is on top of line! This is the edge case.
+					if(include_edge == EdgeInclusion::INSIDE) {
+						winding_number++;
+					}
 				}
 			}
 		} else if(previous.y > next.y) { //Falling edge (next vertex is lower than previous vertex).
 			//For the edge case of the ray hitting a vertex exactly, count rays hitting the lower vertices along with this edge.
 			if(point.y < previous.y && point.y >= next.y) { //Crosses height of point.
-				if(point.isLeftOfLineSegment(previous, next) < 0) { //Line is right of point. Point is right of line.
+				const coord_t point_is_left = point.isLeftOfLineSegment(previous, next);
+				if(point.isLeftOfLineSegment(previous, next) < 0) { //Line is absolutely right of point. Point is relatively right of line.
 					winding_number--;
+				} else if(point_is_left == 0) { //Point is on top of line! This is the edge case.
+					if(include_edge == EdgeInclusion::OUTSIDE) {
+						winding_number--;
+					}
 				}
 			}
 		}
