@@ -90,7 +90,7 @@ public:
 	 * \return ``True`` if the specified point is inside this polygon, or
 	 * ``False`` if it is outside.
 	 */
-	bool contains(const Point2& point, const EdgeInclusion& include_edge = EdgeInclusion::OUTSIDE, const FillType& fill_type = FillType::EVEN_ODD) const;
+	bool contains(const Point2& point, const EdgeInclusion& include_edge = EdgeInclusion::INSIDE, const FillType& fill_type = FillType::EVEN_ODD) const;
 
 	/*
 	 * Move the polygon by a certain offset in each dimension.
