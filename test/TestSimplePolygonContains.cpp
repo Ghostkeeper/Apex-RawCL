@@ -221,7 +221,7 @@ TEST_F(TestSimplePolygonContains, InsideStarCentreEvenOdd) {
  * considered inside the polygon if the fill type "nonzero" is used.
  */
 TEST_F(TestSimplePolygonContains, OutsideStarCentreNonzero) {
-	EXPECT_TRUE(five_pointed_star.contains(Point2(0, 0), FillType::NONZERO));
+	EXPECT_TRUE(five_pointed_star.contains(Point2(0, 0), EdgeInclusion::INSIDE, FillType::NONZERO));
 }
 
 /*
@@ -230,12 +230,12 @@ TEST_F(TestSimplePolygonContains, OutsideStarCentreNonzero) {
  */
 TEST_F(TestSimplePolygonContains, InsideStarPointEvenOdd) {
 	EXPECT_TRUE(five_pointed_star.contains(Point2(-std::sin(TAU / 5) * 460, std::cos(TAU / 5) * 460)));
-	EXPECT_TRUE(five_pointed_star.contains(Point2(-std::sin(TAU / 5) * 460, std::cos(TAU / 5) * 460), FillType::NONZERO));
+	EXPECT_TRUE(five_pointed_star.contains(Point2(-std::sin(TAU / 5) * 460, std::cos(TAU / 5) * 460), EdgeInclusion::INSIDE, FillType::NONZERO));
 }
 
 TEST_F(TestSimplePolygonContains, LeftEdgeOfSquare) {
-	EXPECT_TRUE(square_1000.contains(Point2(0, 500), FillType::EVEN_ODD, EdgeInclusion::INSIDE));
-	EXPECT_FALSE(square_1000.contains(Point2(0, 500), FillType::EVEN_ODD, EdgeInclusion::OUTSIDE));
+	EXPECT_TRUE(square_1000.contains(Point2(0, 500), EdgeInclusion::INSIDE, FillType::EVEN_ODD));
+	EXPECT_FALSE(square_1000.contains(Point2(0, 500), EdgeInclusion::OUTSIDE, FillType::EVEN_ODD));
 }
 
 }

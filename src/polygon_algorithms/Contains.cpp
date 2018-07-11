@@ -10,7 +10,7 @@
 
 namespace parallelogram {
 
-bool SimplePolygon::contains_host(const Point2& point, const FillType& fill_type, const EdgeInclusion& include_edge) const {
+bool SimplePolygon::contains_host(const Point2& point, const EdgeInclusion& include_edge, const FillType& fill_type) const {
 	//TODO: If pre-calculation is allowed, obtain the AABB of the polygon and do that check first.
 	if(size() < 3) {
 		return false; //TODO: Check edge cases for lines and points if edges are to be included. Currently they're not included.
