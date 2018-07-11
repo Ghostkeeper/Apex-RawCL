@@ -213,7 +213,7 @@ TEST_F(TestSimplePolygonContains, OutsideHourglassNextToIntersection) {
  * considered outside the polygon.
  */
 TEST_F(TestSimplePolygonContains, InsideStarCentreEvenOdd) {
-	EXPECT_FALSE(five_pointed_star.contains(Point2(0, 0)));
+	EXPECT_FALSE(five_pointed_star.contains(Point2(0, 0), EdgeInclusion::INSIDE, FillType::EVEN_ODD));
 }
 
 /*
@@ -221,7 +221,7 @@ TEST_F(TestSimplePolygonContains, InsideStarCentreEvenOdd) {
  * considered inside the polygon if the fill type "nonzero" is used.
  */
 TEST_F(TestSimplePolygonContains, OutsideStarCentreNonzero) {
-	EXPECT_TRUE(five_pointed_star.contains(Point2(0, 0), EdgeInclusion::INSIDE, FillType::NONZERO));
+	EXPECT_TRUE(five_pointed_star.contains(Point2(0, 0)));
 }
 
 /*
@@ -229,8 +229,8 @@ TEST_F(TestSimplePolygonContains, OutsideStarCentreNonzero) {
  * considered inside the polygon regardless of the fill type.
  */
 TEST_F(TestSimplePolygonContains, InsideStarPointEvenOdd) {
+	EXPECT_TRUE(five_pointed_star.contains(Point2(-std::sin(TAU / 5) * 460, std::cos(TAU / 5) * 460), EdgeInclusion::INSIDE, FillType::EVEN_ODD));
 	EXPECT_TRUE(five_pointed_star.contains(Point2(-std::sin(TAU / 5) * 460, std::cos(TAU / 5) * 460)));
-	EXPECT_TRUE(five_pointed_star.contains(Point2(-std::sin(TAU / 5) * 460, std::cos(TAU / 5) * 460), EdgeInclusion::INSIDE, FillType::NONZERO));
 }
 
 TEST_F(TestSimplePolygonContains, LeftEdgeOfSquare) {
