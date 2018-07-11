@@ -16,7 +16,25 @@ namespace parallelogram {
  * the polygon.
  */
 enum FillType {
+	/*
+	 * Areas with an odd winding number are considered inside the polygon. Areas
+	 * with an even winding number are considered outside the polygon.
+	 *
+	 * This means that if an area is surrounded multiple times by the same
+	 * outline of a polygon, each loop inverts the area of whether it is
+	 * considered inside the polygon or not.
+	 */
 	EVEN_ODD,
+
+	/*
+	 * Areas with a winding number that is not equal to 0 are considered inside
+	 * the polygon. Areas with a winding number that is equal to 0 is considered
+	 * outside the polygon.
+	 *
+	 * This means that regardless of how often the edge of a polygon loops
+	 * around an area, any area that is surrounded at least once is considered
+	 * to be inside the polygon.
+	 */
 	NONZERO
 };
 
