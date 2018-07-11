@@ -10,6 +10,7 @@
 #define SIMPLEPOLYGON_H
 
 #include <vector> //To store the vertices.
+#include "EdgeInclusion.h" //To specify whether the edge of a polygon is considered inside the polygon.
 #include "FillType.h" //To specify the default fill type for contains().
 #include "Point2.h" //The type to represent a vertex.
 
@@ -89,7 +90,7 @@ public:
 	 * \return ``True`` if the specified point is inside this polygon, or
 	 * ``False`` if it is outside.
 	 */
-	bool contains(const Point2& point, const FillType& fill_type = FillType::EVEN_ODD, const bool include_edge = true) const;
+	bool contains(const Point2& point, const FillType& fill_type = FillType::EVEN_ODD, const EdgeInclusion& include_edge = EdgeInclusion::OUTSIDE) const;
 
 	/*
 	 * Move the polygon by a certain offset in each dimension.
@@ -128,7 +129,7 @@ private:
 	 * \return ``True`` if the specified point is inside this polygon, or
 	 * ``False`` if it is outside.
 	 */
-	bool contains_host(const Point2& point, const FillType& fill_type, const bool include_edge) const;
+	bool contains_host(const Point2& point, const FillType& fill_type, const EdgeInclusion& include_edge = EdgeInclusion::INSIDE) const;
 };
 
 }

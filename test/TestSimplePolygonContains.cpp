@@ -234,8 +234,8 @@ TEST_F(TestSimplePolygonContains, InsideStarPointEvenOdd) {
 }
 
 TEST_F(TestSimplePolygonContains, LeftEdgeOfSquare) {
-	EXPECT_TRUE(square_1000.contains(Point2(0, 500), FillType::EVEN_ODD, true));
-	EXPECT_FALSE(square_1000.contains(Point2(0, 500), FillType::EVEN_ODD, false));
+	EXPECT_TRUE(square_1000.contains(Point2(0, 500), FillType::EVEN_ODD, EdgeInclusion::INSIDE));
+	EXPECT_FALSE(square_1000.contains(Point2(0, 500), FillType::EVEN_ODD, EdgeInclusion::OUTSIDE));
 }
 
 }
