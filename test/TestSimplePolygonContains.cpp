@@ -233,6 +233,10 @@ TEST_F(TestSimplePolygonContains, InsideStarPointEvenOdd) {
 	EXPECT_TRUE(five_pointed_star.contains(Point2(-std::sin(TAU / 5) * 460, std::cos(TAU / 5) * 460)));
 }
 
+/*
+ * Test whether a point on an edge of a square is considered inside if the edges
+ * are counted as inside, and outside if edges are considered outside.
+ */
 TEST_F(TestSimplePolygonContains, LeftEdgeOfSquare) {
 	EXPECT_TRUE(square_1000.contains(Point2(0, 500), EdgeInclusion::INSIDE, FillType::EVEN_ODD));
 	EXPECT_FALSE(square_1000.contains(Point2(0, 500), EdgeInclusion::OUTSIDE, FillType::EVEN_ODD));
