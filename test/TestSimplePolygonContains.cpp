@@ -55,6 +55,12 @@ protected:
 	SimplePolygon five_pointed_star;
 
 	/*
+	 * A polygon with only two points, making a degenerate polygon like a line
+	 * segment.
+	 */
+	SimplePolygon line;
+
+	/*
 	 * Prepares for running a test.
 	 *
 	 * Before every test, a new instance of this class is created and this test
@@ -75,6 +81,9 @@ protected:
 		hourglass.emplace_back(1000, 0);
 		hourglass.emplace_back(0, 1000);
 		hourglass.emplace_back(1000, 1000);
+
+		line.emplace_back(100, 100);
+		line.emplace_back(200, 300);
 
 		five_pointed_star.emplace_back(0, 500);
 		five_pointed_star.emplace_back(-std::sin(TAU / 5 * 2) * 500, std::cos(TAU / 5 * 2) * 500);
@@ -258,6 +267,25 @@ TEST_F(TestSimplePolygonContains, BottomEdgeOfSquare) {
 TEST_F(TestSimplePolygonContains, TopEdgeOfSquare) {
 	EXPECT_TRUE(square_1000.contains(Point2(500, 1000), EdgeInclusion::INSIDE));
 	EXPECT_FALSE(square_1000.contains(Point2(500, 1000), EdgeInclusion::OUTSIDE));
+}
+
+//TODO: Add more tests for hitting edges of polygons. Also multiple edges at once.
+//TODO: Add tests with negative polygons.
+
+/*
+ * Test whether a point next to a line is considered outside the line.
+ */
+TEST_F(TestSimplePolygonContains, OutsideLine) {
+	EXPECT_FALSE(line.contains(Point2(100, 200)));
+}
+
+/*
+ * Test whether a point on top of a line is considered in the polygon if and
+ * only if edges are included in the polygon.
+ */
+TEST_F(TestSimplePolygonContains, OnLine) {
+	EXPECT_TRUE(line.contains(Point2(200, 200), EdgeInclusion::INSIDE));
+	EXPECT_FALSE(line.contains(Point2(200, 200), EdgeInclusion::OUTSIDE));
 }
 
 }
