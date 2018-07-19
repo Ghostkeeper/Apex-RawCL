@@ -112,8 +112,12 @@ TEST_F(TestSimplePolygonContains, OutsideSquare) {
  *
  * This tests for the case where the polygon has diagonal edges.
  */
-TEST_F(TestSimplePolygonContains, InsideDiamondNonCentre) {
+TEST_F(TestSimplePolygonContains, InsideDiamondAboveCentre) {
 	EXPECT_TRUE(diamond_1000.contains(Point2(50, 50)));
+}
+
+TEST_F(TestSimplePolygonContains, InsideDiamondBelowCentre) {
+	EXPECT_TRUE(diamond_1000.contains(Point2(50, -50)));
 }
 
 /*
