@@ -17,7 +17,6 @@ bool SimplePolygon::contains_host(const Point2& point, const EdgeInclusion& incl
 	}
 	//This is the winding number algorithm to determine if a point is inside a polygon.
 	int winding_number = 0;
-	int edges_hit = 0;
 	Point2 previous = back();
 	for(size_t index = 0; index < size(); index++) //Take two adjacent vertices of the polygon.
 	{
@@ -27,44 +26,27 @@ bool SimplePolygon::contains_host(const Point2& point, const EdgeInclusion& incl
 		direction. */
 		if(previous.y < next.y) { //Rising edge.
 			//For the edge case of the ray hitting a vertex exactly, count rays hitting the lower vertices along with this edge.
-			//Do NOT count horizontal lines at all.
 			if(point.y >= previous.y && point.y < next.y) { //Crosses height of point.
 				const coord_t point_is_left = point.isLeftOfLineSegment(previous, next);
-				if(point_is_left > 0) { //Line is absolutely right of point. Point is relatively left of line.
+				if(point_is_left > 0 || (point_is_left == 0 && include_edge == EdgeInclusion::INSIDE)) { //Line is absolutely right of point. Point is relatively left of line.
 					winding_number++;
-				} else if(point_is_left == 0) { //Point is on top of line! This is the edge case.
-					if(include_edge == EdgeInclusion::OUTSIDE) {
-						edges_hit++;
-					} else {
-						winding_number++;
-					}
 				}
 			}
 		} else if(previous.y > next.y) { //Falling edge (next vertex is lower than previous vertex).
 			//For the edge case of the ray hitting a vertex exactly, count rays hitting the lower vertices along with this edge.
 			if(point.y < previous.y && point.y >= next.y) { //Crosses height of point.
 				const coord_t point_is_left = point.isLeftOfLineSegment(previous, next);
-				if(point.isLeftOfLineSegment(previous, next) < 0) { //Line is absolutely right of point. Point is relatively right of line.
+				if(point_is_left < 0 || (point_is_left == 0 && include_edge == EdgeInclusion::OUTSIDE)) { //Line is absolutely right of point. Point is relatively right of line.
 					winding_number--;
-				} else if(point_is_left == 0) { //Point is on top of line! This is the edge case.
-					if(include_edge == EdgeInclusion::INSIDE) {
-						edges_hit--;
-					} else {
-						winding_number--;
-					}
 				}
 			}
 		} else if(previous.y == point.y) { //Horizontal line at exactly the height of the point.
-			if(previous.x < next.x && point.x >= previous.x && point.x <= next.x) {
-				if(include_edge == EdgeInclusion::INSIDE) {
-					edges_hit++;
-				} else {
+			if(previous.x < next.x && point.x >= previous.x && point.x <= next.x) { //Going to the left.
+				if(include_edge == EdgeInclusion::OUTSIDE) {
 					winding_number--;
 				}
-			} else if(previous.x >= next.x && point.x <= previous.x && point.x >= next.x) {
-				if(include_edge == EdgeInclusion::OUTSIDE) {
-					edges_hit--;
-				} else {
+			} else if(previous.x >= next.x && point.x <= previous.x && point.x >= next.x) { //Going to the right.
+				if(include_edge == EdgeInclusion::INSIDE) {
 					winding_number++;
 				}
 			}
@@ -76,9 +58,9 @@ bool SimplePolygon::contains_host(const Point2& point, const EdgeInclusion& incl
 	switch(fill_type) {
 		default:
 		case FillType::EVEN_ODD:
-			return winding_number & 1 || (include_edge == EdgeInclusion::INSIDE && (edges_hit & 1));
+			return winding_number & 1;
 		case FillType::NONZERO:
-			return winding_number != 0 || (include_edge == EdgeInclusion::INSIDE && (edges_hit != 0));
+			return winding_number != 0;
 	}
 }
 
