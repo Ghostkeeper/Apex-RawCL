@@ -36,6 +36,8 @@ public:
 
 	/*
 	 * Create a new point.
+	 * \param x The projection of the desired point on the X axis.
+	 * \param y The projection of the desired point on the Y axis.
 	 */
 	Point2(const coord_t x, const coord_t y);
 
@@ -45,6 +47,7 @@ public:
 	 * This is equivalent to translating this point by the coordinates of the
 	 * other (or vice versa).
 	 * \param other The point to add to this point.
+	 * \return A new point with the coordinates of both points summed together.
 	 */
 	Point2 operator +(const Point2& other) const;
 
@@ -54,6 +57,7 @@ public:
 	 * This is equivalent to translating this point by the coordinates of the
 	 * other.
 	 * \param other The point to add to this point.
+	 * \return This point, after adding the other point to it.
 	 */
 	Point2& operator +=(const Point2& other);
 
@@ -62,6 +66,8 @@ public:
 	 *
 	 * This results in the difference vector between the two points.
 	 * \param other The point to subtract from this point.
+	 * \return A new point with the coordinates of both points subtracted from
+	 * each other.
 	 */
 	Point2 operator -(const Point2& other) const;
 
@@ -70,6 +76,7 @@ public:
 	 *
 	 * This results in the difference vector between the two points.
 	 * \param other The point to subtract from this point.
+	 * \return This point, after subtracting the other point from it.
 	 */
 	Point2& operator -=(const Point2& other);
 
