@@ -12,9 +12,19 @@ namespace parallelogram {
 
 bool SimplePolygon::contains_host(const Point2& point, const EdgeInclusion& include_edge, const FillType& fill_type) const {
 	//TODO: If pre-calculation is allowed, obtain the AABB of the polygon and do that check first.
-	if(size() < 3) {
-		return false; //TODO: Check edge cases for lines and points if edges are to be included. Currently they're not included.
+
+	if(size() == 2) {
+		//This polygon is a line. Only report true if we consider edges inside and we're on the edge.
+		return include_edge == EdgeInclusion::INSIDE && point.isLeftOfLineSegment(front(), back()) == 0;
 	}
+	if(size() == 1) {
+		//This polygon is a point. Only report true if we consider edges inside and we're on the vertex.
+		return include_edge == EdgeInclusion::INSIDE && point == front();
+	}
+	if(size() == 0) {
+		return false;
+	}
+
 	//This is the winding number algorithm to determine if a point is inside a polygon.
 	int winding_number = 0;
 	Point2 previous = back();
