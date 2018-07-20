@@ -74,6 +74,13 @@ public:
 	Point2& operator -=(const Point2& other);
 
 	/*
+	 * Compares two points for equality.
+	 * \param other The point to compare with.
+	 * \return ``true`` if the two points are equal, or ``false`` otherwise.
+	 */
+	bool operator ==(const Point2& other) const;
+
+	/*
 	 * Determines whether the point is left of a line segment.
 	 *
 	 * Or more accurately, this tests whether the point is port-side of the line

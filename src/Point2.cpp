@@ -32,6 +32,10 @@ Point2& Point2::operator -=(const Point2& other) {
 	y -= other.y;
 }
 
+bool Point2::operator ==(const Point2& other) const {
+	return x == other.x && y == other.y;
+}
+
 coord_t Point2::isLeftOfLineSegment(const Point2& start, const Point2& end) const {
 	return (end.x - start.x) * (y - start.y) - (end.y - start.y) * (x - start.x);
 }
