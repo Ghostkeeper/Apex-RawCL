@@ -316,6 +316,16 @@ TEST_F(TestSimplePolygonContains, OnPoint) {
 	EXPECT_FALSE(point.contains(Point2(1000, 1000), EdgeInclusion::OUTSIDE));
 }
 
+/*
+ * Test whether a point is always considered outside the polygon if the polygon
+ * has no vertices.
+ */
+TEST_F(TestSimplePolygonContains, Empty) {
+	SimplePolygon empty; //Polygon without vertices.
+	EXPECT_FALSE(empty.contains(Point2(0, 0)));
+	EXPECT_FALSE(empty.contains(Point2(100, 100)));
+}
+
 }
 
 /*
