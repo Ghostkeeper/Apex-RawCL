@@ -288,8 +288,8 @@ TEST_F(TestSimplePolygonContains, OutsideLine) {
  * only if edges are included in the polygon.
  */
 TEST_F(TestSimplePolygonContains, OnLine) {
-	EXPECT_TRUE(line.contains(Point2(200, 200), EdgeInclusion::INSIDE));
-	EXPECT_FALSE(line.contains(Point2(200, 200), EdgeInclusion::OUTSIDE));
+	EXPECT_TRUE(line.contains(Point2(150, 200), EdgeInclusion::INSIDE));
+	EXPECT_FALSE(line.contains(Point2(150, 200), EdgeInclusion::OUTSIDE));
 }
 
 }
