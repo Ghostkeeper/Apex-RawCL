@@ -55,10 +55,15 @@ protected:
 	SimplePolygon five_pointed_star;
 
 	/*
-	 * A polygon with only two points, making a degenerate polygon like a line
+	 * A polygon with only two vertices, making a degenerate polygon like a line
 	 * segment.
 	 */
 	SimplePolygon line;
+
+	/*
+	 * A polygon with only one vertex, making a degenerate polygon like a point.
+	 */
+	SimplePolygon point;
 
 	/*
 	 * Prepares for running a test.
@@ -84,6 +89,8 @@ protected:
 
 		line.emplace_back(100, 100);
 		line.emplace_back(200, 300);
+
+		point.emplace_back(1000, 1000);
 
 		five_pointed_star.emplace_back(0, 500);
 		five_pointed_star.emplace_back(-std::sin(TAU / 5 * 2) * 500, std::cos(TAU / 5 * 2) * 500);
@@ -290,6 +297,23 @@ TEST_F(TestSimplePolygonContains, OutsideLine) {
 TEST_F(TestSimplePolygonContains, OnLine) {
 	EXPECT_TRUE(line.contains(Point2(150, 200), EdgeInclusion::INSIDE));
 	EXPECT_FALSE(line.contains(Point2(150, 200), EdgeInclusion::OUTSIDE));
+}
+
+/*
+ * Test whether a point next to a single-vertex polygon is considered outside
+ * of the polygon.
+ */
+TEST_F(TestSimplePolygonContains, OutsidePoint) {
+	EXPECT_FALSE(point.contains(Point2(500, 1000)));
+}
+
+/*
+ * Test whether a point on top of a single-vertex polygon is considered in the
+ * polygon if and only if edges are included in the polygon.
+ */
+TEST_F(TestSimplePolygonContains, OnPoint) {
+	EXPECT_TRUE(point.contains(Point2(1000, 1000), EdgeInclusion::INSIDE));
+	EXPECT_FALSE(point.contains(Point2(1000, 1000), EdgeInclusion::OUTSIDE));
 }
 
 }
