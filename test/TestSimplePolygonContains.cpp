@@ -11,7 +11,9 @@
 
 #include <gtest/gtest.h>
 #include <cmath> //To construct a star.
+#include "OpenCLDevices.h" //To get the OpenCL devices.
 #include "SimplePolygon.h" //To construct simple polygons to test on.
+#include "SimplePolygonTestGroper.h" //To get access to SimplePolygon's private members.
 
 #define TAU 6.28318530717959
 
@@ -78,6 +80,17 @@ protected:
 	SimplePolygon point;
 
 	/*
+	 * The devices to run tests on.
+	 */
+	std::vector<cl::Device> devices;
+
+	/*
+	 * Provides access to ``SimplePolygon``'s private members in order to test
+	 * them.
+	 */
+	SimplePolygonTestGroper groper;
+
+	/*
 	 * Prepares for running a test.
 	 *
 	 * Before every test, a new instance of this class is created and this test
@@ -121,6 +134,8 @@ protected:
 		line.emplace_back(200, 300);
 
 		point.emplace_back(1000, 1000);
+
+		devices = OpenCLDevices::getInstance().getAll();
 	}
 };
 
@@ -128,14 +143,22 @@ protected:
  * Test whether a point is inside a square.
  */
 TEST_F(TestSimplePolygonContains, InsideSquare) {
-	EXPECT_TRUE(square_1000.contains(Point2(500, 500)));
+	groper.tested_simple_polygon = &square_1000;
+	for(const cl::Device& device : devices) {
+		EXPECT_TRUE(groper.contains_opencl(device, Point2(500, 500)));
+	}
+	EXPECT_TRUE(groper.contains_host(Point2(500, 500)));
 }
 
 /*
  * Test whether a point is outside a square.
  */
 TEST_F(TestSimplePolygonContains, OutsideSquare) {
-	EXPECT_FALSE(square_1000.contains(Point2(-500, 500)));
+	groper.tested_simple_polygon = &square_1000;
+	for(const cl::Device& device : devices) {
+		EXPECT_FALSE(groper.contains_opencl(device, Point2(-500, 500)));
+	}
+	EXPECT_FALSE(groper.contains_host(Point2(-500, 500)));
 }
 
 /*
@@ -145,8 +168,13 @@ TEST_F(TestSimplePolygonContains, OutsideSquare) {
  * where the polygon has diagonal edges.
  */
 TEST_F(TestSimplePolygonContains, InsideDiamondOffCentre) {
-	EXPECT_TRUE(diamond_1000.contains(Point2(50, 50)));
-	EXPECT_TRUE(diamond_1000.contains(Point2(50, -50)));
+	groper.tested_simple_polygon = &diamond_1000;
+	for(const cl::Device& device : devices) {
+		EXPECT_TRUE(groper.contains_opencl(device, Point2(50, 50)));
+		EXPECT_TRUE(groper.contains_opencl(device, Point2(50, -50)));
+	}
+	EXPECT_TRUE(groper.contains_host(Point2(50, 50)));
+	EXPECT_TRUE(groper.contains_host(Point2(50, -50)));
 }
 
 /*
@@ -156,7 +184,11 @@ TEST_F(TestSimplePolygonContains, InsideDiamondOffCentre) {
  * hit two of the endpoints of edges (one vertex of the diamond).
  */
 TEST_F(TestSimplePolygonContains, InsideDiamondCentre) {
-	EXPECT_TRUE(diamond_1000.contains(Point2(0, 0)));
+	groper.tested_simple_polygon = &diamond_1000;
+	for(const cl::Device& device : devices) {
+		EXPECT_TRUE(groper.contains_opencl(device, Point2(0, 0)));
+	}
+	EXPECT_TRUE(groper.contains_host(Point2(0, 0)));
 }
 
 /*
@@ -166,7 +198,11 @@ TEST_F(TestSimplePolygonContains, InsideDiamondCentre) {
  * make any difference from the InsideDiamondCentre test.
  */
 TEST_F(TestSimplePolygonContains, InsideDiamondLeftOfCentre) {
-	EXPECT_TRUE(diamond_1000.contains(Point2(-50, 0)));
+	groper.tested_simple_polygon = &diamond_1000;
+	for(const cl::Device& device : devices) {
+		EXPECT_TRUE(groper.contains_opencl(device, Point2(-50, 0)));
+	}
+	EXPECT_TRUE(groper.contains_host(Point2(-50, 0)));
 }
 
 /*
@@ -177,7 +213,11 @@ TEST_F(TestSimplePolygonContains, InsideDiamondLeftOfCentre) {
  * rakes the tip of the diamond.
  */
 TEST_F(TestSimplePolygonContains, OutsideDiamondLeftOfTip) {
-	EXPECT_FALSE(diamond_1000.contains(Point2(-50, 500)));
+	groper.tested_simple_polygon = &diamond_1000;
+	for(const cl::Device& device : devices) {
+		EXPECT_FALSE(groper.contains_opencl(device, Point2(-50, 500)));
+	}
+	EXPECT_FALSE(groper.contains_host(Point2(-50, 500)));
 }
 
 /*
@@ -190,7 +230,11 @@ TEST_F(TestSimplePolygonContains, OutsideDiamondLeftOfTip) {
  * crosses the tips of two edges.
  */
 TEST_F(TestSimplePolygonContains, OutsideDiamondLeftOfBottom) {
-	EXPECT_FALSE(diamond_1000.contains(Point2(-50, -500)));
+	groper.tested_simple_polygon = &diamond_1000;
+	for(const cl::Device& device : devices) {
+		EXPECT_FALSE(groper.contains_opencl(device, Point2(-50, -500)));
+	}
+	EXPECT_FALSE(groper.contains_host(Point2(-50, -500)));
 }
 
 /*
@@ -201,7 +245,11 @@ TEST_F(TestSimplePolygonContains, OutsideDiamondLeftOfBottom) {
  * of the ray that is being shot outside of the point in question.
  */
 TEST_F(TestSimplePolygonContains, OutsideSquareLeftOfTop) {
-	EXPECT_FALSE(square_1000.contains(Point2(-50, 1000)));
+	groper.tested_simple_polygon = &square_1000;
+	for(const cl::Device& device : devices) {
+		EXPECT_FALSE(groper.contains_opencl(device, Point2(-50, 1000)));
+	}
+	EXPECT_FALSE(groper.contains_host(Point2(-50, 1000)));
 }
 
 /*
@@ -214,14 +262,22 @@ TEST_F(TestSimplePolygonContains, OutsideSquareLeftOfTop) {
  * when the ray crosses the tips of two edges.
  */
 TEST_F(TestSimplePolygonContains, OutsideSquareLeftOfBottom) {
-	EXPECT_FALSE(square_1000.contains(Point2(-50, 0)));
+	groper.tested_simple_polygon = &square_1000;
+	for(const cl::Device& device : devices) {
+		EXPECT_FALSE(groper.contains_opencl(device, Point2(-50, 0)));
+	}
+	EXPECT_FALSE(groper.contains_host(Point2(-50, 0)));
 }
 
 /*
  * Test whether a point is inside the bottom (positive) half of an hourglass.
  */
 TEST_F(TestSimplePolygonContains, InsideHourglassPositive) {
-	EXPECT_TRUE(hourglass.contains(Point2(500, 250)));
+	groper.tested_simple_polygon = &hourglass;
+	for(const cl::Device& device : devices) {
+		EXPECT_TRUE(groper.contains_opencl(device, Point2(500, 250)));
+	}
+	EXPECT_TRUE(groper.contains_host(Point2(500, 250)));
 }
 
 /*
@@ -231,7 +287,11 @@ TEST_F(TestSimplePolygonContains, InsideHourglassPositive) {
  * is odd meaning it should be considered inside.
  */
 TEST_F(TestSimplePolygonContains, InsideHourglassNegative) {
-	EXPECT_TRUE(hourglass.contains(Point2(500, 750)));
+	groper.tested_simple_polygon = &hourglass;
+	for(const cl::Device& device : devices) {
+		EXPECT_TRUE(groper.contains_opencl(device, Point2(500, 750)));
+	}
+	EXPECT_TRUE(groper.contains_host(Point2(500, 750)));
 }
 
 /*
@@ -239,7 +299,11 @@ TEST_F(TestSimplePolygonContains, InsideHourglassNegative) {
  * outside the polygon.
  */
 TEST_F(TestSimplePolygonContains, OutsideHourglassNextToNegative) {
-	EXPECT_FALSE(hourglass.contains(Point2(0, 750)));
+	groper.tested_simple_polygon = &hourglass;
+	for(const cl::Device& device : devices) {
+		EXPECT_FALSE(groper.contains_opencl(device, Point2(0, 750)));
+	}
+	EXPECT_FALSE(groper.contains_host(Point2(0, 750)));
 }
 
 /*
@@ -247,7 +311,11 @@ TEST_F(TestSimplePolygonContains, OutsideHourglassNextToNegative) {
  * is considered outside the polygon.
  */
 TEST_F(TestSimplePolygonContains, OutsideHourglassNextToIntersection) {
-	EXPECT_FALSE(hourglass.contains(Point2(0, 500)));
+	groper.tested_simple_polygon = &hourglass;
+	for(const cl::Device& device : devices) {
+		EXPECT_FALSE(groper.contains_opencl(device, Point2(0, 500)));
+	}
+	EXPECT_FALSE(groper.contains_host(Point2(0, 500)));
 }
 
 /*
@@ -255,7 +323,11 @@ TEST_F(TestSimplePolygonContains, OutsideHourglassNextToIntersection) {
  * considered outside the polygon.
  */
 TEST_F(TestSimplePolygonContains, InsideStarCentreEvenOdd) {
-	EXPECT_FALSE(five_pointed_star.contains(Point2(0, 0), EdgeInclusion::INSIDE, FillType::EVEN_ODD));
+	groper.tested_simple_polygon = &five_pointed_star;
+	for(const cl::Device& device : devices) {
+		EXPECT_FALSE(groper.contains_opencl(device, Point2(0, 0), EdgeInclusion::INSIDE, FillType::EVEN_ODD));
+	}
+	EXPECT_FALSE(groper.contains_host(Point2(0, 0), EdgeInclusion::INSIDE, FillType::EVEN_ODD));
 }
 
 /*
@@ -263,7 +335,11 @@ TEST_F(TestSimplePolygonContains, InsideStarCentreEvenOdd) {
  * considered inside the polygon if the fill type "nonzero" is used.
  */
 TEST_F(TestSimplePolygonContains, OutsideStarCentreNonzero) {
-	EXPECT_TRUE(five_pointed_star.contains(Point2(0, 0)));
+	groper.tested_simple_polygon = &five_pointed_star;
+	for(const cl::Device& device : devices) {
+		EXPECT_TRUE(groper.contains_opencl(device, Point2(0, 0)));
+	}
+	EXPECT_TRUE(groper.contains_host(Point2(0, 0)));
 }
 
 /*
@@ -271,8 +347,13 @@ TEST_F(TestSimplePolygonContains, OutsideStarCentreNonzero) {
  * considered inside the polygon regardless of the fill type.
  */
 TEST_F(TestSimplePolygonContains, InsideStarPointEvenOdd) {
-	EXPECT_TRUE(five_pointed_star.contains(Point2(-std::sin(TAU / 5) * 460, std::cos(TAU / 5) * 460), EdgeInclusion::INSIDE, FillType::EVEN_ODD));
-	EXPECT_TRUE(five_pointed_star.contains(Point2(-std::sin(TAU / 5) * 460, std::cos(TAU / 5) * 460)));
+	groper.tested_simple_polygon = &five_pointed_star;
+	for(const cl::Device& device : devices) {
+		EXPECT_TRUE(groper.contains_opencl(device, Point2(-std::sin(TAU / 5) * 460, std::cos(TAU / 5) * 460), EdgeInclusion::INSIDE, FillType::EVEN_ODD));
+		EXPECT_TRUE(groper.contains_opencl(device, Point2(-std::sin(TAU / 5) * 460, std::cos(TAU / 5) * 460)));
+	}
+	EXPECT_TRUE(groper.contains_host(Point2(-std::sin(TAU / 5) * 460, std::cos(TAU / 5) * 460), EdgeInclusion::INSIDE, FillType::EVEN_ODD));
+	EXPECT_TRUE(groper.contains_host(Point2(-std::sin(TAU / 5) * 460, std::cos(TAU / 5) * 460)));
 }
 
 /*
@@ -280,10 +361,17 @@ TEST_F(TestSimplePolygonContains, InsideStarPointEvenOdd) {
  * are counted as inside, and outside if edges are considered outside.
  */
 TEST_F(TestSimplePolygonContains, VerticalEdgeOfSquare) {
-	EXPECT_TRUE(square_1000.contains(Point2(0, 500), EdgeInclusion::INSIDE));
-	EXPECT_FALSE(square_1000.contains(Point2(0, 500), EdgeInclusion::OUTSIDE));
-	EXPECT_TRUE(square_1000.contains(Point2(1000, 500), EdgeInclusion::INSIDE));
-	EXPECT_FALSE(square_1000.contains(Point2(1000, 500), EdgeInclusion::OUTSIDE));
+	groper.tested_simple_polygon = &square_1000;
+	for(const cl::Device& device : devices) {
+		EXPECT_TRUE(groper.contains_opencl(device, Point2(0, 500), EdgeInclusion::INSIDE));
+		EXPECT_FALSE(groper.contains_opencl(device, Point2(0, 500), EdgeInclusion::OUTSIDE));
+		EXPECT_TRUE(groper.contains_opencl(device, Point2(1000, 500), EdgeInclusion::INSIDE));
+		EXPECT_FALSE(groper.contains_opencl(device, Point2(1000, 500), EdgeInclusion::OUTSIDE));
+	}
+	EXPECT_TRUE(groper.contains_host(Point2(0, 500), EdgeInclusion::INSIDE));
+	EXPECT_FALSE(groper.contains_host(Point2(0, 500), EdgeInclusion::OUTSIDE));
+	EXPECT_TRUE(groper.contains_host(Point2(1000, 500), EdgeInclusion::INSIDE));
+	EXPECT_FALSE(groper.contains_host(Point2(1000, 500), EdgeInclusion::OUTSIDE));
 }
 
 /*
@@ -291,8 +379,13 @@ TEST_F(TestSimplePolygonContains, VerticalEdgeOfSquare) {
  * the edges are counted as inside, and outside if edges are considered outside.
  */
 TEST_F(TestSimplePolygonContains, BottomEdgeOfSquare) {
-	EXPECT_TRUE(square_1000.contains(Point2(500, 0), EdgeInclusion::INSIDE));
-	EXPECT_FALSE(square_1000.contains(Point2(500, 0), EdgeInclusion::OUTSIDE));
+	groper.tested_simple_polygon = &square_1000;
+	for(const cl::Device& device : devices) {
+		EXPECT_TRUE(groper.contains_opencl(device, Point2(500, 0), EdgeInclusion::INSIDE));
+		EXPECT_FALSE(groper.contains_opencl(device, Point2(500, 0), EdgeInclusion::OUTSIDE));
+	}
+	EXPECT_TRUE(groper.contains_host(Point2(500, 0), EdgeInclusion::INSIDE));
+	EXPECT_FALSE(groper.contains_host(Point2(500, 0), EdgeInclusion::OUTSIDE));
 }
 
 /*
@@ -304,8 +397,13 @@ TEST_F(TestSimplePolygonContains, BottomEdgeOfSquare) {
  * vertex.
  */
 TEST_F(TestSimplePolygonContains, TopEdgeOfSquare) {
-	EXPECT_TRUE(square_1000.contains(Point2(500, 1000), EdgeInclusion::INSIDE));
-	EXPECT_FALSE(square_1000.contains(Point2(500, 1000), EdgeInclusion::OUTSIDE));
+	groper.tested_simple_polygon = &square_1000;
+	for(const cl::Device& device : devices) {
+		EXPECT_TRUE(groper.contains_opencl(device, Point2(500, 1000), EdgeInclusion::INSIDE));
+		EXPECT_FALSE(groper.contains_opencl(device, Point2(500, 1000), EdgeInclusion::OUTSIDE));
+	}
+	EXPECT_TRUE(groper.contains_host(Point2(500, 1000), EdgeInclusion::INSIDE));
+	EXPECT_FALSE(groper.contains_host(Point2(500, 1000), EdgeInclusion::OUTSIDE));
 }
 
 /*
@@ -313,8 +411,13 @@ TEST_F(TestSimplePolygonContains, TopEdgeOfSquare) {
  * non-zero fill rule and outside when using even-odd.
  */
 TEST_F(TestSimplePolygonContains, MiddleOfDoubleWinding) {
-	EXPECT_TRUE(double_winding.contains(Point2(250, 250)));
-	EXPECT_FALSE(double_winding.contains(Point2(250, 250), EdgeInclusion::INSIDE, FillType::EVEN_ODD)); //Since the polygon winds twice, this should be considered outside.
+	groper.tested_simple_polygon = &double_winding;
+	for(const cl::Device& device : devices) {
+		EXPECT_TRUE(groper.contains_opencl(device, Point2(250, 250)));
+		EXPECT_FALSE(groper.contains_opencl(device, Point2(250, 250), EdgeInclusion::INSIDE, FillType::EVEN_ODD)); //Since the polygon winds twice, this should be considered outside.
+	}
+	EXPECT_TRUE(groper.contains_host(Point2(250, 250)));
+	EXPECT_FALSE(groper.contains_host(Point2(250, 250), EdgeInclusion::INSIDE, FillType::EVEN_ODD)); //Since the polygon winds twice, this should be considered outside.
 }
 
 /*
@@ -326,10 +429,17 @@ TEST_F(TestSimplePolygonContains, MiddleOfDoubleWinding) {
  * times.
  */
 TEST_F(TestSimplePolygonContains, EdgeOfDoubleWinding) {
-	EXPECT_TRUE(double_winding.contains(Point2(0, 500), EdgeInclusion::INSIDE, FillType::NONZERO));
-	EXPECT_FALSE(double_winding.contains(Point2(0, 500), EdgeInclusion::OUTSIDE, FillType::NONZERO));
-	EXPECT_FALSE(double_winding.contains(Point2(0, 500), EdgeInclusion::INSIDE, FillType::EVEN_ODD));
-	EXPECT_FALSE(double_winding.contains(Point2(0, 500), EdgeInclusion::OUTSIDE, FillType::EVEN_ODD));
+	groper.tested_simple_polygon = &double_winding;
+	for(const cl::Device& device : devices) {
+		EXPECT_TRUE(groper.contains_opencl(device, Point2(0, 500), EdgeInclusion::INSIDE, FillType::NONZERO));
+		EXPECT_FALSE(groper.contains_opencl(device, Point2(0, 500), EdgeInclusion::OUTSIDE, FillType::NONZERO));
+		EXPECT_FALSE(groper.contains_opencl(device, Point2(0, 500), EdgeInclusion::INSIDE, FillType::EVEN_ODD));
+		EXPECT_FALSE(groper.contains_opencl(device, Point2(0, 500), EdgeInclusion::OUTSIDE, FillType::EVEN_ODD));
+	}
+	EXPECT_TRUE(groper.contains_host(Point2(0, 500), EdgeInclusion::INSIDE, FillType::NONZERO));
+	EXPECT_FALSE(groper.contains_host(Point2(0, 500), EdgeInclusion::OUTSIDE, FillType::NONZERO));
+	EXPECT_FALSE(groper.contains_host(Point2(0, 500), EdgeInclusion::INSIDE, FillType::EVEN_ODD));
+	EXPECT_FALSE(groper.contains_host(Point2(0, 500), EdgeInclusion::OUTSIDE, FillType::EVEN_ODD));
 }
 
 /*
@@ -337,7 +447,11 @@ TEST_F(TestSimplePolygonContains, EdgeOfDoubleWinding) {
  * polygon.
  */
 TEST_F(TestSimplePolygonContains, InsideNegativeSquare) {
-	EXPECT_TRUE(negative_square.contains(Point2(500, 500)));
+	groper.tested_simple_polygon = &negative_square;
+	for(const cl::Device& device : devices) {
+		EXPECT_TRUE(groper.contains_opencl(device, Point2(500, 500)));
+	}
+	EXPECT_TRUE(groper.contains_host(Point2(500, 500)));
 }
 
 /*
@@ -348,7 +462,11 @@ TEST_F(TestSimplePolygonContains, InsideNegativeSquare) {
  * with the polygon.
  */
 TEST_F(TestSimplePolygonContains, OutsideNegativeSquare) {
-	EXPECT_FALSE(negative_square.contains(Point2(-50, 500)));
+	groper.tested_simple_polygon = &negative_square;
+	for(const cl::Device& device : devices) {
+		EXPECT_FALSE(groper.contains_opencl(device, Point2(-50, 500)));
+	}
+	EXPECT_FALSE(groper.contains_host(Point2(-50, 500)));
 }
 
 /*
@@ -358,10 +476,17 @@ TEST_F(TestSimplePolygonContains, OutsideNegativeSquare) {
  * For negative polygons, the edge inclusion property is inverted.
  */
 TEST_F(TestSimplePolygonContains, VerticalEdgeNegativeSquare) {
-	EXPECT_FALSE(negative_square.contains(Point2(0, 500), EdgeInclusion::INSIDE));
-	EXPECT_TRUE(negative_square.contains(Point2(0, 500), EdgeInclusion::OUTSIDE));
-	EXPECT_FALSE(negative_square.contains(Point2(1000, 500), EdgeInclusion::INSIDE));
-	EXPECT_TRUE(negative_square.contains(Point2(1000, 500), EdgeInclusion::OUTSIDE));
+	groper.tested_simple_polygon = &negative_square;
+	for(const cl::Device& device : devices) {
+		EXPECT_FALSE(groper.contains_opencl(device, Point2(0, 500), EdgeInclusion::INSIDE));
+		EXPECT_TRUE(groper.contains_opencl(device, Point2(0, 500), EdgeInclusion::OUTSIDE));
+		EXPECT_FALSE(groper.contains_opencl(device, Point2(1000, 500), EdgeInclusion::INSIDE));
+		EXPECT_TRUE(groper.contains_opencl(device, Point2(1000, 500), EdgeInclusion::OUTSIDE));
+	}
+	EXPECT_FALSE(groper.contains_host(Point2(0, 500), EdgeInclusion::INSIDE));
+	EXPECT_TRUE(groper.contains_host(Point2(0, 500), EdgeInclusion::OUTSIDE));
+	EXPECT_FALSE(groper.contains_host(Point2(1000, 500), EdgeInclusion::INSIDE));
+	EXPECT_TRUE(groper.contains_host(Point2(1000, 500), EdgeInclusion::OUTSIDE));
 }
 
 /*
@@ -369,8 +494,13 @@ TEST_F(TestSimplePolygonContains, VerticalEdgeNegativeSquare) {
  * inside (depending on whether edges are included or not).
  */
 TEST_F(TestSimplePolygonContains, BottomEdgeNegativeSquare) {
-	EXPECT_FALSE(negative_square.contains(Point2(500, 0), EdgeInclusion::INSIDE));
-	EXPECT_TRUE(negative_square.contains(Point2(500, 0), EdgeInclusion::OUTSIDE));
+	groper.tested_simple_polygon = &negative_square;
+	for(const cl::Device& device : devices) {
+		EXPECT_FALSE(groper.contains_opencl(device, Point2(500, 0), EdgeInclusion::INSIDE));
+		EXPECT_TRUE(groper.contains_opencl(device, Point2(500, 0), EdgeInclusion::OUTSIDE));
+	}
+	EXPECT_FALSE(groper.contains_host(Point2(500, 0), EdgeInclusion::INSIDE));
+	EXPECT_TRUE(groper.contains_host(Point2(500, 0), EdgeInclusion::OUTSIDE));
 }
 
 /*
@@ -382,15 +512,24 @@ TEST_F(TestSimplePolygonContains, BottomEdgeNegativeSquare) {
  * vertex.
  */
 TEST_F(TestSimplePolygonContains, TopEdgeNegativeSquare) {
-	EXPECT_FALSE(negative_square.contains(Point2(500, 1000), EdgeInclusion::INSIDE));
-	EXPECT_TRUE(negative_square.contains(Point2(500, 1000), EdgeInclusion::OUTSIDE));
+	groper.tested_simple_polygon = &negative_square;
+	for(const cl::Device& device : devices) {
+		EXPECT_FALSE(groper.contains_opencl(device, Point2(500, 1000), EdgeInclusion::INSIDE));
+		EXPECT_TRUE(groper.contains_opencl(device, Point2(500, 1000), EdgeInclusion::OUTSIDE));
+	}
+	EXPECT_FALSE(groper.contains_host(Point2(500, 1000), EdgeInclusion::INSIDE));
+	EXPECT_TRUE(groper.contains_host(Point2(500, 1000), EdgeInclusion::OUTSIDE));
 }
 
 /*
  * Test whether a point next to a line is considered outside the line.
  */
 TEST_F(TestSimplePolygonContains, OutsideLine) {
-	EXPECT_FALSE(line.contains(Point2(100, 200)));
+	groper.tested_simple_polygon = &line;
+	for(const cl::Device& device : devices) {
+		EXPECT_FALSE(groper.contains_opencl(device, Point2(100, 200)));
+	}
+	EXPECT_FALSE(groper.contains_host(Point2(100, 200)));
 }
 
 /*
@@ -398,8 +537,13 @@ TEST_F(TestSimplePolygonContains, OutsideLine) {
  * only if edges are included in the polygon.
  */
 TEST_F(TestSimplePolygonContains, OnLine) {
-	EXPECT_TRUE(line.contains(Point2(150, 200), EdgeInclusion::INSIDE));
-	EXPECT_FALSE(line.contains(Point2(150, 200), EdgeInclusion::OUTSIDE));
+	groper.tested_simple_polygon = &line;
+	for(const cl::Device& device : devices) {
+		EXPECT_TRUE(groper.contains_opencl(device, Point2(150, 200), EdgeInclusion::INSIDE));
+		EXPECT_FALSE(groper.contains_opencl(device, Point2(150, 200), EdgeInclusion::OUTSIDE));
+	}
+	EXPECT_TRUE(groper.contains_host(Point2(150, 200), EdgeInclusion::INSIDE));
+	EXPECT_FALSE(groper.contains_host(Point2(150, 200), EdgeInclusion::OUTSIDE));
 }
 
 /*
@@ -407,7 +551,11 @@ TEST_F(TestSimplePolygonContains, OnLine) {
  * of the polygon.
  */
 TEST_F(TestSimplePolygonContains, OutsidePoint) {
-	EXPECT_FALSE(point.contains(Point2(500, 1000)));
+	groper.tested_simple_polygon = &point;
+	for(const cl::Device& device : devices) {
+		EXPECT_FALSE(groper.contains_opencl(device, Point2(500, 1000)));
+	}
+	EXPECT_FALSE(groper.contains_host(Point2(500, 1000)));
 }
 
 /*
@@ -415,8 +563,13 @@ TEST_F(TestSimplePolygonContains, OutsidePoint) {
  * polygon if and only if edges are included in the polygon.
  */
 TEST_F(TestSimplePolygonContains, OnPoint) {
-	EXPECT_TRUE(point.contains(Point2(1000, 1000), EdgeInclusion::INSIDE));
-	EXPECT_FALSE(point.contains(Point2(1000, 1000), EdgeInclusion::OUTSIDE));
+	groper.tested_simple_polygon = &point;
+	for(const cl::Device& device : devices) {
+		EXPECT_TRUE(groper.contains_opencl(device, Point2(1000, 1000), EdgeInclusion::INSIDE));
+		EXPECT_FALSE(groper.contains_opencl(device, Point2(1000, 1000), EdgeInclusion::OUTSIDE));
+	}
+	EXPECT_TRUE(groper.contains_host(Point2(1000, 1000), EdgeInclusion::INSIDE));
+	EXPECT_FALSE(groper.contains_host(Point2(1000, 1000), EdgeInclusion::OUTSIDE));
 }
 
 /*
@@ -425,8 +578,13 @@ TEST_F(TestSimplePolygonContains, OnPoint) {
  */
 TEST_F(TestSimplePolygonContains, Empty) {
 	SimplePolygon empty; //Polygon without vertices.
-	EXPECT_FALSE(empty.contains(Point2(0, 0)));
-	EXPECT_FALSE(empty.contains(Point2(100, 100)));
+	groper.tested_simple_polygon = &empty;
+	for(const cl::Device& device : devices) {
+		EXPECT_FALSE(groper.contains_opencl(device, Point2(0, 0)));
+		EXPECT_FALSE(groper.contains_opencl(device, Point2(100, 100)));
+	}
+	EXPECT_FALSE(groper.contains_host(Point2(0, 0)));
+	EXPECT_FALSE(groper.contains_host(Point2(100, 100)));
 }
 
 /*
@@ -444,7 +602,11 @@ TEST_F(TestSimplePolygonContains, BigSawTooth) {
 	}
 	saw_tooth.emplace_back(4 * num_vertices, 0);
 
-	EXPECT_TRUE(saw_tooth.contains(Point2(2, 10)));
+	groper.tested_simple_polygon = &saw_tooth;
+	for(const cl::Device& device : devices) {
+		EXPECT_TRUE(groper.contains_opencl(device, Point2(2, 10)));
+	}
+	EXPECT_TRUE(groper.contains_host(Point2(2, 10)));
 }
 
 /*
@@ -459,10 +621,17 @@ TEST_F(TestSimplePolygonContains, Rounding) {
 	long_horizontal.emplace_back(1000, 0);
 	long_horizontal.emplace_back(1000, 2);
 
-	EXPECT_FALSE(long_horizontal.contains(Point2(800, 0), EdgeInclusion::OUTSIDE));
-	EXPECT_FALSE(long_horizontal.contains(Point2(800, 0), EdgeInclusion::INSIDE));
-	EXPECT_TRUE(long_horizontal.contains(Point2(800, 1), EdgeInclusion::OUTSIDE));
-	EXPECT_TRUE(long_horizontal.contains(Point2(800, 1), EdgeInclusion::OUTSIDE));
+	groper.tested_simple_polygon = &long_horizontal;
+	for(const cl::Device& device : devices) {
+		EXPECT_FALSE(groper.contains_opencl(device, Point2(800, 0), EdgeInclusion::OUTSIDE));
+		EXPECT_FALSE(groper.contains_opencl(device, Point2(800, 0), EdgeInclusion::INSIDE));
+		EXPECT_TRUE(groper.contains_opencl(device, Point2(800, 1), EdgeInclusion::OUTSIDE));
+		EXPECT_TRUE(groper.contains_opencl(device, Point2(800, 1), EdgeInclusion::OUTSIDE));
+	}
+	EXPECT_FALSE(groper.contains_host(Point2(800, 0), EdgeInclusion::OUTSIDE));
+	EXPECT_FALSE(groper.contains_host(Point2(800, 0), EdgeInclusion::INSIDE));
+	EXPECT_TRUE(groper.contains_host(Point2(800, 1), EdgeInclusion::OUTSIDE));
+	EXPECT_TRUE(groper.contains_host(Point2(800, 1), EdgeInclusion::OUTSIDE));
 }
 
 }

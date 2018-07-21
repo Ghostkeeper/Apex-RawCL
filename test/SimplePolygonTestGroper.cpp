@@ -18,4 +18,12 @@ area_t SimplePolygonTestGroper::area_opencl(const cl::Device& device) const {
 	return tested_simple_polygon->area_opencl(device);
 }
 
+bool SimplePolygonTestGroper::contains_host(const Point2& point, const EdgeInclusion& include_edge, const FillType& fill_type) const {
+	return tested_simple_polygon->contains_host(point, include_edge, fill_type);
+}
+
+bool SimplePolygonTestGroper::contains_opencl(const cl::Device& device, const Point2& point, const EdgeInclusion& include_edge, const FillType& fill_type) const {
+	return tested_simple_polygon->contains_opencl(device, point, include_edge, fill_type);
+}
+
 }

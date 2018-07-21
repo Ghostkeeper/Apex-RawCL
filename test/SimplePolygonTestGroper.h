@@ -41,6 +41,18 @@ public:
 	 * returns the result.
 	 */
 	area_t area_opencl(const cl::Device& device) const;
+
+	/*
+	 * Calls the private function "contains_host" on the tested simple polygon
+	 * and returns the result.
+	 */
+	bool contains_host(const Point2& point, const EdgeInclusion& include_edge = EdgeInclusion::INSIDE, const FillType& fill_type = FillType::NONZERO) const;
+
+	/*
+	 * Calls the private function "contains_opencl" on the tested simple polygon
+	 * and returns the result.
+	 */
+	bool contains_opencl(const cl::Device& device, const Point2& point, const EdgeInclusion& include_edge = EdgeInclusion::INSIDE, const FillType& fill_type = FillType::NONZERO) const;
 };
 
 }
