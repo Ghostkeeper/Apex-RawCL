@@ -447,6 +447,24 @@ TEST_F(TestSimplePolygonContains, BigSawTooth) {
 	EXPECT_TRUE(saw_tooth.contains(Point2(2, 10)));
 }
 
+/*
+ * Test whether a point is identified correctly if it's less than one unit away
+ * from the edge.
+ *
+ * This tests with a horizontal edge.
+ */
+TEST_F(TestSimplePolygonContains, Rounding) {
+	SimplePolygon long_horizontal; //Triangle that is 1000 units wide and just 2 units tall.
+	long_horizontal.emplace_back(0, 2);
+	long_horizontal.emplace_back(1000, 0);
+	long_horizontal.emplace_back(1000, 2);
+
+	EXPECT_FALSE(long_horizontal.contains(Point2(800, 0), EdgeInclusion::OUTSIDE));
+	EXPECT_FALSE(long_horizontal.contains(Point2(800, 0), EdgeInclusion::INSIDE));
+	EXPECT_TRUE(long_horizontal.contains(Point2(800, 1), EdgeInclusion::OUTSIDE));
+	EXPECT_TRUE(long_horizontal.contains(Point2(800, 1), EdgeInclusion::OUTSIDE));
+}
+
 }
 
 /*
