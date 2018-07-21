@@ -289,9 +289,11 @@ TEST_F(TestSimplePolygonContains, InsideStarPointEvenOdd) {
  * Test whether a point on an edge of a square is considered inside if the edges
  * are counted as inside, and outside if edges are considered outside.
  */
-TEST_F(TestSimplePolygonContains, LeftEdgeOfSquare) {
+TEST_F(TestSimplePolygonContains, VerticalEdgeOfSquare) {
 	EXPECT_TRUE(square_1000.contains(Point2(0, 500), EdgeInclusion::INSIDE));
 	EXPECT_FALSE(square_1000.contains(Point2(0, 500), EdgeInclusion::OUTSIDE));
+	EXPECT_TRUE(square_1000.contains(Point2(1000, 500), EdgeInclusion::INSIDE));
+	EXPECT_FALSE(square_1000.contains(Point2(1000, 500), EdgeInclusion::OUTSIDE));
 }
 
 /*
