@@ -82,6 +82,27 @@ public:
 
 	/*
 	 * Test whether the specified point is inside this simple polygon.
+	 *
+	 * You can test this with different fill rules, and choose whether to
+	 * include edges or not.
+	 *
+	 * Negative polygons (with clockwise winding order) are computed in the same
+	 * way as positive polygons. For the non-zero and even-odd fill rules, the
+	 * answer of this algorithm will be the same regardless of the winding order
+	 * of the polygon. However if you check for a point on the edge of a
+	 * polygon, the answer will be inversed for negative polygons. This keeps
+	 * the answer consistent with complex polygons, where a negative polygon
+	 * delimits a hole in the shape.
+	 *
+	 * Points where the polygon's edges intersect each other are indeterminate.
+	 * This is because the point must be inside if it's on the edge of a
+	 * positive polygon and edges are included, or outside if it's on the edge
+	 * of a negative polygon and edges are included (and vice-versa if edges are
+	 * not included). On a point of self-intersection, the winding order of the
+	 * shape locally around the point is indeterminate. It could be either
+	 * positive (counter-clockwise) or negative (clockwise). The answer given
+	 * will depend on the frills of the algorithm but should not be considered
+	 * reliable.
 	 * \param point The point to test.
 	 * \param fill_type What areas to count as being inside this simple polygon
 	 * if the polygon is self-intersecting.
