@@ -25,11 +25,12 @@ namespace parallelogram {
 namespace benchmarks {
 
 const std::vector<SimplePolygonBenchmark> Benchmarker::device_benchmarks = {
-	SimplePolygonBenchmark("area_opencl", [](const cl::Device* device, SimplePolygon& polygon) {polygon.area_opencl(*device);}),
+	SimplePolygonBenchmark("area_opencl", [](const cl::Device* device, SimplePolygon& polygon) {polygon.area_opencl(*device);})
 };
 
 const std::vector<SimplePolygonBenchmark> Benchmarker::host_benchmarks = {
-	SimplePolygonBenchmark("area_host", [](const cl::Device* device, SimplePolygon& polygon) {polygon.area_host();})
+	SimplePolygonBenchmark("area_host", [](const cl::Device* device, SimplePolygon& polygon) {polygon.area_host();}),
+	SimplePolygonBenchmark("contains_host", [](const cl::Device* device, SimplePolygon& polygon) {polygon.contains_host(Point2(0, 0));})
 };
 
 Benchmarker::Benchmarker(const cl::Device* device) : device(device) { }
