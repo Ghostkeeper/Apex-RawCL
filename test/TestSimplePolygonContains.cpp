@@ -293,9 +293,28 @@ TEST_F(TestSimplePolygonContains, TopEdgeOfSquare) {
 	EXPECT_FALSE(square_1000.contains(Point2(500, 1000), EdgeInclusion::OUTSIDE));
 }
 
+/*
+ * Test whether the centre of a polygon that winds twice is inside using the
+ * non-zero fill rule and outside when using even-odd.
+ */
 TEST_F(TestSimplePolygonContains, MiddleOfDoubleWinding) {
 	EXPECT_TRUE(double_winding.contains(Point2(250, 250)));
 	EXPECT_FALSE(double_winding.contains(Point2(250, 250), EdgeInclusion::INSIDE, FillType::EVEN_ODD)); //Since the polygon winds twice, this should be considered outside.
+}
+
+/*
+ * Test a point on the edge of a polygon that winds twice.
+ *
+ * With the non-zero fill rule, the point should only be considered inside if
+ * edges are considered inside the polygon. With the even-odd fill rule, the
+ * edge is never inside the polygon since the polygon winds an even number of
+ * times.
+ */
+TEST_F(TestSimplePolygonContains, EdgeOfDoubleWinding) {
+	EXPECT_TRUE(double_winding.contains(Point2(0, 500), EdgeInclusion::INSIDE, FillType::NONZERO));
+	EXPECT_FALSE(double_winding.contains(Point2(0, 500), EdgeInclusion::OUTSIDE, FillType::NONZERO));
+	EXPECT_FALSE(double_winding.contains(Point2(0, 500), EdgeInclusion::INSIDE, FillType::EVEN_ODD));
+	EXPECT_FALSE(double_winding.contains(Point2(0, 500), EdgeInclusion::OUTSIDE, FillType::EVEN_ODD));
 }
 
 //TODO: Add tests with negative polygons.
