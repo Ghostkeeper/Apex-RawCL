@@ -61,6 +61,12 @@ protected:
 	SimplePolygon double_winding;
 
 	/*
+	 * A square of 1000 by 1000 units, but the vertices wind in clockwise
+	 * direction, making the polygon have a negative surface.
+	 */
+	SimplePolygon negative_square;
+
+	/*
 	 * A polygon with only two vertices, making a degenerate polygon like a line
 	 * segment.
 	 */
@@ -106,6 +112,11 @@ protected:
 		double_winding.emplace_back(1000, 0);
 		double_winding.emplace_back(0, 1000);
 
+		negative_square.emplace_back(0, 0);
+		negative_square.emplace_back(0, 1000);
+		negative_square.emplace_back(1000, 1000);
+		negative_square.emplace_back(1000, 0);
+
 		line.emplace_back(100, 100);
 		line.emplace_back(200, 300);
 
@@ -130,12 +141,20 @@ TEST_F(TestSimplePolygonContains, OutsideSquare) {
 /*
  * Test whether a point is inside a diamond.
  *
- * This tests for the case where the polygon has diagonal edges.
+ * The point is just above the centre of the diamond. This tests for the case
+ * where the polygon has diagonal edges.
  */
 TEST_F(TestSimplePolygonContains, InsideDiamondAboveCentre) {
 	EXPECT_TRUE(diamond_1000.contains(Point2(50, 50)));
 }
 
+/*
+ * Test whether a point is inside a diamond.
+ *
+ * The point is just below the centre of the diamond. This tests for the case
+ * where the polygon has diagonal edges, but the edges that the ray crosses will
+ * go in another horizontal direction than in InsideDiamondAboveCentre.
+ */
 TEST_F(TestSimplePolygonContains, InsideDiamondBelowCentre) {
 	EXPECT_TRUE(diamond_1000.contains(Point2(50, -50)));
 }
@@ -317,7 +336,13 @@ TEST_F(TestSimplePolygonContains, EdgeOfDoubleWinding) {
 	EXPECT_FALSE(double_winding.contains(Point2(0, 500), EdgeInclusion::OUTSIDE, FillType::EVEN_ODD));
 }
 
-//TODO: Add tests with negative polygons.
+/*
+ * Test for whether a point is considered inside if it's in a negative winding
+ * polygon.
+ */
+TEST_F(TestSimplePolygonContains, InsideNegativeSquare) {
+	EXPECT_TRUE(negative_square.contains(Point2(500, 500)));
+}
 
 /*
  * Test whether a point next to a line is considered outside the line.
