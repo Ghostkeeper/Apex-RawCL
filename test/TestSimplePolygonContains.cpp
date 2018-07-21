@@ -356,6 +356,19 @@ TEST_F(TestSimplePolygonContains, OutsideNegativeSquare) {
 }
 
 /*
+ * Test whether a point on a vertical edge of a negative square is considered
+ * inside if and only if edges are included.
+ *
+ * For negative polygons, the edge inclusion property is inverted.
+ */
+TEST_F(TestSimplePolygonContains, VerticalEdgeNegativeSquare) {
+	EXPECT_FALSE(negative_square.contains(Point2(0, 500), EdgeInclusion::INSIDE));
+	EXPECT_TRUE(negative_square.contains(Point2(0, 500), EdgeInclusion::OUTSIDE));
+	EXPECT_FALSE(negative_square.contains(Point2(1000, 500), EdgeInclusion::INSIDE));
+	EXPECT_TRUE(negative_square.contains(Point2(1000, 500), EdgeInclusion::OUTSIDE));
+}
+
+/*
  * Test whether a point next to a line is considered outside the line.
  */
 TEST_F(TestSimplePolygonContains, OutsideLine) {
