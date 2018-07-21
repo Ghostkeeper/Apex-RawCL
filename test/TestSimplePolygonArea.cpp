@@ -249,6 +249,7 @@ TEST_F(TestSimplePolygonArea, Point) {
 TEST_F(TestSimplePolygonArea, Circle) {
 	SimplePolygon circle;
 	constexpr size_t num_vertices = 1000000;
+	circle.reserve(num_vertices);
 	constexpr coord_t radius = 1000000;
 	for(size_t vertex = 0; vertex < num_vertices; vertex++) { //Construct a circle with lots of vertices.
 		const coord_t x = std::lround(std::cos(PI * 2 / num_vertices * vertex) * radius); //This rounding naturally introduces error, so we must allow some lenience in the output.
