@@ -308,6 +308,10 @@ TEST_F(TestSimplePolygonContains, BottomEdgeOfSquare) {
 /*
  * Test whether a point on a horizontal edge of a square is considered inside if
  * the edges are counted as inside, and outside if edges are considered outside.
+ *
+ * This tests the bottom side of a square. This may be different from the top
+ * since the non-horizontal edges of the polygon are not intersected on the top
+ * vertex.
  */
 TEST_F(TestSimplePolygonContains, TopEdgeOfSquare) {
 	EXPECT_TRUE(square_1000.contains(Point2(500, 1000), EdgeInclusion::INSIDE));
@@ -368,6 +372,28 @@ TEST_F(TestSimplePolygonContains, VerticalEdgeNegativeSquare) {
 	EXPECT_TRUE(negative_square.contains(Point2(0, 500), EdgeInclusion::OUTSIDE));
 	EXPECT_FALSE(negative_square.contains(Point2(1000, 500), EdgeInclusion::INSIDE));
 	EXPECT_TRUE(negative_square.contains(Point2(1000, 500), EdgeInclusion::OUTSIDE));
+}
+
+/*
+ * Test whether a point on a horizontal edge of a negative square is considered
+ * inside (depending on whether edges are included or not).
+ */
+TEST_F(TestSimplePolygonContains, BottomEdgeNegativeSquare) {
+	EXPECT_FALSE(negative_square.contains(Point2(500, 0), EdgeInclusion::INSIDE));
+	EXPECT_TRUE(negative_square.contains(Point2(500, 0), EdgeInclusion::OUTSIDE));
+}
+
+/*
+ * Test whether a point on a horizontal edge of a negative square is considered
+ * inside (depending on whether edges are included or not).
+ *
+ * This tests the bottom side of a square. This may be different from the top
+ * since the non-horizontal edges of the polygon are not intersected on the top
+ * vertex.
+ */
+TEST_F(TestSimplePolygonContains, TopEdgeNegativeSquare) {
+	EXPECT_FALSE(negative_square.contains(Point2(500, 1000), EdgeInclusion::INSIDE));
+	EXPECT_TRUE(negative_square.contains(Point2(500, 1000), EdgeInclusion::OUTSIDE));
 }
 
 /*
