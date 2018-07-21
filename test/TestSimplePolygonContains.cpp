@@ -345,6 +345,17 @@ TEST_F(TestSimplePolygonContains, InsideNegativeSquare) {
 }
 
 /*
+ * Test whether a point outside of a negative square is considered to be outside
+ * the polygon.
+ *
+ * The point is positioned such that a ray projected to the right will intersect
+ * with the polygon.
+ */
+TEST_F(TestSimplePolygonContains, OutsideNegativeSquare) {
+	EXPECT_FALSE(negative_square.contains(Point2(-50, 500)));
+}
+
+/*
  * Test whether a point next to a line is considered outside the line.
  */
 TEST_F(TestSimplePolygonContains, OutsideLine) {
