@@ -429,6 +429,24 @@ TEST_F(TestSimplePolygonContains, Empty) {
 	EXPECT_FALSE(empty.contains(Point2(100, 100)));
 }
 
+/*
+ * Test containment of a point inside a large polygon.
+ *
+ * The polygon is also constructed such that a ray shooting toward positive X
+ * will cross many of its edges.
+ */
+TEST_F(TestSimplePolygonContains, BigSawTooth) {
+	constexpr size_t num_vertices = 1000000;
+	SimplePolygon saw_tooth; //An auto-generated sawtooth shape with many vertices.
+	saw_tooth.reserve(num_vertices);
+	for(size_t x = 0; x < num_vertices - 1; x++) {
+		saw_tooth.emplace_back(x * 4, (x % 2) * 500); //Each saw is 4 coordinates wide. Y coordinates alternates between 0 and 500.
+	}
+	saw_tooth.emplace_back(4 * num_vertices, 0);
+
+	EXPECT_TRUE(saw_tooth.contains(Point2(2, 10)));
+}
+
 }
 
 /*
