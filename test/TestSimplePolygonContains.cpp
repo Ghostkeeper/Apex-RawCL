@@ -55,6 +55,12 @@ protected:
 	SimplePolygon five_pointed_star;
 
 	/*
+	 * A triangle that winds twice, producing two triangles that exactly self-
+	 * overlap.
+	 */
+	SimplePolygon double_winding;
+
+	/*
 	 * A polygon with only two vertices, making a degenerate polygon like a line
 	 * segment.
 	 */
@@ -87,16 +93,23 @@ protected:
 		hourglass.emplace_back(0, 1000);
 		hourglass.emplace_back(1000, 1000);
 
-		line.emplace_back(100, 100);
-		line.emplace_back(200, 300);
-
-		point.emplace_back(1000, 1000);
-
 		five_pointed_star.emplace_back(0, 500);
 		five_pointed_star.emplace_back(-std::sin(TAU / 5 * 2) * 500, std::cos(TAU / 5 * 2) * 500);
 		five_pointed_star.emplace_back(-std::sin(TAU / 5 * 4) * 500, std::cos(TAU / 5 * 4) * 500);
 		five_pointed_star.emplace_back(-std::sin(TAU / 5 * 1) * 500, std::cos(TAU / 5 * 1) * 500);
 		five_pointed_star.emplace_back(-std::sin(TAU / 5 * 3) * 500, std::cos(TAU / 5 * 3) * 500);
+
+		double_winding.emplace_back(0, 0);
+		double_winding.emplace_back(1000, 0);
+		double_winding.emplace_back(0, 1000);
+		double_winding.emplace_back(0, 0);
+		double_winding.emplace_back(1000, 0);
+		double_winding.emplace_back(0, 1000);
+
+		line.emplace_back(100, 100);
+		line.emplace_back(200, 300);
+
+		point.emplace_back(1000, 1000);
 	}
 };
 
@@ -280,7 +293,11 @@ TEST_F(TestSimplePolygonContains, TopEdgeOfSquare) {
 	EXPECT_FALSE(square_1000.contains(Point2(500, 1000), EdgeInclusion::OUTSIDE));
 }
 
-//TODO: Add more tests for hitting edges of polygons. Also multiple edges at once.
+TEST_F(TestSimplePolygonContains, MiddleOfDoubleWinding) {
+	EXPECT_TRUE(double_winding.contains(Point2(250, 250)));
+	EXPECT_FALSE(double_winding.contains(Point2(250, 250), EdgeInclusion::INSIDE, FillType::EVEN_ODD)); //Since the polygon winds twice, this should be considered outside.
+}
+
 //TODO: Add tests with negative polygons.
 
 /*
