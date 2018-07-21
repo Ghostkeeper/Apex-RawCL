@@ -104,10 +104,10 @@ public:
 	 * will depend on the frills of the algorithm but should not be considered
 	 * reliable.
 	 * \param point The point to test.
-	 * \param fill_type What areas to count as being inside this simple polygon
-	 * if the polygon is self-intersecting.
 	 * \param include_edge Whether the edge of the polygon should be counted as
 	 * being inside the polygon.
+	 * \param fill_type What areas to count as being inside this simple polygon
+	 * if the polygon is self-intersecting.
 	 * \return ``True`` if the specified point is inside this polygon, or
 	 * ``False`` if it is outside.
 	 */
@@ -139,14 +139,29 @@ private:
 	area_t area_host() const;
 
 	/*
+	 * Implements the ``contains`` function via OpenCL.
+	 *
+	 * This may perform better on large amounts of data.
+	 * \param device The OpenCL device to test for containment with.
+	 * \param point The point to test.
+	 * \param include_edge Whether the edge of the polygon should be counted as
+	 * being inside the polygon.
+	 * \param fill_type What areas to count as being inside this simple polygon
+	 * if the polygon is self-intersecting.
+	 * \return ``True`` if the specified point is inside this polygon, or
+	 * ``False`` if it is outside.
+	 */
+	bool contains_opencl(const cl::Device& device, const Point2& point, const EdgeInclusion& include_edge = EdgeInclusion::INSIDE, const FillType& fill_type = FillType::NONZERO) const;
+
+	/*
 	 * Implements the ``contains`` function on the host hardware.
 	 *
 	 * This does not go via OpenCL. It may perform better for small polygons.
 	 * \param point The point to test.
-	 * \param fill_type What areas to count as being inside this simple polygon
-	 * if the polygon is self-intersecting.
 	 * \param include_edge Whether the edge of the polygon should be counted as
 	 * being inside the polygon.
+	 * \param fill_type What areas to count as being inside this simple polygon
+	 * if the polygon is self-intersecting.
 	 * \return ``True`` if the specified point is inside this polygon, or
 	 * ``False`` if it is outside.
 	 */

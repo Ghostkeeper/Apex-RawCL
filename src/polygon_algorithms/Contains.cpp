@@ -10,6 +10,10 @@
 
 namespace parallelogram {
 
+bool SimplePolygon::contains_opencl(const cl::Device& device, const Point2& point, const EdgeInclusion& include_edge, const FillType& fill_type) const {
+	return false;
+}
+
 bool SimplePolygon::contains_host(const Point2& point, const EdgeInclusion& include_edge, const FillType& fill_type) const {
 	//TODO: If pre-calculation is allowed, obtain the AABB of the polygon and do that check first.
 
