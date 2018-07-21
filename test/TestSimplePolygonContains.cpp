@@ -141,21 +141,11 @@ TEST_F(TestSimplePolygonContains, OutsideSquare) {
 /*
  * Test whether a point is inside a diamond.
  *
- * The point is just above the centre of the diamond. This tests for the case
+ * The point is not exactly the centre of the diamond. This tests for the case
  * where the polygon has diagonal edges.
  */
-TEST_F(TestSimplePolygonContains, InsideDiamondAboveCentre) {
+TEST_F(TestSimplePolygonContains, InsideDiamondOffCentre) {
 	EXPECT_TRUE(diamond_1000.contains(Point2(50, 50)));
-}
-
-/*
- * Test whether a point is inside a diamond.
- *
- * The point is just below the centre of the diamond. This tests for the case
- * where the polygon has diagonal edges, but the edges that the ray crosses will
- * go in another horizontal direction than in InsideDiamondAboveCentre.
- */
-TEST_F(TestSimplePolygonContains, InsideDiamondBelowCentre) {
 	EXPECT_TRUE(diamond_1000.contains(Point2(50, -50)));
 }
 
