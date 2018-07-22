@@ -21,6 +21,7 @@ Point2 Point2::operator +(const Point2& other) const {
 Point2& Point2::operator +=(const Point2& other) {
 	x += other.x;
 	y += other.y;
+	return *this;
 }
 
 Point2 Point2::operator -(const Point2& other) const {
@@ -30,6 +31,7 @@ Point2 Point2::operator -(const Point2& other) const {
 Point2& Point2::operator -=(const Point2& other) {
 	x -= other.x;
 	y -= other.y;
+	return *this;
 }
 
 bool Point2::operator ==(const Point2& other) const {
