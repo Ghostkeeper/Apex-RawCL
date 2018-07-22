@@ -129,7 +129,7 @@ DeviceStatistics::DeviceStatistics(const cl::Device* device) {
 					 * EBX contains the line size and partition count.
 					 * ECX contains the line count.
 					 */
-					if(eax & 0x1F == 0) { //No more cache levels to read. We couldn't find it.
+					if((eax & 0x1F) == 0) { //No more cache levels to read. We couldn't find it.
 						break;
 					}
 					const uint32_t level = ((eax >> 5) & 7) - 1;
