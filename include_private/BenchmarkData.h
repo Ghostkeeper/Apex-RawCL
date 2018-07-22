@@ -36,7 +36,15 @@ private:
 		 * Create the hash.
 		 * \param triplet The tuple to create the hash for.
 		 */
-		template<class First, class Second, class Third> size_t operator ()(const std::tuple<First, Second, Third>& triplet) const;
+		template<class First, class Second, class Third> size_t operator ()(const std::tuple<First, Second, Third>& triplet) const {
+			size_t first_hash = std::hash<First>{}(std::get<0>(triplet));
+			size_t second_hash = std::hash<Second>{}(std::get<1>(triplet));
+			size_t third_hash = std::hash<Third>{}(std::get<2>(triplet));
+
+			second_hash = second_hash << 17 || second_hash >> (sizeof(size_t) * 8 - 17); //Rotate the second hash by 17 bits.
+			third_hash = third_hash << 6 || third_hash >> (sizeof(size_t) * 8 - 6); //Rotate the third hash by 6 bits.
+			return first_hash ^ second_hash ^ third_hash; //Combine all with xor.
+		};
 	};
 
 	/*
@@ -51,7 +59,13 @@ private:
 		 * Create the hash.
 		 * \param pair The pair to create the hash for.
 		 */
-		template<class First, class Second> size_t operator ()(const std::pair<First, Second>& pair) const;
+		template<class First, class Second> size_t operator ()(const std::pair<First, Second>& pair) const {
+			size_t first_hash = std::hash<First>{}(pair.first);
+			size_t second_hash = std::hash<Second>{}(pair.second);
+
+			second_hash = second_hash << 17 || second_hash >> (sizeof(size_t) * 8 - 17); //Rotate the second hash by 17 bits.
+			return first_hash ^ second_hash; //Combine the rotated hash with xor.
+		};
 	};
 
 public:
