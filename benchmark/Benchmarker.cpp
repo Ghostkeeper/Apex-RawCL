@@ -47,7 +47,6 @@ void Benchmarker::device_statistics() const {
 }
 
 void Benchmarker::run() const {
-	OpenCLDevices& devices = OpenCLDevices::getInstance();
 	if(device) {
 		for(const SimplePolygonBenchmark& benchmark : device_benchmarks) {
 			benchmark.benchmark(device);
