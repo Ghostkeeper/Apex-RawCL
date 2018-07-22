@@ -9,6 +9,7 @@
 #include <algorithm> //For std::min.
 #include "OpenCL.h" //To call the OpenCL API.
 
+#include "DeviceStatistics.h" //To get the capacities of the OpenCL devices to adjust the algorithm to them.
 #include "OpenCLContext.h" //To get the OpenCL context to run on.
 #include "ParallelogramException.h"
 #include "SimplePolygon.h" //The class we're implementing.
@@ -25,25 +26,10 @@ area_t SimplePolygon::area_opencl(const cl::Device& device) const {
 	);
 
 	//We might need to make multiple passes if the device has a very limited amount of memory.
+	DeviceStatistics statistics(&device);
 	constexpr size_t vertex_size = sizeof(coord_t) * 2;
-	cl_uint compute_units;
-	if(device.getInfo(CL_DEVICE_MAX_COMPUTE_UNITS, &compute_units) != CL_SUCCESS) {
-		compute_units = 1; //OpenCL standard says that there must be 1 compute unit.
-	}
-	cl_ulong local_buffer_size;
-	if(device.getInfo(CL_DEVICE_LOCAL_MEM_SIZE, &local_buffer_size) != CL_SUCCESS) {
-		local_buffer_size = 32 << 10; //OpenCL standard says that the minimum is 32kB.
-	}
-	local_buffer_size = local_buffer_size / vertex_size * vertex_size;
-	cl_ulong global_buffer_size;
-	if(device.getInfo(CL_DEVICE_GLOBAL_MEM_SIZE, &global_buffer_size) != CL_SUCCESS) {
-		global_buffer_size = 64 << 10; //OpenCL standard says that the minimum is 64kB.
-	}
-	global_buffer_size = global_buffer_size / vertex_size * vertex_size; //Make sure that the constant buffer holds an integer number of vertices.
-	size_t max_work_group_size;
-	if(device.getInfo(CL_DEVICE_MAX_WORK_GROUP_SIZE, &max_work_group_size) != CL_SUCCESS) {
-		max_work_group_size = 1; //OpenCL standard says that the minimum is 1.
-	}
+	const cl_ulong local_buffer_size = statistics.local_memory / vertex_size * vertex_size; //Make sure that the memory buffers hold an integer number of vertices.
+	const cl_ulong global_buffer_size = statistics.global_memory / vertex_size * vertex_size;
 
 	const size_t vertices_per_pass = global_buffer_size / vertex_size;
 	area_t total_area = 0; //Result sum of all passes.
@@ -58,10 +44,10 @@ area_t SimplePolygon::area_opencl(const cl::Device& device) const {
 		}
 
 		//Dividing the work over as many work groups as possible.
-		size_t this_work_groups = std::min(static_cast<size_t>(compute_units), vertices_this_pass);
+		size_t this_work_groups = std::min(static_cast<size_t>(statistics.compute_units), vertices_this_pass);
 		size_t vertices_per_work_group = (vertices_this_pass + this_work_groups - 1) / this_work_groups;
-		vertices_per_work_group = std::min(vertices_per_work_group, max_work_group_size); //However the work group size is limited by hardware and the number of compute units scales then.
-		vertices_per_work_group = std::min(vertices_per_work_group, local_buffer_size / sizeof(coord_t)); //We must also limit the work group size by the memory that the work groups can use locally.
+		vertices_per_work_group = std::min(vertices_per_work_group, statistics.items_per_compute_unit); //However the work group size is limited by hardware and the number of compute units scales then.
+		vertices_per_work_group = std::min(vertices_per_work_group, local_buffer_size / vertex_size); //We must also limit the work group size by the memory that the work groups can use locally.
 		this_work_groups = (vertices_this_pass + vertices_per_work_group - 1) / vertices_per_work_group;
 		//Round the global work size up to multiple of vertices_per_work_group. The kernel itself handles work items that need to idle.
 		const size_t global_work_size = (vertices_this_pass + vertices_per_work_group - 1) / vertices_per_work_group * vertices_per_work_group;
