@@ -11,6 +11,8 @@ R"kernel(
 /*
  * Computes the area of (a part of) a polygon.
  * \param input_data_points The coordinates of the vertices of the polygon.
+ * \param total_vertices The number of vertices in the total problem (over all
+ * work groups).
  * \param output_areas For each work group, the output area of their part of the
  * polygon.
  * \param sums Some scratch space to store the computed areas before summing
