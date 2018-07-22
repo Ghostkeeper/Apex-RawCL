@@ -61,6 +61,7 @@ area_t SimplePolygon::area_opencl(const cl::Device& device) const {
 		size_t this_work_groups = std::min(static_cast<size_t>(compute_units), vertices_this_pass);
 		size_t vertices_per_work_group = (vertices_this_pass + this_work_groups - 1) / this_work_groups;
 		vertices_per_work_group = std::min(vertices_per_work_group, max_work_group_size); //However the work group size is limited by hardware and the number of compute units scales then.
+		vertices_per_work_group = std::min(vertices_per_work_group, local_buffer_size / sizeof(coord_t)); //We must also limit the work group size by the memory that the work groups can use locally.
 		this_work_groups = (vertices_this_pass + vertices_per_work_group - 1) / vertices_per_work_group;
 		//Round the global work size up to multiple of vertices_per_work_group. The kernel itself handles work items that need to idle.
 		const size_t global_work_size = (vertices_this_pass + vertices_per_work_group - 1) / vertices_per_work_group * vertices_per_work_group;
