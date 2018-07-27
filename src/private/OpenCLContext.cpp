@@ -57,10 +57,12 @@ cl::Program& OpenCLContext::compile(const cl::Device& device, const std::string 
 		cl_int result = CL_SUCCESS;
 		programs[device_and_source] = cl::Program(contexts[device], sources, &result);
 		if(result != CL_SUCCESS) {
+			programs.erase(device_and_source);
 			throw ParallelogramException((std::string("Constructing program object failed: error ") + std::to_string(result)).c_str());
 		}
 		result = programs[device_and_source].build({device});
 		if(result != CL_SUCCESS) {
+			programs.erase(device_and_source);
 			throw ParallelogramException((std::string("Compiling kernel failed (") + std::to_string(result) + std::string("): ") + programs[device_and_source].getBuildInfo<CL_PROGRAM_BUILD_LOG>(device)).c_str());
 		}
 	}
