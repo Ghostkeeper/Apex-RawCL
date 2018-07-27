@@ -31,11 +31,7 @@ void kernel area(global const int2* input_data_points, const long total_vertices
 	const uint workgroup_id = global_id / local_size;
 	uint current_size = local_size;
 	if((workgroup_id + 1) * local_size > total_vertices) {
-		if(workgroup_id * local_size < total_vertices) {
-			current_size = total_vertices % local_size;
-		} else {
-			current_size = 0;
-		}
+		current_size = (workgroup_id * local_size < total_vertices) * (total_vertices % local_size);
 	}
 	for(int offset = (current_size + 1) / 2; offset > 1; offset = (current_size + 1) / 2) {
 		barrier(CLK_LOCAL_MEM_FENCE);
