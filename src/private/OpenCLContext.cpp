@@ -10,6 +10,8 @@
 #include "OpenCLDevices.h" //To get the devices to compile for.
 #include "ParallelogramException.h"
 
+#include <iostream> //DEBUG!
+
 namespace std {
 
 size_t hash<cl::Device>::operator ()(const cl::Device& device) const {
@@ -62,8 +64,9 @@ cl::Program& OpenCLContext::compile(const cl::Device& device, const std::string 
 		}
 		result = programs[device_and_source].build({device});
 		if(result != CL_SUCCESS) {
+			std::string error_log = programs[device_and_source].getBuildInfo<CL_PROGRAM_BUILD_LOG>(device);
 			programs.erase(device_and_source);
-			throw ParallelogramException((std::string("Compiling kernel failed (") + std::to_string(result) + std::string("): ") + programs[device_and_source].getBuildInfo<CL_PROGRAM_BUILD_LOG>(device)).c_str());
+			throw ParallelogramException((std::string("Compiling kernel failed (") + std::to_string(result) + std::string("): ") + error_log).c_str());
 		}
 	}
 	return programs[device_and_source];
