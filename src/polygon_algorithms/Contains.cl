@@ -41,6 +41,8 @@ void kernel contains(global const int2* input_data_points, const long total_vert
 		if(point_delta_y * is_rising > prev_delta_y * is_rising) {
 			const int is_left = (next.x - previous.x) * (point.y - previous.y) - (next.y - previous.y) * (point.x - previous.x) * is_rising;
 			sums[local_id] = is_left > 0 || (is_left == 0 && include_edges ^ (is_rising < 0));
+		} else {
+			sums[local_id] = 0;
 		}
 	}
 
