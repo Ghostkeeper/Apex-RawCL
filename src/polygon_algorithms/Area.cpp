@@ -47,7 +47,7 @@ area_t SimplePolygon::area_opencl(const cl::Device& device) const {
 		size_t this_work_groups = std::min(static_cast<size_t>(statistics.compute_units), vertices_this_pass);
 		size_t vertices_per_work_group = (vertices_this_pass + this_work_groups - 1) / this_work_groups;
 		vertices_per_work_group = std::min(vertices_per_work_group, statistics.items_per_compute_unit); //However the work group size is limited by hardware and the number of compute units scales then.
-		vertices_per_work_group = std::min(vertices_per_work_group, local_buffer_size / vertex_size); //We must also limit the work group size by the memory that the work groups can use locally.
+		vertices_per_work_group = std::min(vertices_per_work_group, local_buffer_size / sizeof(area_t)); //We must also limit the work group size by the memory that the work groups can use locally.
 		this_work_groups = (vertices_this_pass + vertices_per_work_group - 1) / vertices_per_work_group;
 		//Round the global work size up to multiple of vertices_per_work_group. The kernel itself handles work items that need to idle.
 		const size_t global_work_size = (vertices_this_pass + vertices_per_work_group - 1) / vertices_per_work_group * vertices_per_work_group;
@@ -67,7 +67,7 @@ area_t SimplePolygon::area_opencl(const cl::Device& device) const {
 		area_kernel.setArg(0, input_points);
 		area_kernel.setArg(1, vertices_this_pass);
 		area_kernel.setArg(2, output_areas);
-		area_kernel.setArg(3, cl::Local(vertices_per_work_group * vertex_size));
+		area_kernel.setArg(3, cl::Local(vertices_per_work_group * sizeof(area_t)));
 		queue.enqueueNDRangeKernel(area_kernel, cl::NullRange, cl::NDRange(global_work_size), cl::NDRange(vertices_per_work_group));
 		cl_int result = queue.finish(); //Let the device do its thing!
 		if(result != CL_SUCCESS) {
