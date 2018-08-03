@@ -6,7 +6,6 @@
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
  */
 
-#include <iostream> //DEBUG!
 #include "BenchmarkData.h" //File that groups the actual benchmark data in compile time.
 #include "Benchmarks.h"
 #include "DeviceStatistics.h" //To predict the performance of devices based on their specs.
