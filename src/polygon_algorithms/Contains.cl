@@ -39,8 +39,12 @@ void kernel contains(global const int2* input_data_points, const long total_vert
 		const uint point_delta_y = point.y - next.y; //Trick to prevent a branch here: Let unsigned int underflow if y is less than next.y.
 		const uint prev_delta_y = previous.y - next.y;
 		if(point_delta_y * is_rising > prev_delta_y * is_rising) {
-			const int is_left = (next.x - previous.x) * (point.y - previous.y) - (next.y - previous.y) * (point.x - previous.x) * is_rising;
-			sums[local_id] = is_left > 0 || (is_left == 0 && include_edges ^ (is_rising < 0));
+			const int is_left = ((next.x - previous.x) * (point.y - previous.y) - (next.y - previous.y) * (point.x - previous.x)) * is_rising;
+			int winding_number = (is_left > 0) * is_rising;
+			if(is_left == 0 && !winding_number) {
+				winding_number = include_edges * is_rising;
+			}
+			sums[local_id] = winding_number;
 		} else {
 			sums[local_id] = 0;
 		}
