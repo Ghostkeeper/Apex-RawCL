@@ -79,9 +79,10 @@ bool SimplePolygon::contains_opencl(const cl::Device& device, const Point2& poin
 		cl::Kernel contains_kernel(program, "contains");
 		contains_kernel.setArg(0, input_points);
 		contains_kernel.setArg(1, vertices_this_pass);
-		cl_int2 point_vector = {point.x, point.y};
+		const cl_int2 point_vector = {point.x, point.y};
 		contains_kernel.setArg(2, point_vector);
-		contains_kernel.setArg(3, include_edge == EdgeInclusion::INSIDE);
+		const cl_int include_edge_cl_int = (include_edge == EdgeInclusion::INSIDE);
+		contains_kernel.setArg(3, include_edge_cl_int);
 		contains_kernel.setArg(4, output_winding_numbers);
 		contains_kernel.setArg(5, cl::Local(vertices_per_work_group * sizeof(cl_int)));
 
