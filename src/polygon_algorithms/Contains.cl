@@ -35,7 +35,7 @@ void kernel contains(global const int2* input_data_points, const long total_vert
 	if(previous.y == next.y && previous.y == point.y) { //Horizontal edges are very special. Have to use branching for that, sorry.
 		sums[local_id] = 0; //TODO.
 	} else {
-		const int is_rising = (next.y - previous.y) % 1; //1 if the edge is going up, -1 if it's going down.
+		const int is_rising = clamp(next.y - previous.y, -1, 1); //1 if the edge is going up, -1 if it's going down.
 		const uint point_delta_y = point.y - next.y; //Trick to prevent a branch here: Let unsigned int underflow if y is less than next.y.
 		const uint prev_delta_y = previous.y - next.y;
 		if(point_delta_y * is_rising > prev_delta_y * is_rising) {
