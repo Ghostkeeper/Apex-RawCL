@@ -24,7 +24,7 @@ R"kernel(
  * \param sums Some scratch space to store the computed winding numbers before
  * summing them all up within one work group.
  */
-void kernel contains(global const int2* input_data_points, const long total_vertices, const int2 point, const int include_edges, global long* output_windings, local long* sums) {
+void kernel contains(global const int2* input_data_points, const long total_vertices, const int2 point, const int include_edges, global int* output_windings, local int* sums) {
 	//Compute the winding number contributed by one line segment.
 	const uint global_id = get_global_id(0);
 	const int2 previous = input_data_points[global_id];
