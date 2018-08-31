@@ -40,9 +40,9 @@ void kernel contains(global const int2* input_data_points, const long total_vert
 		//Add/subtract is_rising in order to get correct edge cases (where > should've been >= for instance).
 		if(point.y * is_rising + is_rising > previous.y * is_rising && point.y * is_rising < next.y * is_rising - is_rising) {
 			const int is_left = ((next.x - previous.x) * (point.y - previous.y) - (next.y - previous.y) * (point.x - previous.x)) * is_rising;
-			int winding_number = (is_left > 0) * is_rising;
+			char winding_number = (is_left > 0) * is_rising;
 			if(is_left == 0 && !winding_number) {
-				winding_number = include_edges * is_rising;
+				winding_number = (include_edges ^ (is_rising < 0)) * is_rising;
 			}
 			sums[local_id] = winding_number;
 		} else {
