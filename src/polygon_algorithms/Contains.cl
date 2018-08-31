@@ -35,7 +35,7 @@ void kernel contains(global const int2* input_data_points, const long total_vert
 	if(previous.y == next.y && previous.y == point.y) { //Horizontal edges are very special. Have to use branching for that, sorry.
 		sums[local_id] = 0; //TODO.
 	} else {
-		const int is_rising = clamp(next.y - previous.y, -1, 1); //1 if the edge is going up, -1 if it's going down.
+		const char is_rising = clamp(next.y - previous.y, -1, 1); //1 if the edge is going up, -1 if it's going down.
 		//Multiply everything by is_rising to essentially flip the greater-than and lesser-than operators if we're going down.
 		//Add/subtract is_rising in order to get correct edge cases (where > should've been >= for instance).
 		if(point.y * is_rising + is_rising > previous.y * is_rising && point.y * is_rising < next.y * is_rising - is_rising) {
