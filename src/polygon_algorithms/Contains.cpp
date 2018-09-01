@@ -72,7 +72,7 @@ bool SimplePolygon::contains_opencl(const cl::Device& device, const Point2& poin
 		queue.enqueueWriteBuffer(input_points, CL_TRUE, this_constant_buffer_size - vertex_size, vertex_size, &(*this)[pivot_vertex_after]); //Write the second pivot vertex.
 
 		//Allocate an output buffer: One int for each work group as their output.
-		cl_ulong this_output_buffer_size = this_work_groups * sizeof(cl_int);
+		const cl_ulong this_output_buffer_size = this_work_groups * sizeof(cl_int);
 		cl::Buffer output_winding_numbers(context, CL_MEM_WRITE_ONLY, this_output_buffer_size);
 
 		//Call the kernel to compute the winding number of this polygon and add it to total_winding.
@@ -109,6 +109,7 @@ bool SimplePolygon::contains_opencl(const cl::Device& device, const Point2& poin
 		case FillType::NONZERO:
 			return total_winding != 0;
 	}
+	return false;
 }
 
 bool SimplePolygon::contains_host(const Point2& point, const EdgeInclusion& include_edge, const FillType& fill_type) const {

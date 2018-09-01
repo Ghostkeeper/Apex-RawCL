@@ -33,7 +33,14 @@ void kernel contains(global const int2* input_data_points, const long total_vert
 
 	//The winding number algorithm outlined in Contains.cpp, but with less branching.
 	if(previous.y == next.y && previous.y == point.y) { //Horizontal edges are very special. Have to use branching for that, sorry.
-		sums[local_id] = 0; //TODO.
+		const char going_right = clamp(next.x - previous.x, -1, 1); //1 if the edge is going right, -1 if it's going left.
+		char winding_number = 0;
+		//If going left, simply flip the sign so that we can use the same comparators and prevent another branch.
+		if(point.x * going_right >= previous.x * going_right && point.x * going_right <= next.x * going_right && (include_edges ^ (going_right > 0))) {
+			//Point is on line, and edge should be included.
+			winding_number = include_edges - (include_edges == 0);
+		}
+		sums[local_id] = winding_number;
 	} else {
 		const char is_rising = clamp(next.y - previous.y, -1, 1); //1 if the edge is going up, -1 if it's going down.
 		//Multiply everything by is_rising to essentially flip the greater-than and lesser-than operators if we're going down.
