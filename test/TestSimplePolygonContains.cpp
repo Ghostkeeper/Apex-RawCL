@@ -626,12 +626,12 @@ TEST_F(TestSimplePolygonContains, Rounding) {
 		EXPECT_FALSE(groper.contains_opencl(device, Point2(800, 0), EdgeInclusion::OUTSIDE));
 		EXPECT_FALSE(groper.contains_opencl(device, Point2(800, 0), EdgeInclusion::INSIDE));
 		EXPECT_TRUE(groper.contains_opencl(device, Point2(800, 1), EdgeInclusion::OUTSIDE));
-		EXPECT_TRUE(groper.contains_opencl(device, Point2(800, 1), EdgeInclusion::OUTSIDE));
+		EXPECT_TRUE(groper.contains_opencl(device, Point2(800, 1), EdgeInclusion::INSIDE));
 	}
 	EXPECT_FALSE(groper.contains_host(Point2(800, 0), EdgeInclusion::OUTSIDE));
 	EXPECT_FALSE(groper.contains_host(Point2(800, 0), EdgeInclusion::INSIDE));
 	EXPECT_TRUE(groper.contains_host(Point2(800, 1), EdgeInclusion::OUTSIDE));
-	EXPECT_TRUE(groper.contains_host(Point2(800, 1), EdgeInclusion::OUTSIDE));
+	EXPECT_TRUE(groper.contains_host(Point2(800, 1), EdgeInclusion::INSIDE));
 }
 
 }
