@@ -634,6 +634,32 @@ TEST_F(TestSimplePolygonContains, Rounding) {
 	EXPECT_TRUE(groper.contains_host(Point2(800, 1), EdgeInclusion::INSIDE));
 }
 
+/*
+ * Test whether a point is identified correctly if it's less than one unit away
+ * from the edge.
+ *
+ * The test is the same as the other Rounding test, but all units are negative
+ * now. The rounding of integers goes the other way then.
+ */
+TEST_F(TestSimplePolygonContains, RoundingNegative) {
+	SimplePolygon long_horizontal; //Triangle that is 1000 units wide and just 2 units tall.
+	long_horizontal.emplace_back(0, -2);
+	long_horizontal.emplace_back(-1000, 0);
+	long_horizontal.emplace_back(-1000, -2);
+
+	groper.tested_simple_polygon = &long_horizontal;
+	for(const cl::Device& device : devices) {
+		EXPECT_FALSE(groper.contains_opencl(device, Point2(-800, 0), EdgeInclusion::OUTSIDE));
+		EXPECT_FALSE(groper.contains_opencl(device, Point2(-800, 0), EdgeInclusion::INSIDE));
+		EXPECT_TRUE(groper.contains_opencl(device, Point2(-800, -1), EdgeInclusion::OUTSIDE));
+		EXPECT_TRUE(groper.contains_opencl(device, Point2(-800, -1), EdgeInclusion::INSIDE));
+	}
+	EXPECT_FALSE(groper.contains_host(Point2(-800, 0), EdgeInclusion::OUTSIDE));
+	EXPECT_FALSE(groper.contains_host(Point2(-800, 0), EdgeInclusion::INSIDE));
+	EXPECT_TRUE(groper.contains_host(Point2(-800, -1), EdgeInclusion::OUTSIDE));
+	EXPECT_TRUE(groper.contains_host(Point2(-800, -1), EdgeInclusion::INSIDE));
+}
+
 }
 
 /*
