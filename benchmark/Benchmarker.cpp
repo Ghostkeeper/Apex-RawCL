@@ -25,7 +25,8 @@ namespace parallelogram {
 namespace benchmarks {
 
 const std::vector<SimplePolygonBenchmark> Benchmarker::device_benchmarks = {
-	SimplePolygonBenchmark("area_opencl", [](const cl::Device* device, SimplePolygon& polygon) {polygon.area_opencl(*device);})
+	SimplePolygonBenchmark("area_opencl", [](const cl::Device* device, SimplePolygon& polygon) {polygon.area_opencl(*device);}),
+	SimplePolygonBenchmark("contains_opencl", [](const cl::Device* device, SimplePolygon& polygon) {polygon.contains_opencl(*device, Point2(0, 0));})
 };
 
 const std::vector<SimplePolygonBenchmark> Benchmarker::host_benchmarks = {
