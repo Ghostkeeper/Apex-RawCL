@@ -31,8 +31,12 @@ bool SimplePolygon::contains(const Point2& point, const EdgeInclusion& include_e
 }
 
 void SimplePolygon::translate(const coord_t x, const coord_t y) {
+	translate(Point2(x, y));
+}
+
+void SimplePolygon::translate(const Point2 translation_vector) {
 	for(size_t vertex = 0; vertex < size(); vertex++) {
-		at(vertex) += Point2(x, y);
+		at(vertex) += translation_vector; //Add the coordinates to every vertex of the polygon.
 	}
 }
 

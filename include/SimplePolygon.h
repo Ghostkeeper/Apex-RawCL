@@ -120,6 +120,12 @@ public:
 	 */
 	void translate(const coord_t x, const coord_t y);
 
+	/*
+	 * Move the polygon by a certain offset in each dimension.
+	 * \param translation_vector The vector by which to move the polygon.
+	 */
+	void translate(const Point2 translation_vector);
+
 private:
 	/*
 	 * Implements the ``area`` function via OpenCL.
