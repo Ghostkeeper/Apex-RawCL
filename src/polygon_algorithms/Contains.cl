@@ -31,31 +31,36 @@ void kernel contains(global const int2* input_data_points, const long total_vert
 	const int2 next = input_data_points[global_id + 1];
 	const uint local_id = get_local_id(0);
 
-	//The winding number algorithm outlined in Contains.cpp, but with less branching.
-	if(previous.y == next.y && previous.y == point.y) { //Horizontal edges are very special. Have to use branching for that, sorry.
-		const char going_right = clamp(next.x - previous.x, -1, 1); //1 if the edge is going right, -1 if it's going left.
-		char winding_number = 0;
-		//If going left, simply flip the sign so that we can use the same comparators and prevent another branch.
-		if(point.x * going_right >= previous.x * going_right && point.x * going_right <= next.x * going_right && (include_edges ^ (going_right > 0))) {
-			//Point is on line, and edge should be included.
-			winding_number = include_edges - (include_edges == 0);
-		}
-		sums[local_id] = winding_number;
-	} else {
-		const char is_rising = clamp(next.y - previous.y, -1, 1); //1 if the edge is going up, -1 if it's going down.
-		//Multiply everything by is_rising to essentially flip the greater-than and lesser-than operators if we're going down.
-		//Add/subtract is_rising in order to get correct edge cases (where > should've been >= for instance).
-		if(point.y * is_rising + is_rising > previous.y * is_rising && point.y * is_rising < next.y * is_rising - is_rising) {
-			const int is_left = ((next.x - previous.x) * (point.y - previous.y) - (next.y - previous.y) * (point.x - previous.x)) * is_rising;
-			char winding_number = (is_left > 0) * is_rising;
-			if(is_left == 0 && !winding_number) {
-				winding_number = (include_edges ^ (is_rising < 0)) * is_rising;
+	//The winding number algorithm outlined in Contains.cpp.
+	char winding_number = 0;
+	if(previous.y < next.y) { //Rising edge.
+		//For the edge case of the ray hitting a vertex exactly, count rays hitting the lower vertices along with this edge.
+		if(point.y >= previous.y && point.y < next.y) { //Crosses height of point.
+			const long point_is_left = (next.x - previous.x) * (point.y - previous.y) - (next.y - previous.y) * (point.x - previous.x);
+			if(point_is_left > 0 || (point_is_left == 0 && include_edges == 1)) {
+				winding_number = 1;
 			}
-			sums[local_id] = winding_number;
-		} else {
-			sums[local_id] = 0;
+		}
+	} else if(previous.y > next.y) { //Falling edge (next vertex is lower than previous vertex).
+		//For the edge case of the ray hitting a vertex exactly, count rays hitting the lower vertices along with this edge.
+		if(point.y < previous.y && point.y >= next.y) { //Crosses height of point.
+			const long point_is_left = (next.x - previous.x) * (point.y - previous.y) - (next.y - previous.y) * (point.x - previous.x);
+			if(point_is_left < 0 || (point_is_left == 0 && include_edges == 0)) { //Line is absolutely right of point. Point is relatively right of line.
+				winding_number = -1;
+			}
+		}
+	} else if(previous.y == point.y) { //Horizontal line at exactly the height of the point.
+		if(previous.x < next.x && point.x >= previous.x && point.x <= next.x) { //Going to the left.
+			if(include_edges == 0) {
+				winding_number = -1;
+			}
+		} else if(previous.x >= next.x && point.x <= previous.x && point.x >= next.x) { //Going to the right.
+			if(include_edges == 1) {
+				winding_number = 1;
+			}
 		}
 	}
+	sums[local_id] = winding_number;
 
 	//Aggregate sum on the memory in this work group.
 	const uint local_size = get_local_size(0);
