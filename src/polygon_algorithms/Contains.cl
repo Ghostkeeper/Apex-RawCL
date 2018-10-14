@@ -32,11 +32,11 @@ void kernel contains(global const int2* input_data_points, const long total_vert
 	const uint local_id = get_local_id(0);
 
 	//The winding number algorithm outlined in Contains.cpp.
+	const long point_is_left = (next.x - previous.x) * (point.y - previous.y) - (next.y - previous.y) * (point.x - previous.x);
 	char winding_number = 0;
 	if(previous.y < next.y) { //Rising edge.
 		//For the edge case of the ray hitting a vertex exactly, count rays hitting the lower vertices along with this edge.
 		if(point.y >= previous.y && point.y < next.y) { //Crosses height of point.
-			const long point_is_left = (next.x - previous.x) * (point.y - previous.y) - (next.y - previous.y) * (point.x - previous.x);
 			if(point_is_left > 0 || (point_is_left == 0 && include_edges == 1)) {
 				winding_number = 1;
 			}
@@ -44,7 +44,6 @@ void kernel contains(global const int2* input_data_points, const long total_vert
 	} else if(previous.y > next.y) { //Falling edge (next vertex is lower than previous vertex).
 		//For the edge case of the ray hitting a vertex exactly, count rays hitting the lower vertices along with this edge.
 		if(point.y < previous.y && point.y >= next.y) { //Crosses height of point.
-			const long point_is_left = (next.x - previous.x) * (point.y - previous.y) - (next.y - previous.y) * (point.x - previous.x);
 			if(point_is_left < 0 || (point_is_left == 0 && include_edges == 0)) { //Line is absolutely right of point. Point is relatively right of line.
 				winding_number = -1;
 			}
