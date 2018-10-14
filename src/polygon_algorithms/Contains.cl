@@ -6,7 +6,9 @@
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
  */
 
-R"kernel(
+#include "KernelMacro.h"
+
+PARALLELOGRAM_KERNEL(
 
 /*
  * Computes the winding number of (a part of) a polygon around a certain point.
@@ -87,4 +89,4 @@ void kernel contains(global const int2* input_data_points, const long total_vert
 	}
 }
 
-)kernel"
+)
