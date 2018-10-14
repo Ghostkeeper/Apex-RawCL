@@ -34,18 +34,13 @@ void kernel contains(global const int2* input_data_points, const long total_vert
 	//The winding number algorithm outlined in Contains.cpp.
 	const long point_is_left = (next.x - previous.x) * (point.y - previous.y) - (next.y - previous.y) * (point.x - previous.x);
 	char winding_number = 0;
-	if(previous.y < next.y) { //Rising edge.
+	if(previous.y < next.y || previous.y > next.y) { //Rising or falling edge.
+		const bool inversed = previous.y > next.y; //When the edge is falling instead of rising, many things are inversed.
+		const char invert = (!inversed) * 2 - 1; //Either -1 or 1. Multiply by this to invert the sign if inversed.
 		//For the edge case of the ray hitting a vertex exactly, count rays hitting the lower vertices along with this edge.
-		if(point.y >= previous.y && point.y < next.y) { //Crosses height of point.
-			if(point_is_left > 0 || (point_is_left == 0 && include_edges == 1)) {
-				winding_number = 1;
-			}
-		}
-	} else if(previous.y > next.y) { //Falling edge (next vertex is lower than previous vertex).
-		//For the edge case of the ray hitting a vertex exactly, count rays hitting the lower vertices along with this edge.
-		if(point.y < previous.y && point.y >= next.y) { //Crosses height of point.
-			if(point_is_left < 0 || (point_is_left == 0 && include_edges == 0)) { //Line is absolutely right of point. Point is relatively right of line.
-				winding_number = -1;
+		if((point.y >= previous.y) ^ inversed && (point.y < next.y) ^ inversed) { //Crosses height of point.
+			if(point_is_left * invert > 0 || (point_is_left == 0 && include_edges != inversed)) {
+				winding_number = invert;
 			}
 		}
 	} else if(previous.y == point.y) { //Horizontal line at exactly the height of the point.
