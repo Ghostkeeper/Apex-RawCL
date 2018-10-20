@@ -22,6 +22,11 @@ area_t Polygon::area() const {
 	return area;
 }
 
+bool Polygon::contains(const Point2& point, const EdgeInclusion& include_edge, const FillType& fill_type) const {
+	//TODO: Implement.
+	return false;
+}
+
 void Polygon::translate(const coord_t x, const coord_t y) {
 	for(SimplePolygon& simple_polygon : *this) {
 		simple_polygon.translate(x, y);
