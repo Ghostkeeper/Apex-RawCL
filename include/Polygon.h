@@ -39,6 +39,8 @@ public:
 	using std::vector<SimplePolygon>::capacity;
 	using std::vector<SimplePolygon>::cbegin;
 	using std::vector<SimplePolygon>::cend;
+	using std::vector<SimplePolygon>::const_iterator;
+	using std::vector<SimplePolygon>::const_reverse_iterator;
 	using std::vector<SimplePolygon>::crbegin;
 	using std::vector<SimplePolygon>::crend;
 	using std::vector<SimplePolygon>::clear;
@@ -50,12 +52,14 @@ public:
 	using std::vector<SimplePolygon>::front;
 	using std::vector<SimplePolygon>::get_allocator;
 	using std::vector<SimplePolygon>::insert;
+	using std::vector<SimplePolygon>::iterator;
 	using std::vector<SimplePolygon>::max_size;
 	using std::vector<SimplePolygon>::pop_back;
 	using std::vector<SimplePolygon>::push_back;
 	using std::vector<SimplePolygon>::rbegin;
 	using std::vector<SimplePolygon>::rend;
 	using std::vector<SimplePolygon>::reserve;
+	using std::vector<SimplePolygon>::reverse_iterator;
 	using std::vector<SimplePolygon>::shrink_to_fit;
 	using std::vector<SimplePolygon>::size;
 	using std::vector<SimplePolygon>::swap;
