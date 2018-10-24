@@ -9,7 +9,7 @@
 #ifndef SIMPLEPOLYGONBATCH_H
 #define SIMPLEPOLYGONBATCH_H
 
-#include <iterator> //To iterate over the contents of the batch.
+#include <cstddef> //For size_t.
 
 namespace parallelogram {
 
@@ -31,7 +31,11 @@ class SimplePolygon;
  *
  * The batch never stores a copy of the polygon data, except when it needs to
  * copy this data to another device for processing there.
+ * \tparam Iterator The type of iterators to use. You must use an iterator that
+ * supports equality tests. The iterator must be iterating over `SimplePolygon`
+ * instances.
  */
+template<typename Iterator>
 class SimplePolygonBatch {
 public:
 	/*
@@ -49,18 +53,36 @@ public:
 	 * \param end The element after the last element of the range of simple
 	 * polygons to batch.
 	 */
-	SimplePolygonBatch(const std::iterator<std::forward_iterator_tag, SimplePolygon> begin, const std::iterator<std::forward_iterator_tag, SimplePolygon> end);
+	SimplePolygonBatch(const Iterator begin, const Iterator end) :
+		begin(begin),
+		end(end),
+		total_vertices([begin, end]() {
+			size_t result = 0;
+			for(Iterator simple_polygon = begin; simple_polygon != end; simple_polygon++) {
+				result += simple_polygon->size();
+			}
+			return result;
+		}()) {
+		}
 
 private:
 	/*
 	 * The first element of a range of simple polygons to batch.
 	 */
-	const std::iterator<std::forward_iterator_tag, SimplePolygon> begin;
+	const Iterator begin;
 
 	/*
 	 * The last element of a range of simple polygons to batch.
 	 */
-	const std::iterator<std::forward_iterator_tag, SimplePolygon> end;
+	const Iterator end;
+
+	/*
+	 * The total amount of vertices in the entire batch.
+	 *
+	 * This is used to choose the algorithms to operate on the batch, since each
+	 * algorithm will have different ways to scale with the vertex count.
+	 */
+	const size_t total_vertices;
 };
 
 }

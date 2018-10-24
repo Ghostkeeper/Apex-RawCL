@@ -21,7 +21,6 @@ set(sources
 	src/Point2.cpp
 	src/Polygon.cpp
 	src/SimplePolygon.cpp
-	src/SimplePolygonBatch.cpp
 
 	src/polygon_algorithms/Area.cpp
 	src/polygon_algorithms/Contains.cpp
