@@ -10,6 +10,7 @@
 #define SIMPLEPOLYGONBATCH_H
 
 #include <cstddef> //For size_t.
+#include <iterator> //For distance.
 
 namespace parallelogram {
 
@@ -56,6 +57,7 @@ public:
 	SimplePolygonBatch(const Iterator begin, const Iterator end) :
 		begin(begin),
 		end(end),
+		count(std::distance(begin, end)),
 		total_vertices([begin, end]() {
 			size_t result = 0;
 			for(Iterator simple_polygon = begin; simple_polygon != end; simple_polygon++) {
@@ -63,7 +65,7 @@ public:
 			}
 			return result;
 		}()) {
-		}
+	}
 
 private:
 	/*
@@ -75,6 +77,11 @@ private:
 	 * The last element of a range of simple polygons to batch.
 	 */
 	const Iterator end;
+
+	/*
+	 * The total amount of simple polygons in this batch.
+	 */
+	const size_t count;
 
 	/*
 	 * The total amount of vertices in the entire batch.
