@@ -10,7 +10,7 @@
 #define SIMPLEPOLYGONBATCH_H
 
 #include <cstddef> //For size_t.
-#include <iterator> //For distance.
+#include <iterator> //For iterating over a subset of a data structure.
 
 namespace parallelogram {
 
@@ -60,7 +60,7 @@ public:
 		count(std::distance(begin, end)),
 		total_vertices([begin, end]() {
 			size_t result = 0;
-			for(Iterator simple_polygon = begin; simple_polygon != end; simple_polygon++) {
+			for(Iterator simple_polygon = begin; simple_polygon != end; std::advance(simple_polygon)) {
 				result += simple_polygon->size();
 			}
 			return result;
