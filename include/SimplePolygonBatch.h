@@ -11,6 +11,7 @@
 
 #include <cstddef> //For size_t.
 #include <iterator> //For iterating over a subset of a data structure.
+#include "Benchmarks.h" //To choose the preferred algorithm and device.
 
 namespace parallelogram {
 
@@ -60,11 +61,25 @@ public:
 		count(std::distance(begin, end)),
 		total_vertices([begin, end]() {
 			size_t result = 0;
-			for(Iterator simple_polygon = begin; simple_polygon != end; std::advance(simple_polygon)) {
+			for(Iterator simple_polygon = begin; simple_polygon != end; std::advance(simple_polygon, 1)) {
 				result += simple_polygon->size();
 			}
 			return result;
 		}()) {
+	}
+
+	void area(std::vector<area_t>& output) {
+		output.clear();
+		output.reserve(count);
+
+		const std::vector<std::string> options = {"area_opencl", "area_host"};
+		const std::vector<size_t> problem_size = {count, total_vertices / count};
+		const std::pair<std::string, const cl::Device*> best_choice = benchmarks::choose(options, problem_size);
+		if(best_choice.first == "area_host" || !best_choice.second) {
+			return area_host(output);
+		} else {
+			return area_opencl(*best_choice.second, output);
+		}
 	}
 
 private:
@@ -90,6 +105,14 @@ private:
 	 * algorithm will have different ways to scale with the vertex count.
 	 */
 	const size_t total_vertices;
+
+	void area_host(std::vector<area_t>& output) const {
+		//TODO: Implement.
+	}
+
+	void area_opencl(const cl::Device& device, std::vector<area_t>& output) const {
+		//TODO: Implement.
+	}
 };
 
 }
