@@ -107,7 +107,9 @@ private:
 	const size_t total_vertices;
 
 	void area_host(std::vector<area_t>& output) const {
-		//TODO: Implement.
+		for(Iterator simple_polygon = begin; simple_polygon != end; std::advance(simple_polygon, 1)) {
+			output.emplace_back(simple_polygon->area());
+		}
 	}
 
 	void area_opencl(const cl::Device& device, std::vector<area_t>& output) const {
