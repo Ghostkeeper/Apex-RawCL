@@ -68,6 +68,10 @@ public:
 		}()) {
 	}
 
+	/*
+	 * Compute the total surface area of the simple polygons.
+	 * \param output A vector that will be filled with the resulting areas.
+	 */
 	void area(std::vector<area_t>& output) {
 		output.clear();
 		output.reserve(count);
@@ -106,12 +110,21 @@ private:
 	 */
 	const size_t total_vertices;
 
+	/*
+	 * Compute the total surface area of the simple polygons using the host CPU.
+	 * \param output A vector that will be filled with the resulting areas.
+	 */
 	void area_host(std::vector<area_t>& output) const {
 		for(Iterator simple_polygon = begin; simple_polygon != end; std::advance(simple_polygon, 1)) {
 			output.emplace_back(simple_polygon->area());
 		}
 	}
 
+	/*
+	 * Compute the total surface area of the simple polygons using an OpenCL
+	 * device.
+	 * \param output A vector that will be filled with the resulting areas.
+	 */
 	void area_opencl(const cl::Device& device, std::vector<area_t>& output) const {
 		//TODO: Implement.
 	}
