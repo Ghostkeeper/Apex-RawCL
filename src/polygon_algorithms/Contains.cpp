@@ -31,7 +31,7 @@ bool SimplePolygon::contains_opencl(const cl::Device& device, const Point2& poin
 	}
 
 	cl::Context& context = OpenCLContext::getInstance().contexts[device];
-	cl::CommandQueue queue(context, device);
+	cl::CommandQueue queue = OpenCLContext::getInstance().queues[device];
 
 	//Load the source code.
 	cl::Program& program = OpenCLContext::getInstance().compile(device,

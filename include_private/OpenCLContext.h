@@ -56,8 +56,8 @@ bool operator ==(const cl::Device& first, const cl::Device& second);
 namespace parallelogram {
 
 /*
- * This holds the OpenCL contexts so that we don't have to recreate them for
- * every function call.
+ * This holds the OpenCL contexts and queues so that we don't have to recreate
+ * them for every function call.
  *
  * One context is created for every available device.
  *
@@ -71,6 +71,11 @@ public:
 	 * For each OpenCL device its context, where all kernels should be run.
 	 */
 	std::unordered_map<cl::Device, cl::Context> contexts;
+
+	/*
+	 * For each OpenCL device its command queue.
+	 */
+	std::unordered_map<cl::Device, cl::CommandQueue> queues;
 
 	/*
 	 * Statically gets the instance of this class.
@@ -119,4 +124,3 @@ protected:
 }
 
 #endif //OPENCLKERNELS_H
-

@@ -40,6 +40,7 @@ OpenCLContext::OpenCLContext() {
 	for(const cl::Device& device : OpenCLDevices::getInstance().getAll()) {
 		cl_int result = CL_SUCCESS;
 		contexts[device] = cl::Context({device}, nullptr, nullptr, nullptr, &result);
+		queues[device] = cl::CommandQueue(contexts[device], device);
 		if(result != CL_SUCCESS) {
 			throw ParallelogramException((std::string("Constructing context failed: error ") + std::to_string(result)).c_str());
 		}

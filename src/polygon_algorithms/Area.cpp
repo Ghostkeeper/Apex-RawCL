@@ -18,7 +18,7 @@ namespace parallelogram {
 
 area_t SimplePolygon::area_opencl(const cl::Device& device) const {
 	cl::Context& context = OpenCLContext::getInstance().contexts[device];
-	cl::CommandQueue queue(context, device);
+	cl::CommandQueue& queue = OpenCLContext::getInstance().queues[device];
 
 	//Load the source code.
 	cl::Program& program = OpenCLContext::getInstance().compile(device,
