@@ -38,6 +38,21 @@ target_include_directories(parallelogram PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/incl
 target_include_directories(parallelogram PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include_private)
 target_include_directories(parallelogram PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/benchmark) #To make the benchmarker a friend class.
 
+#Verify some compile features that we need so we can give an early error if it's not.
+target_compile_features(parallelogram PUBLIC cxx_std_11)
+target_compile_features(parallelogram PUBLIC cxx_constexpr)
+target_compile_features(parallelogram PUBLIC cxx_defaulted_functions)
+target_compile_features(parallelogram PUBLIC cxx_lambdas)
+#target_compile_features(parallelogram PUBLIC cxx_noexcept) #Reminder for the future.
+target_compile_features(parallelogram PUBLIC cxx_nonstatic_member_init)
+target_compile_features(parallelogram PUBLIC cxx_range_for)
+target_compile_features(parallelogram PUBLIC cxx_right_angle_brackets)
+target_compile_features(parallelogram PUBLIC cxx_rvalue_references)
+target_compile_features(parallelogram PUBLIC cxx_variadic_macros)
+target_compile_features(parallelogram PRIVATE cxx_generalized_initializers)
+target_compile_features(parallelogram PRIVATE cxx_static_assert)
+target_compile_features(parallelogram PRIVATE cxx_thread_local)
+
 #Dependencies.
 find_package(OpenCL REQUIRED)
 target_include_directories(parallelogram PRIVATE ${OpenCL_INCLUDE_DIRS})
