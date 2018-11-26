@@ -18,7 +18,7 @@ namespace cl {
 class Device; //Forward declaration of Device so we don't have to include all of OpenCL.
 }
 
-namespace parallelogram {
+namespace apex {
 
 namespace benchmarks {
 class Benchmarker; //Forward declaration of Benchmarker so that the benchmarker can use SimplePolygons as well.

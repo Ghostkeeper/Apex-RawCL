@@ -12,7 +12,7 @@
 #include <gtest/gtest.h> //Testing library.
 #include "OpenCLDevices.h"
 
-namespace parallelogram {
+namespace apex {
 
 /*
  * Tests whether the singleton pattern has correctly been implemented.

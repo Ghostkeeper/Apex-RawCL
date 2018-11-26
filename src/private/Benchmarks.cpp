@@ -10,14 +10,14 @@
 #include "Benchmarks.h"
 #include "DeviceStatistics.h" //To predict the performance of devices based on their specs.
 #include "OpenCLDevices.h" //Get the devices that we can choose to run algorithms on.
-#include "ParallelogramException.h" //When something goes wrong.
+#include "ApexException.h"
 
-namespace parallelogram {
+namespace apex {
 namespace benchmarks {
 
 std::pair<std::string, const cl::Device*> choose(const std::vector<std::string> options, const std::vector<size_t> problem_size) {
 	if(options.empty()) {
-		throw ParallelogramException("Strategy choice has no algorithms to choose from.");
+		throw ApexException("Strategy choice has no algorithms to choose from.");
 	}
 	const OpenCLDevices& device_manager = OpenCLDevices::getInstance();
 	const std::vector<cl::Device>& all_devices = device_manager.getAll();

@@ -8,7 +8,7 @@
 
 #include "OpenCLContext.h"
 #include "OpenCLDevices.h" //To get the devices to compile for.
-#include "ParallelogramException.h"
+#include "ApexException.h"
 
 #include <iostream> //DEBUG!
 
@@ -33,7 +33,7 @@ bool operator ==(const cl::Device& first, const cl::Device& second) {
 
 }
 
-namespace parallelogram {
+namespace apex {
 
 OpenCLContext::OpenCLContext() {
 	//Create a context for every device.
@@ -42,7 +42,7 @@ OpenCLContext::OpenCLContext() {
 		contexts[device] = cl::Context({device}, nullptr, nullptr, nullptr, &result);
 		queues[device] = cl::CommandQueue(contexts[device], device);
 		if(result != CL_SUCCESS) {
-			throw ParallelogramException((std::string("Constructing context failed: error ") + std::to_string(result)).c_str());
+			throw ApexException((std::string("Constructing context failed: error ") + std::to_string(result)).c_str());
 		}
 	}
 }
@@ -61,13 +61,13 @@ cl::Program& OpenCLContext::compile(const cl::Device& device, const std::string 
 		programs[device_and_source] = cl::Program(contexts[device], sources, &result);
 		if(result != CL_SUCCESS) {
 			programs.erase(device_and_source);
-			throw ParallelogramException((std::string("Constructing program object failed: error ") + std::to_string(result)).c_str());
+			throw ApexException((std::string("Constructing program object failed: error ") + std::to_string(result)).c_str());
 		}
 		result = programs[device_and_source].build({device});
 		if(result != CL_SUCCESS) {
 			std::string error_log = programs[device_and_source].getBuildInfo<CL_PROGRAM_BUILD_LOG>(device);
 			programs.erase(device_and_source);
-			throw ParallelogramException((std::string("Compiling kernel failed (") + std::to_string(result) + std::string("): ") + error_log).c_str());
+			throw ApexException((std::string("Compiling kernel failed (") + std::to_string(result) + std::string("): ") + error_log).c_str());
 		}
 	}
 	return programs[device_and_source];

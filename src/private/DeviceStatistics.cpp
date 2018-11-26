@@ -13,29 +13,29 @@
 	#include <windows.h> //To detect device information.
 #endif
 #include "DeviceStatistics.h"
-#include "ParallelogramException.h" //For when we can't sample the device statistics.
+#include "ApexException.h" //For when we can't sample the device statistics.
 
-namespace parallelogram {
+namespace apex {
 
 DeviceStatistics::DeviceStatistics(const cl::Device* device) {
 	if(device) { //An OpenCL device. Those are simple.
 		if(device->getInfo(CL_DEVICE_TYPE, &device_type) != CL_SUCCESS) {
-			throw ParallelogramException("Couldn't get device type from OpenCL.");
+			throw ApexException("Couldn't get device type from OpenCL.");
 		}
 		if(device->getInfo(CL_DEVICE_MAX_COMPUTE_UNITS, &compute_units) != CL_SUCCESS) {
-			throw ParallelogramException("Couldn't get number of compute units from OpenCL.");
+			throw ApexException("Couldn't get number of compute units from OpenCL.");
 		}
 		if(device->getInfo(CL_DEVICE_MAX_WORK_GROUP_SIZE, &items_per_compute_unit) != CL_SUCCESS) {
-			throw ParallelogramException("Couldn't get number of work items from OpenCL.");
+			throw ApexException("Couldn't get number of work items from OpenCL.");
 		}
 		if(device->getInfo(CL_DEVICE_MAX_CLOCK_FREQUENCY, &clock_frequency) != CL_SUCCESS) {
-			throw ParallelogramException("Couldn't get clock frequency from OpenCL.");
+			throw ApexException("Couldn't get clock frequency from OpenCL.");
 		}
 		if(device->getInfo(CL_DEVICE_GLOBAL_MEM_SIZE, &global_memory) != CL_SUCCESS) {
-			throw ParallelogramException("Couldn't get the global memory size from OpenCL.");
+			throw ApexException("Couldn't get the global memory size from OpenCL.");
 		}
 		if(device->getInfo(CL_DEVICE_LOCAL_MEM_SIZE, &local_memory) != CL_SUCCESS) {
-			throw ParallelogramException("Couldn't get the local memory size from OpenCL.");
+			throw ApexException("Couldn't get the local memory size from OpenCL.");
 		}
 	} else { //Querying the host.
 		device_type = 2u; //Always a CPU.
@@ -92,13 +92,13 @@ DeviceStatistics::DeviceStatistics(const cl::Device* device) {
 
 			HKEY hkey = 0;
 			if(RegOpenKeyEx(HKEY_LOCAL_MACHINE, TEXT("HARDWARE\\DESCRIPTION\\SYSTEM\\CentralProcessor\\0"), 0, KEY_READ, &hkey) != ERROR_SUCCESS) {
-				throw ParallelogramException("Could not open the registry key to query the processor for clock frequency.");
+				throw ApexException("Could not open the registry key to query the processor for clock frequency.");
 			}
 			DWORD buffer_size = 4;
 			DWORD clock_frequency_word;
 			if(RegQueryValueEx(hkey, TEXT("~MHz"), NULL, NULL, (LPBYTE)&clock_frequency_word, (LPDWORD)&buffer_size) != ERROR_SUCCESS) {
 				RegCloseKey(hkey);
-				throw ParallelogramException("Could not read registry value to query the processor for clock frequency.");
+				throw ApexException("Could not read registry value to query the processor for clock frequency.");
 			}
 			RegCloseKey(hkey);
 			clock_frequency = clock_frequency_word;

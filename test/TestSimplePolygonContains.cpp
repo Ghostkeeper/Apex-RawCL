@@ -17,7 +17,7 @@
 
 #define TAU 6.28318530717959
 
-namespace parallelogram {
+namespace apex {
 
 /*
  * Some fixtures of polygons to test with.

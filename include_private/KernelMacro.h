@@ -17,6 +17,6 @@
  * compiler it'll be a proper string, but your IDE should still be using C++'s
  * syntax highlighting. Handy!
  */
-#define PARALLELOGRAM_KERNEL(...) #__VA_ARGS__
+#define APEX_KERNEL(...) #__VA_ARGS__
 
 #endif //KERNELMACRO_H

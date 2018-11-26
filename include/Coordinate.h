@@ -11,7 +11,7 @@
 
 #include <stdint.h>
 
-namespace parallelogram {
+namespace apex {
 
 /*
  * The type to use to store coordinates in space.

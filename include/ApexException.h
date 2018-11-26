@@ -6,25 +6,25 @@
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
  */
 
-#ifndef PARALLELOGRAMEXCEPTION_H
-#define PARALLELOGRAMEXCEPTION_H
+#ifndef APEXEXCEPTION_H
+#define APEXEXCEPTION_H
 
 #include <exception> //To extend from the built-in exception class.
 
-namespace parallelogram {
+namespace apex {
 
 /*
  * All exceptions raised by this library should be instances of this struct.
  *
  * This allows users of the library to catch this exception in order to filter
- * out problems with calls to Parallelogram.
+ * out problems with calls to Apex.
  */
-struct ParallelogramException : public std::exception {
+struct ApexException : public std::exception {
 public:
 	/*
 	 * Constructs the exception instance with a specified message.
 	 */
-	ParallelogramException(const char* message);
+	ApexException(const char* message);
 
 	/*
 	 * Returns the message stored with this exception.
@@ -40,4 +40,4 @@ private:
 
 }
 
-#endif //PARALLELOGRAMEXCEPTION_H
+#endif //APEXEXCEPTION_H

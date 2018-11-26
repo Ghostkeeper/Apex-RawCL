@@ -8,7 +8,7 @@
 
 #include "SimplePolygonTestGroper.h"
 
-namespace parallelogram {
+namespace apex {
 
 area_t SimplePolygonTestGroper::area_host() const {
 	return tested_simple_polygon->area_host();

@@ -19,7 +19,7 @@ class Device; //Forward declaration of device to associate benchmarker with.
 
 }
 
-namespace parallelogram {
+namespace apex {
 namespace benchmarks {
 
 /*

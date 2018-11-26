@@ -8,7 +8,7 @@
 
 #include "KernelMacro.h"
 
-PARALLELOGRAM_KERNEL(
+APEX_KERNEL(
 
 /*
  * Computes the winding number of (a part of) a polygon around a certain point.

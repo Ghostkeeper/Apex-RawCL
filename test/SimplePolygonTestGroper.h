@@ -15,7 +15,7 @@ namespace cl {
 class Device; //Forward declaration so we won't have to import all of OpenCL.
 }
 
-namespace parallelogram {
+namespace apex {
 
 /*
  * Class that allows access to private members of ``SimplePolygon`` in order to

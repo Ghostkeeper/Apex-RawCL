@@ -9,7 +9,7 @@
 #include "Benchmarks.h" //To choose the preferred algorithm and device.
 #include "SimplePolygon.h" //The class we're implementing.
 
-namespace parallelogram {
+namespace apex {
 
 SimplePolygon::SimplePolygon() {
 	//Only construct the vector of vertices.

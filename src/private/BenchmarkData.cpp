@@ -8,7 +8,7 @@
 
 #include "BenchmarkData.h" //The class definition we're implementing.
 
-namespace parallelogram {
+namespace apex {
 namespace benchmarks {
 
 BenchmarkData& BenchmarkData::getInstance() {

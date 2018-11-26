@@ -12,7 +12,7 @@
 #include <gtest/gtest.h>
 #include "Polygon.h"
 
-namespace parallelogram {
+namespace apex {
 
 /*
  * Tests moving a simple square in a positive direction.

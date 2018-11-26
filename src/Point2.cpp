@@ -8,7 +8,7 @@
 
 #include "Point2.h"
 
-namespace parallelogram {
+namespace apex {
 
 Point2::Point2(const coord_t x, const coord_t y) : x(x), y(y) {
     //Only copy the constructor parameters to the fields.

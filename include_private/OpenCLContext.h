@@ -53,7 +53,7 @@ bool operator ==(const cl::Device& first, const cl::Device& second);
 
 }
 
-namespace parallelogram {
+namespace apex {
 
 /*
  * This holds the OpenCL contexts and queues so that we don't have to recreate

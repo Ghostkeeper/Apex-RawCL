@@ -11,10 +11,10 @@
 
 #include "DeviceStatistics.h" //To get the capacities of the OpenCL devices to adjust the algorithm to them.
 #include "OpenCLContext.h" //To get the OpenCL context to run on.
-#include "ParallelogramException.h"
+#include "ApexException.h"
 #include "SimplePolygon.h" //The class we're implementing.
 
-namespace parallelogram {
+namespace apex {
 
 area_t SimplePolygon::area_opencl(const cl::Device& device) const {
 	cl::Context& context = OpenCLContext::getInstance().contexts[device];
@@ -71,7 +71,7 @@ area_t SimplePolygon::area_opencl(const cl::Device& device) const {
 		queue.enqueueNDRangeKernel(area_kernel, cl::NullRange, cl::NDRange(global_work_size), cl::NDRange(vertices_per_work_group));
 		cl_int result = queue.finish(); //Let the device do its thing!
 		if(result != CL_SUCCESS) {
-			throw ParallelogramException("Error executing command queue for area computation.");
+			throw ApexException("Error executing command queue for area computation.");
 		}
 
 		//Read the output data in.

@@ -9,7 +9,7 @@
 #ifndef EDGEINCLUSION_H
 #define EDGEINCLUSION_H
 
-namespace parallelogram {
+namespace apex {
 
 /*
  * Determines whether edges are included in the coverage of a polygon.

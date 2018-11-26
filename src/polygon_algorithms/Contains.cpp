@@ -10,10 +10,10 @@
 
 #include "DeviceStatistics.h" //To get the capacities of the OpenCL devices to adjust the algorithm to them.
 #include "OpenCLContext.h" //To get the OpenCL context to run on.
-#include "ParallelogramException.h"
+#include "ApexException.h"
 #include "SimplePolygon.h" //The class whose algorithms we're implementing.
 
-namespace parallelogram {
+namespace apex {
 
 bool SimplePolygon::contains_opencl(const cl::Device& device, const Point2& point, const EdgeInclusion& include_edge, const FillType& fill_type) const {
 	//TODO: If pre-calculation is allowed, obtain the AABB of the polygon and do that check first.
@@ -89,7 +89,7 @@ bool SimplePolygon::contains_opencl(const cl::Device& device, const Point2& poin
 		queue.enqueueNDRangeKernel(contains_kernel, cl::NullRange, cl::NDRange(global_work_size), cl::NDRange(vertices_per_work_group));
 		cl_int result = queue.finish(); //Let the device do its thing!
 		if(result != CL_SUCCESS) {
-			throw ParallelogramException("Error executing command queue for point-in-polygon computation.");
+			throw ApexException("Error executing command queue for point-in-polygon computation.");
 		}
 
 		//Read the output data in.

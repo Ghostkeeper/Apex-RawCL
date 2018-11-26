@@ -11,7 +11,7 @@
 
 #include "OpenCL.h" //To obtain the statistics from OpenCL devices.
 
-namespace parallelogram {
+namespace apex {
 
 /*
  * Data holder for some statistics of compute devices.

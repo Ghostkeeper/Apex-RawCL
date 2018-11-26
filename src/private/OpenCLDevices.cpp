@@ -14,7 +14,7 @@
 #endif
 #include "OpenCLDevices.h"
 
-namespace parallelogram {
+namespace apex {
 
 OpenCLDevices::OpenCLDevices() {
 	//Detect the platforms on this computer.

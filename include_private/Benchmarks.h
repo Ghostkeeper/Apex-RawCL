@@ -11,7 +11,7 @@
 
 #include "OpenCL.h" //For cl::Device.
 
-namespace parallelogram {
+namespace apex {
 namespace benchmarks { //Contain all benchmark data and the ``choose`` function in a sub-namespace.
 
 /*

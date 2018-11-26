@@ -8,7 +8,7 @@
 
 #include "Polygon.h"
 
-namespace parallelogram {
+namespace apex {
 
 Polygon::Polygon() {
 	//Only initialise the simple_polygons vector.

@@ -15,7 +15,7 @@
 
 #define PI 3.14159265358979
 
-namespace parallelogram {
+namespace apex {
 
 /*
  * Some fixtures for the TestPolygonArea tests.

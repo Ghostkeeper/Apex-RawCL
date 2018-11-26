@@ -5,7 +5,7 @@
 #You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
 
 cmake_minimum_required(VERSION 2.8.12)
-project(parallelogram)
+project(apex)
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 
 #Compiler settings.
@@ -17,7 +17,7 @@ endif()
 
 #Source files.
 set(sources
-	src/ParallelogramException.cpp
+	src/ApexException.cpp
 	src/Point2.cpp
 	src/Polygon.cpp
 	src/SimplePolygon.cpp
@@ -33,30 +33,30 @@ set(sources
 )
 
 #Compilation.
-add_library(parallelogram SHARED ${sources})
-target_include_directories(parallelogram PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
-target_include_directories(parallelogram PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include_private)
-target_include_directories(parallelogram PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/benchmark) #To make the benchmarker a friend class.
+add_library(apex SHARED ${sources})
+target_include_directories(apex PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(apex PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include_private)
+target_include_directories(apex PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/benchmark) #To make the benchmarker a friend class.
 
 #Verify some compile features that we need so we can give an early error if it's not.
-target_compile_features(parallelogram PUBLIC cxx_std_11)
-target_compile_features(parallelogram PUBLIC cxx_constexpr)
-target_compile_features(parallelogram PUBLIC cxx_defaulted_functions)
-target_compile_features(parallelogram PUBLIC cxx_lambdas)
-#target_compile_features(parallelogram PUBLIC cxx_noexcept) #Reminder for the future.
-target_compile_features(parallelogram PUBLIC cxx_nonstatic_member_init)
-target_compile_features(parallelogram PUBLIC cxx_range_for)
-target_compile_features(parallelogram PUBLIC cxx_right_angle_brackets)
-target_compile_features(parallelogram PUBLIC cxx_rvalue_references)
-target_compile_features(parallelogram PUBLIC cxx_variadic_macros)
-target_compile_features(parallelogram PRIVATE cxx_generalized_initializers)
-target_compile_features(parallelogram PRIVATE cxx_static_assert)
-target_compile_features(parallelogram PRIVATE cxx_thread_local)
+target_compile_features(apex PUBLIC cxx_std_11)
+target_compile_features(apex PUBLIC cxx_constexpr)
+target_compile_features(apex PUBLIC cxx_defaulted_functions)
+target_compile_features(apex PUBLIC cxx_lambdas)
+#target_compile_features(apex PUBLIC cxx_noexcept) #Reminder for the future.
+target_compile_features(apex PUBLIC cxx_nonstatic_member_init)
+target_compile_features(apex PUBLIC cxx_range_for)
+target_compile_features(apex PUBLIC cxx_right_angle_brackets)
+target_compile_features(apex PUBLIC cxx_rvalue_references)
+target_compile_features(apex PUBLIC cxx_variadic_macros)
+target_compile_features(apex PRIVATE cxx_generalized_initializers)
+target_compile_features(apex PRIVATE cxx_static_assert)
+target_compile_features(apex PRIVATE cxx_thread_local)
 
 #Dependencies.
 find_package(OpenCL REQUIRED)
-target_include_directories(parallelogram PRIVATE ${OpenCL_INCLUDE_DIRS})
-target_link_libraries(parallelogram ${OpenCL_LIBRARIES})
+target_include_directories(apex PRIVATE ${OpenCL_INCLUDE_DIRS})
+target_link_libraries(apex ${OpenCL_LIBRARIES})
 if(OpenCL_VERSION_MAJOR EQUAL 1)
 	set(_opencl_hpp_file cl.hpp)
 elseif(OpenCL_VERSION_MAJOR EQUAL 2)
@@ -105,7 +105,7 @@ if(BUILD_TESTS)
 		find_package(Threads REQUIRED)
 
 		add_executable(${test_case} test/${test_path}.cpp ${test_helpers})
-		target_link_libraries(${test_case} ${GOOGLETEST_BOTH_LIBRARIES} ${OpenCL_LIBRARIES} Threads::Threads parallelogram) #Link with GoogleTest, OpenCL and the main Parallelogram library.
+		target_link_libraries(${test_case} ${GOOGLETEST_BOTH_LIBRARIES} ${OpenCL_LIBRARIES} Threads::Threads apex) #Link with GoogleTest, OpenCL and the main Apex library.
 		target_include_directories(${test_case} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test)
 		target_include_directories(${test_case} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/benchmark)
 		target_include_directories(${test_case} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include_private) #This test has access to private headers.
@@ -134,7 +134,7 @@ if(BUILD_BENCHMARKER)
 	target_include_directories(benchmarker PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 	target_include_directories(benchmarker PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include_private) #The benchmarker has access to private headers to call specific implementations.
 	target_include_directories(benchmarker PRIVATE ${OpenCL_INCLUDE_DIRS})
-	target_link_libraries(benchmarker parallelogram)
+	target_link_libraries(benchmarker apex)
 	target_link_libraries(benchmarker ${OpenCL_LIBRARIES})
 	if(BUILD_EIGEN)
 		add_dependencies(benchmarker Eigen)

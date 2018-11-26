@@ -15,7 +15,7 @@
 #include "DeviceStatistics.h" //To get the statistics on the devices.
 #include "OpenCL.h" //To call the OpenCL API.
 
-namespace parallelogram {
+namespace apex {
 
 /*
  * Proxy for getting the available OpenCL devices.

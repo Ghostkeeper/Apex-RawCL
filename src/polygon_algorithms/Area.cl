@@ -8,7 +8,7 @@
 
 #include "KernelMacro.h"
 
-PARALLELOGRAM_KERNEL(
+APEX_KERNEL(
 
 /*
  * Computes the area of (a part of) a polygon.

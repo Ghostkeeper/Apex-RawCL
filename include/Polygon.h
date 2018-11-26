@@ -12,7 +12,7 @@
 #include <vector> //To list the simple polygons.
 #include "SimplePolygon.h" //The simple polygons that this complex polygon consists of.
 
-namespace parallelogram {
+namespace apex {
 
 /*
  * A complex polygon.

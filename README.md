@@ -5,8 +5,8 @@
 [license]: # (This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for details.)
 [license]: # (You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.)
 
-Parallelogram
-=============
+Apex
+====
 The current state of this library can be considered to be completely defunct. I am basically experimenting here. You will find nothing of actual use here in your application, but it may serve as a crude example of how to make OpenCL work well on all platforms.
 
 This is intended to be a library for polygon and polyhedron operations. It provides a bunch of geometrical algorithms that operate on finite-resolution shapes in 2D and 3D. These algorithms have multiple implementations. Some scale well, using more extensive data structures or highly parallel computing. Some don't scale well, but are more efficient on smaller data sets. The library chooses an implementation automatically based on predictions of how long an algorithm will take to compute its operation on the input data.

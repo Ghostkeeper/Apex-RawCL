@@ -6,15 +6,15 @@
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
  */
 
-#include "ParallelogramException.h"
+#include "ApexException.h"
 
-namespace parallelogram {
+namespace apex {
 
-ParallelogramException::ParallelogramException(const char* message) : message(message) {
+ApexException::ApexException(const char* message) : message(message) {
 	//Only need to copy the parameter to the message field.
 }
 
-const char* ParallelogramException::what() const throw() {
+const char* ApexException::what() const throw() {
 	return message;
 }
 

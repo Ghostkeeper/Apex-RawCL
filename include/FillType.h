@@ -9,7 +9,7 @@
 #ifndef FILLTYPE_H
 #define FILLTYPE_H
 
-namespace parallelogram {
+namespace apex {
 
 /*
  * Determines what parts of a self-intersecting polygon are considered inside

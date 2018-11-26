@@ -15,7 +15,7 @@
 #include "OpenCL.h" //For the OpenCL device to run the benchmark on.
 #include "SimplePolygon.h"
 
-namespace parallelogram {
+namespace apex {
 namespace benchmarks {
 
 /*

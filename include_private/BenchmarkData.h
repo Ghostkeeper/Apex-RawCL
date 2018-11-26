@@ -14,7 +14,7 @@
 #include <utility> //For std::pair and std::tuple, for using multiple keys in a mapping.
 #include "OpenCL.h" //For cl_ulong, the data type for device data.
 
-namespace parallelogram {
+namespace apex {
 namespace benchmarks {
 
 /*

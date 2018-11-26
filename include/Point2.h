@@ -11,7 +11,7 @@
 
 #include "Coordinate.h"
 
-namespace parallelogram {
+namespace apex {
 
 /*
  * Represents a point in a 2-dimensional coordinate system.

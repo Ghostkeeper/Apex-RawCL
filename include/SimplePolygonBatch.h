@@ -15,7 +15,7 @@
 #include "DeviceStatistics.h" //To split tasks up based on the available memory in devices.
 #include "OpenCLContext.h" //To get the OpenCL context to run on.
 
-namespace parallelogram {
+namespace apex {
 
 class SimplePolygon;
 
