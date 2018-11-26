@@ -33,7 +33,7 @@ area_t SimplePolygon::area_opencl(const cl::Device& device) const {
 
 	const size_t vertices_per_pass = global_buffer_size / vertex_size;
 	area_t total_area = 0; //Result sum of all passes.
-	for(size_t pivot_vertex = 0; pivot_vertex < size(); pivot_vertex += vertices_per_pass - 1) { //If the total data size is more than what fits in constant memory, we'll have to make multiple passes.
+	for(size_t pivot_vertex = 0; pivot_vertex < size(); pivot_vertex += vertices_per_pass - 1) { //If the total data size is more than what fits in global memory, we'll have to make multiple passes.
 		//Each item works on a line segment, which requires two vertices.
 		//So we must leave space for 1 extra vertex in memory.
 		size_t pivot_vertex_after = pivot_vertex + vertices_per_pass - 1; //-1 because the pivot vertex of the next pass is the last vertex of this pass.
@@ -52,11 +52,11 @@ area_t SimplePolygon::area_opencl(const cl::Device& device) const {
 		//Round the global work size up to multiple of vertices_per_work_group. The kernel itself handles work items that need to idle.
 		const size_t global_work_size = (vertices_this_pass + vertices_per_work_group - 1) / vertices_per_work_group * vertices_per_work_group;
 
-		//Allocate constant memory on the device for the input.
-		const cl_ulong this_constant_buffer_size = (vertices_this_pass + 1) * vertex_size;
+		//Allocate global memory on the device for the input.
+		const cl_ulong this_global_buffer_size = (vertices_this_pass + 1) * vertex_size;
 		cl::Buffer input_points(context, CL_MEM_READ_ONLY, (global_work_size + 1) * vertex_size);
-		queue.enqueueWriteBuffer(input_points, CL_TRUE, 0, this_constant_buffer_size - vertex_size, &(*this)[pivot_vertex]); //Write the polyline and first pivot vertex.
-		queue.enqueueWriteBuffer(input_points, CL_TRUE, this_constant_buffer_size - vertex_size, vertex_size, &(*this)[pivot_vertex_after]); //Write the second pivot vertex.
+		queue.enqueueWriteBuffer(input_points, CL_TRUE, 0, this_global_buffer_size - vertex_size, &(*this)[pivot_vertex]); //Write the polyline and first pivot vertex.
+		queue.enqueueWriteBuffer(input_points, CL_TRUE, this_global_buffer_size - vertex_size, vertex_size, &(*this)[pivot_vertex_after]); //Write the second pivot vertex.
 
 		//Allocate an output buffer: One area_t for each work group as their output.
 		cl_ulong this_output_buffer_size = this_work_groups * sizeof(area_t);
