@@ -12,6 +12,8 @@
 #include <cstddef> //For size_t.
 #include <iterator> //For iterating over a subset of a data structure.
 #include "Benchmarks.h" //To choose the preferred algorithm and device.
+#include "DeviceStatistics.h" //To split tasks up based on the available memory in devices.
+#include "OpenCLContext.h" //To get the OpenCL context to run on.
 
 namespace parallelogram {
 
@@ -127,6 +129,71 @@ private:
 	 */
 	void area_opencl(const cl::Device& device, std::vector<area_t>& output) const {
 		//TODO: Implement.
+	}
+
+	/*
+	 * Divide the polygons in this batch over a number of work groups.
+	 *
+	 * If the number of polygons is too great to fit in the local memory of a
+	 * work group, some polygons or some part of some polygon will have to be
+	 * processed by a different work group. This function determines which
+	 * polygons will get processed by which work group.
+	 *
+	 * Similarly, if the global memory is limited such that not all input data
+	 * is able to fit, the work groups will have to be divided over a number of
+	 * passes where the data is cycled through global memory. This function also
+	 * computes the number of work groups that can be processed in each pass.
+	 *
+	 * This version divides up the data such that every edge is situated in some
+	 * work group. That means that some vertices will be placed twice: Once for
+	 * the endpoint of one edge and once for the starting point of another edge.
+	 *
+	 * The function also allows for a certain overhead per polygon in global
+	 * memory. This is intended to allow storing some extra data such as the
+	 * output of the kernel.
+	 * \param statistics The statistics of the device we'll be computing with.
+	 * \param global_overhead_per_polygon How much global memory to reserve.
+	 * This limits the number of work groups that can be stored per pass.
+	 * \param start_positions Output parameter to store the starting positions
+	 * of each polygon in each work group. The result contains one vector for
+	 * each work group. In each vector is the starting positions of a number of
+	 * polygons in the buffer, divided by the size of a vertex. So in effect,
+	 * this is the number of vertices that precede the polygon in the buffer of
+	 * its work group.
+	 * \param work_groups_per_pass Output parameter to store the number of work
+	 * groups that can be computed per pass.
+	 */
+	void divide_edges(const DeviceStatistics& statistics, const cl_ulong global_overhead_per_polygon, std::vector<std::vector<size_t>>& start_positions, std::vector<size_t>& work_groups_per_pass) {
+		constexpr cl_ulong vertex_size = sizeof(coord_t) * 2;
+		const size_t vertices_per_work_group = std::min(statistics.items_per_compute_unit, statistics.local_memory / vertex_size);
+
+		start_positions.reserve(count * 3 / vertices_per_work_group + 1); //Estimate of how many work groups we'll need in total. If there's that many polygons, they are probably triangles!
+		start_positions.emplace_back(); //Need at least one group if the batch is not empty.
+		work_groups_per_pass.reserve(start_positions.capacity() / statistics.compute_units + 1); //Estimate of how many passes we'll need. This estimate assumes that all work groups simply fit in global memory which will usually be the case.
+
+		size_t current_position = 0; //Counts up to vertices_per_workgroup.
+		cl_ulong global_memory_used = 0; //This pass.
+		size_t work_groups_this_pass = 0;
+		for(Iterator polygon = begin; polygon != end; std::advance(polygon, 1)) {
+			while(current_position + 1 >= vertices_per_work_group) { //Doesn't fit in this work group any more. Start a new one.
+				const cl_ulong global_memory_this_work_group = (start_positions.back().size() + 1) * global_overhead_per_polygon + (current_position + 1) * vertex_size;
+				if(global_memory_used + global_memory_this_work_group > statistics.global_memory) {
+					//Doesn't fit in this pass any more. Start a new one.
+					work_groups_per_pass.emplace_back(work_groups_this_pass);
+					global_memory_used = 0;
+					work_groups_this_pass = 0;
+				}
+				//TODO: This makes the assumption that at least one work group fits in global memory. Safe assumption?
+				work_groups_this_pass++;
+				global_memory_used += global_memory_this_work_group;
+
+				current_position -= vertices_per_work_group + 1; //One extra as pivot vertex.
+				start_positions.emplace_back();
+			}
+			start_positions.back().emplace_back(current_position);
+			current_position += polygon->size() + 1; //One extra to close the polygon.
+		}
+		work_groups_per_pass.emplace_back(work_groups_this_pass);
 	}
 };
 
