@@ -162,7 +162,10 @@ private:
 	 * its work group.
 	 * \param work_groups_per_pass Output parameter to store the number of work
 	 * groups that can be computed per pass.
+	 * \tparam DeviceStatistics The DeviceStatistics class to use (so that this
+	 * class can be mocked out for tests).
 	 */
+	template<typename DeviceStatistics = DeviceStatistics>
 	void divide_edges(const DeviceStatistics& statistics, const cl_ulong global_overhead_per_polygon, std::vector<std::vector<size_t>>& start_positions, std::vector<size_t>& work_groups_per_pass) {
 		constexpr cl_ulong vertex_size = sizeof(coord_t) * 2;
 		const size_t vertices_per_work_group = std::min(statistics.items_per_compute_unit, statistics.local_memory / vertex_size);
