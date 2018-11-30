@@ -72,6 +72,12 @@ TEST_F(TestSimplePolygonBatch, LimitedByWorkGroupSize) {
 	const_groper.divide_edges(limits, 0, start_positions, work_groups_per_pass);
 	ASSERT_EQ(1, start_positions.size()); //There should still be only one work group.
 	EXPECT_EQ(ten_triangles.size(), start_positions[0].size());
+
+	limits.items_per_compute_unit = 29; //Now we can't fit everything in one work group. Need a second one!
+	const_groper.divide_edges(limits, 0, start_positions, work_groups_per_pass);
+	ASSERT_EQ(2, start_positions.size()); //Now we need 2 work groups.
+	EXPECT_EQ(10, start_positions[0].size()); //All 10 triangles will still start in the first work group.
+	EXPECT_EQ(0, start_positions[1].size()); //None of them start in the second group, but it is there.
 }
 
 }
