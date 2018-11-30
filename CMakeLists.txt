@@ -79,6 +79,15 @@ if(BUILD_TESTS)
 
 	find_package(GoogleTest REQUIRED)
 
+	#Build a library of helpers for the tests. We only need to compile this once.
+	set(test_helpers_sources
+		test/helpers/SimplePolygonTestGroper.cpp
+	)
+	add_library(test_helpers ${test_helpers_sources})
+	target_link_libraries(test_helpers apex)
+	target_include_directories(test_helpers PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test/helpers)
+	target_include_directories(test_helpers PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include_private) #This test library has access to private headers.
+
 	#Names of all tests. Each must have a file called "test/<name>.cpp" as source file.
 	#Instead of slashes, use periods.
 	set(test_names
@@ -87,9 +96,6 @@ if(BUILD_TESTS)
 		TestSimplePolygonArea
 		TestSimplePolygonContains
 		private.TestOpenCLDevices
-	)
-	set(test_helpers
-		test/SimplePolygonTestGroper.cpp
 	)
 
 	#To make sure that the tests are built before running them, add the building of these tests as an additional test.
@@ -105,12 +111,13 @@ if(BUILD_TESTS)
 		find_package(Threads REQUIRED)
 
 		add_executable(${test_case} test/${test_path}.cpp ${test_helpers})
-		target_link_libraries(${test_case} ${GOOGLETEST_BOTH_LIBRARIES} ${OpenCL_LIBRARIES} Threads::Threads apex) #Link with GoogleTest, OpenCL and the main Apex library.
-		target_include_directories(${test_case} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test)
+		target_link_libraries(${test_case} ${GOOGLETEST_BOTH_LIBRARIES} ${OpenCL_LIBRARIES} Threads::Threads apex test_helpers) #Link with GoogleTest, OpenCL and the main Apex library.
+		target_include_directories(${test_case} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test/helpers)
 		target_include_directories(${test_case} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/benchmark)
 		target_include_directories(${test_case} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include_private) #This test has access to private headers.
 		target_include_directories(${test_case} PRIVATE ${GOOGLETEST_INCLUDE_DIRS})
 		target_include_directories(${test_case} PRIVATE ${OpenCL_INCLUDE_DIRS})
+		add_dependencies(${test_case} apex test_helpers)
 		if(BUILD_GOOGLETEST)
 			add_dependencies(${test_case} GoogleTest)
 		endif()
