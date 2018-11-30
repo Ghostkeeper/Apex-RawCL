@@ -94,6 +94,7 @@ if(BUILD_TESTS)
 		TestPolygonArea
 		TestPolygonTranslate
 		TestSimplePolygonArea
+		TestSimplePolygonBatch
 		TestSimplePolygonContains
 		private.TestOpenCLDevices
 	)
