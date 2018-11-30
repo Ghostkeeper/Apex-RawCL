@@ -41,6 +41,7 @@ class SimplePolygon;
  */
 template<typename Iterator>
 class SimplePolygonBatch {
+	template<typename GroperIterator> friend class SimplePolygonBatchGroper;
 public:
 	/*
 	 * Batches a bunch of simple polygons together to operate on separately.
