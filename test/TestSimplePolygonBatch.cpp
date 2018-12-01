@@ -10,6 +10,7 @@
 #define TESTSIMPLEPOLYGONBATCH
 
 #include <gtest/gtest.h>
+#include <limits> //To simulate infinite memory.
 #include "SimplePolygon.h" //Example polygons.
 #include "SimplePolygonBatch.h"
 #include "helpers/SimplePolygonBatchGroper.h" //The class under test.
@@ -54,9 +55,9 @@ TEST_F(TestSimplePolygonBatch, Unlimited) {
 
 	//Construct a computer with enough memory for anything and unlimited work items per group.
 	DeviceStatistics limits(nullptr);
-	limits.global_memory = 9999999999999; //Shouldn't be a limit.
-	limits.local_memory = 9999999999999;
-	limits.items_per_compute_unit = 9999999999999;
+	limits.global_memory = std::numeric_limits<cl_ulong>::max(); //No limit in memory.
+	limits.local_memory = std::numeric_limits<cl_ulong>::max();
+	limits.items_per_compute_unit = std::numeric_limits<size_t>::max(); //Or in processors.
 
 	std::vector<std::vector<size_t>> start_positions;
 	std::vector<size_t> work_groups_per_pass;
@@ -75,8 +76,8 @@ TEST_F(TestSimplePolygonBatch, JustEnoughWorkItems) {
 
 	//Construct a computer with enough memory for everything but just barely enough work items per group.
 	DeviceStatistics limits(nullptr);
-	limits.global_memory = 9999999999999; //Shouldn't be a limit.
-	limits.local_memory = 9999999999999; //Shouldn't be a limit.
+	limits.global_memory = std::numeric_limits<cl_ulong>::max(); //No limit in memory.
+	limits.local_memory = std::numeric_limits<cl_ulong>::max();
 	limits.items_per_compute_unit = 30; //Just enough to process all 30 vertices at once.
 
 	std::vector<std::vector<size_t>> start_positions;
