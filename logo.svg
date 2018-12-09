@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<svg width="300" height="300" xmlns="http://www.w3.org/2000/svg">
-	<!-- Golden ratio: 2 / (1 + sqrt(5)) * 300 ~= 185, so we put the main visual crossing at 185,185 -->
+<svg width="300" height="255" xmlns="http://www.w3.org/2000/svg">
+	<!-- Golden ratio: 2 / (1 + sqrt(5)) * 300 ~= 185, so we put the main visual line at x=185 -->
 	<!-- For simplicity, diagonal lines have coordinates shifted by 1.5 times the thickness rather than sqrt(2), so diagonal lines will be slightly thicker. -->
 
 	<path d="
