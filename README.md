@@ -5,7 +5,7 @@
 [license]: # (This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for details.)
 [license]: # (You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.)
 
-Apex
+![Apex](logo.svg)
 ====
 The current state of this library can be considered to be completely defunct. I am basically experimenting here. You will find nothing of actual use here in your application, but it may serve as a crude example of how to make OpenCL work well on all platforms.
 
