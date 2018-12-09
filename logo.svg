@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<svg width="300" height="300" xmlns="http://www.w3.org/2000/svg">
+	<!-- Golden ratio: 2 / (1 + sqrt(5)) * 300 ~= 185 -->
+	<!-- For simplicity, diagonal lines have coordinates shifted by 1.5 times the thickness rather than sqrt(2), so diagonal lines will be slightly thicker. -->
+
+	<!-- Most of A and P, half of X. -->
+	<path d="
+		M185,0 L0,185 L80,185 L80,220 L245,220 L165,300 L165,230 L185,210 L90,210 L90,185 L115,185 L145,155 L145,120
+		L110,120 L80,150 L80,165 L50,165 L165,50 L165,110 L275,110 L200,185 L215,185 L300,100 L185,100" />
+</svg>
