@@ -6,6 +6,7 @@
 
 cmake_minimum_required(VERSION 2.8.12)
 project(apex)
+set(PROJECT_DESCRIPTION "Library for performing massively parallel computations on polygons.")
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 
 #Compiler settings.
