@@ -4,9 +4,8 @@
 #This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for details.
 #You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
 
-cmake_minimum_required(VERSION 2.8.12)
-project(apex)
-set(PROJECT_DESCRIPTION "Library for performing massively parallel computations on polygons.")
+cmake_minimum_required(VERSION 3.9)
+project(apex VERSION 0.0.1 DESCRIPTION "Library for performing massively parallel computations on polygons.")
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 
 #Compiler settings.
@@ -151,4 +150,7 @@ if(BUILD_BENCHMARKER)
 endif()
 
 #Installation.
-#TODO
+include(GNUInstallDirs)
+#TODO: Install header files.
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/apex.pc.in ${CMAKE_CURRENT_BINARY_DIR}/apex.pc @ONLY) #Have to use @ONLY since ${} has special meaning for .pc files.
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/apex.pc DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig)
