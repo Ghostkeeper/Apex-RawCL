@@ -151,6 +151,56 @@ private:
 	void area_opencl(const cl::Device& device, std::vector<area_t>& output) const {
 		//TODO: Implement.
 	}
+
+	/*
+	 * Splits this batch into subbatches such that the batch fits within a
+	 * limited amount of memory.
+	 *
+	 * If the batch already fits in the available memory, it remains untouched.
+	 * \param maximum_memory The amount of memory that the batches must fit in.
+	 * \return Whether the splitting was successful. If there is a polygon in
+	 * this batch that is too large to fit in maximum memory on its own, it will
+	 * fail.
+	 */
+	bool ensure_fit(cl_ulong maximum_memory) {
+		constexpr cl_ulong vertex_size = sizeof(cl_ulong) * 2;
+
+		//Check if it's even necessary to rebatch. Maybe it already fits in memory.
+		if(subbatches.empty()) {
+			if((total_vertices + count) * vertex_size <= maximum_memory) {
+				return true; //Already fits. Don't need to do anything.
+			}
+		} else {
+			bool rebatch_necessary = false;
+			for(SimplePolygonBatch<Iterator>& subbatch : subbatches) {
+				if((subbatch.total_vertices + subbatch.count) * vertex_size > maximum_memory) {
+					rebatch_necessary = true;
+					break;
+				}
+			}
+			if(!rebatch_necessary) {
+				return true; //Already fits.
+			}
+		}
+
+		//Rebatch is necessary.
+		subbatches.clear();
+		Iterator batch_start = begin;
+		cl_ulong batch_memory = 0;
+		for(Iterator batch_end = begin; batch_end != end; std::advance(batch_end, 1)) {
+			const cl_ulong poly_size = (batch_end->size() + 1) * vertex_size; //+1 for the end marker.
+			if(batch_memory + poly_size <= maximum_memory) { //Next polygon would still fit.
+				batch_memory += poly_size;
+			} else { //Next polygon no longer fits.
+				if(batch_memory == 0) { //The next polygon on its own is too large already.
+					return false;
+				}
+				subbatches.emplace_back(batch_start, batch_end);
+				batch_start = batch_end;
+				batch_memory = 0;
+			}
+		}
+	}
 };
 
 }
