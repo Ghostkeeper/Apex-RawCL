@@ -28,8 +28,12 @@ public:
 	 */
 	SimplePolygonBatch<Iterator>* tested_batch;
 
-	void divide_edges(const DeviceStatistics& statistics, const cl_ulong global_overhead_per_polygon, std::vector<std::vector<size_t>>& start_positions, std::vector<size_t>& work_groups_per_pass) const {
-		return tested_batch->divide_edges(statistics, global_overhead_per_polygon, start_positions, work_groups_per_pass);
+	size_t count() const {
+		return tested_batch->count;
+	}
+
+	size_t total_vertices() const {
+		return tested_batch->total_vertices;
 	}
 };
 
