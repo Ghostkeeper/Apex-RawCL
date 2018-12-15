@@ -200,6 +200,7 @@ private:
 				batch_memory = 0;
 			}
 		}
+		return true;
 	}
 };
 
