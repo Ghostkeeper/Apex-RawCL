@@ -80,6 +80,16 @@ TEST_F(TestSimplePolygonBatch, CountTen) {
 	EXPECT_EQ(30, const_groper.total_vertices());
 }
 
+TEST_F(TestSimplePolygonBatch, EnsureFitEmpty) {
+	const std::vector<SimplePolygon> empty;
+	SimplePolygonBatch<std::vector<SimplePolygon>::const_iterator> batch(empty.begin(), empty.end());
+	const_groper.tested_batch = &batch;
+
+	const bool result = const_groper.ensure_fit(100);
+	EXPECT_EQ(true, result);
+	EXPECT_EQ(0, const_groper.subbatches().size());
+}
+
 /*
  * Starts running the tests.
  *
