@@ -32,6 +32,14 @@ public:
 		return tested_batch->count;
 	}
 
+	bool ensure_fit(cl_ulong maximum_memory) {
+		return tested_batch->ensure_fit(maximum_memory);
+	}
+
+	std::vector<SimplePolygonBatch<Iterator>> subbatches() const {
+		return tested_batch->subbatches;
+	}
+
 	size_t total_vertices() const {
 		return tested_batch->total_vertices;
 	}
