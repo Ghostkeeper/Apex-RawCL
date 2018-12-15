@@ -98,9 +98,13 @@ TEST_F(TestSimplePolygonBatch, EnsureFitEmpty) {
 	SimplePolygonBatch<std::vector<SimplePolygon>::const_iterator> batch(empty.begin(), empty.end());
 	const_groper.tested_batch = &batch;
 
-	const bool result = const_groper.ensure_fit(100);
-	EXPECT_EQ(true, result);
-	EXPECT_EQ(0, const_groper.subbatches().size());
+	bool result = const_groper.ensure_fit(100);
+	EXPECT_TRUE(result);
+	EXPECT_TRUE(const_groper.subbatches().empty());
+
+	result = const_groper.ensure_fit(0);
+	EXPECT_TRUE(result);
+	EXPECT_TRUE(const_groper.subbatches().empty());
 }
 
 /*
