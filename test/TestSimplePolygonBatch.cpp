@@ -23,6 +23,14 @@ namespace apex {
 class TestSimplePolygonBatch : public testing::Test {
 protected:
 	/*
+	 * A polygon to test with. Put it in a batch, for instance.
+	 *
+	 * It's a triangle, so it'll have 3 vertices. It's also fairly fast to copy.
+	 * This is a triangle of 20 by 10 units (so an area of 100).
+	 */
+	SimplePolygon triangle;
+
+	/*
 	 * A vector containing ten triangles.
 	 */
 	std::vector<SimplePolygon> ten_triangles;
@@ -34,7 +42,6 @@ protected:
 	SimplePolygonBatchGroper<std::vector<SimplePolygon>::const_iterator> const_groper;
 
 	virtual void SetUp() {
-		SimplePolygon triangle; //Triangle with area of 100.
 		triangle.emplace_back(0, 0);
 		triangle.emplace_back(20, 0);
 		triangle.emplace_back(10, 20);
@@ -54,6 +61,16 @@ TEST_F(TestSimplePolygonBatch, CountEmpty) {
 	const_groper.tested_batch = &batch;
 	EXPECT_EQ(0, const_groper.count());
 	EXPECT_EQ(0, const_groper.total_vertices());
+}
+
+TEST_F(TestSimplePolygonBatch, CountOne) {
+	std::vector<SimplePolygon> one;
+	one.push_back(triangle);
+	SimplePolygonBatch<std::vector<SimplePolygon>::const_iterator> batch(one.begin(), one.end());
+	const_groper.tested_batch = &batch;
+
+	EXPECT_EQ(1, const_groper.count());
+	EXPECT_EQ(3, const_groper.total_vertices());
 }
 
 TEST_F(TestSimplePolygonBatch, CountTen) {
