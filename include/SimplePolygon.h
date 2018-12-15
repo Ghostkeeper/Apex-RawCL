@@ -43,6 +43,22 @@ public:
 	 */
 	SimplePolygon();
 
+	/*
+	 * Copies a simple polygon.
+	 * \param original The polygon to create a copy of.
+	 */
+	SimplePolygon(const SimplePolygon& original) : std::vector<Point2>(original) {
+		//Copy constructor of std::vector.
+	}
+
+	/*
+	 * Moves a simple polygon.
+	 * \param original The polygon to move to a different instance.
+	 */
+	SimplePolygon(SimplePolygon&& original) : std::vector<Point2>(original) {
+		//Move constructor of std::vector.
+	}
+
 	//Operations inheriting from std::vector.
 	using std::vector<Point2>::operator=;
 	using std::vector<Point2>::operator[];
