@@ -27,6 +27,7 @@ if(GTEST_FOUND)
 	set(GOOGLETEST_LIBRARIES "${GTEST_LIBRARIES}")
 	set(GOOGLETEST_MAIN_LIBRARIES "${GTEST_MAIN_LIBRARIES}")
 	set(GOOGLETEST_BOTH_LIBRARIES "${GTEST_BOTH_LIBRARIES}")
+	add_custom_target(GoogleTest) #Dummy target so that you can ensure GoogleTest gets built as dependency iff necessary.
 else() #GTest was not found.
 	#Give the option to build Google Test from source.
 	option(BUILD_GOOGLETEST "Build Google Test from source." ON)
