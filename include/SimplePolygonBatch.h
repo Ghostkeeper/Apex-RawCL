@@ -230,13 +230,13 @@ private:
 			const cl_ulong poly_size = (batch_end->size() + 1) * vertex_size; //+1 for the end marker.
 			if(batch_memory + poly_size <= maximum_memory) { //Next polygon would still fit.
 				batch_memory += poly_size;
-			} else { //Next polygon no longer fits.
-				if(batch_memory == 0) { //The next polygon on its own is too large already.
-					return false;
-				}
+			} else { //Next polygon no longer fits. Put it in a new batch.
 				subbatches.emplace_back(batch_start, batch_end);
 				batch_start = batch_end;
-				batch_memory = 0;
+				batch_memory = poly_size;
+				if(batch_memory > maximum_memory) { //This polygon on its own is too large already.
+					return false; //Then there can be no distribution of polygons over batches where every batch fits.
+				}
 			}
 		}
 		subbatches.emplace_back(batch_start, end);
