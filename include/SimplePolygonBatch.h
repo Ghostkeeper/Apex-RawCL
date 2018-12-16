@@ -15,6 +15,7 @@
 #include "Benchmarks.h" //To choose the preferred algorithm and device.
 #include "DeviceStatistics.h" //To split tasks up based on the available memory in devices.
 #include "OpenCLContext.h" //To get the OpenCL context to run on.
+#include "OpenCLDevices.h" //To track on which devices this polygon is loaded.
 
 namespace apex {
 
@@ -60,6 +61,7 @@ public:
 	 * polygons to batch.
 	 */
 	SimplePolygonBatch(const Iterator begin, const Iterator end) :
+		is_loaded(OpenCLDevices::getInstance().getAll().size(), false),
 		begin(begin),
 		end(end),
 		count(std::distance(begin, end)),
