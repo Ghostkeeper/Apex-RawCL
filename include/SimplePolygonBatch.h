@@ -50,7 +50,7 @@ template<typename Iterator,
 	typename Context = cl::Context, //Templated cl::Context to allow mocking it in tests.
 	typename CommandQueue = cl::CommandQueue> //Templated cl::CommandQueue to allow mocking it in tests.
 class SimplePolygonBatch {
-	template<typename GroperIterator> friend class SimplePolygonBatchGroper;
+	template<typename GroperIterator, typename GroperDevice, typename GroperDeviceStatistics, typename GroperOpenCLContext, typename GroperBuffer, typename GroperContext, typename GroperCommandQueue> friend class SimplePolygonBatchGroper;
 public:
 	/*
 	 * Batches a bunch of simple polygons together to operate on separately.
