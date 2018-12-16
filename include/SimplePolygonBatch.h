@@ -239,6 +239,7 @@ private:
 				batch_memory = 0;
 			}
 		}
+		subbatches.emplace_back(batch_start, end);
 		return true;
 	}
 };
