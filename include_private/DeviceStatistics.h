@@ -28,7 +28,6 @@ namespace apex {
  * execute a certain task, and then choose the best algorithm for that device or
  * the best device for a task.
  */
-template<typename Device = cl::Device> //Template to mock out cl::Device for testing.
 struct DeviceStatistics {
 public:
 	/*
@@ -37,6 +36,7 @@ public:
 	 * Use the nullptr device to get these statistics for the host device.
 	 * \param device The device to get the statistics of.
 	 */
+	template<typename Device = cl::Device> //Template to mock out cl::Device for testing.
 	DeviceStatistics(const Device* device) {
 		if(device) { //An OpenCL device. Those are simple.
 			if(device->getInfo(CL_DEVICE_TYPE, &device_type) != CL_SUCCESS) {

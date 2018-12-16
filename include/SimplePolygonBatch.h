@@ -227,7 +227,7 @@ private:
 		typename Context = cl::Context, //Templated cl::Context to allow mocking it in tests.
 		typename CommandQueue = cl::CommandQueue> //Templated cl::CommandQueue to allow mocking it in tests.
 	bool load(const Device& device, const cl_ulong overhead) {
-		const DeviceStatistics<Device> statistics(device);
+		const DeviceStatistics statistics(device);
 		const cl_ulong memory_allowed = statistics.global_memory - overhead;
 		const bool fits = ensure_fit(memory_allowed);
 		if(!fits) {

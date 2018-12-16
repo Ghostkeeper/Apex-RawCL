@@ -83,7 +83,7 @@ public:
 	 * \return A ``DeviceStatistics`` object containing some statistics on the
 	 * specified device.
 	 */
-	const DeviceStatistics<>& getStatistics(const cl::Device* device) const;
+	const DeviceStatistics& getStatistics(const cl::Device* device) const;
 
 	/*
 	 * Since this is a singleton, the copy constructor should not be
@@ -139,7 +139,7 @@ protected:
 	 * statistics about the device that could indicate what sort of performance
 	 * to expect from the device.
 	 */
-	std::unordered_map<const cl::Device*, DeviceStatistics<>> statistics;
+	std::unordered_map<const cl::Device*, DeviceStatistics> statistics;
 
 private:
 	/*
