@@ -140,7 +140,7 @@ TEST_F(TestSimplePolygonBatch, EnsureFitSplitInTwo) {
 	groper.tested_batch = &ten_triangles_batch;
 
 	constexpr cl_ulong vertex_size = sizeof(cl_ulong) * 2;
-	bool result = groper.ensure_fit(30 * vertex_size); //Requires 40 vertex_sizes to fit, so this is too little memory.
+	const bool result = groper.ensure_fit(30 * vertex_size); //Requires 40 vertex_sizes to fit, so this is too little memory.
 	EXPECT_TRUE(result);
 	ASSERT_EQ(2, groper.subbatches().size());
 	SimplePolygonBatchGroper<std::vector<SimplePolygon>::iterator> subbatch_groper;
@@ -150,6 +150,26 @@ TEST_F(TestSimplePolygonBatch, EnsureFitSplitInTwo) {
 	subbatch_groper.tested_batch = &groper.subbatches()[1];
 	EXPECT_EQ(3, subbatch_groper.count()); //Remaining 3 triangles.
 	EXPECT_EQ(9, subbatch_groper.total_vertices());
+}
+
+/*
+ * Tests ensure_fit on a batch that is too big for the maximum memory, and needs
+ * to be split into many.
+ */
+TEST_F(TestSimplePolygonBatch, EnsureFitSplitInFive) {
+	groper.tested_batch = &ten_triangles_batch;
+
+	constexpr cl_ulong vertex_size = sizeof(cl_ulong) * 2;
+	std::cout << "Vertex size: " << vertex_size << ", limit " << (8 * vertex_size) << std::endl;
+	const bool result = groper.ensure_fit(8 * vertex_size); //Fits 2 triangles per batch, exactly.
+	EXPECT_TRUE(result);
+	EXPECT_EQ(5, groper.subbatches().size());
+	SimplePolygonBatchGroper<std::vector<SimplePolygon>::iterator> subbatch_groper;
+
+	for(SimplePolygonBatch<std::vector<SimplePolygon>::iterator>& subbatch : groper.subbatches()) {
+		subbatch_groper.tested_batch = &subbatch;
+		EXPECT_EQ(2, subbatch_groper.count());
+	}
 }
 
 /*
