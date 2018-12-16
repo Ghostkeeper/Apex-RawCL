@@ -78,6 +78,7 @@ public:
 	 * \param original The batch to copy.
 	 */
 	SimplePolygonBatch(const SimplePolygonBatch& original) :
+		subbatches(original.subbatches),
 		begin(original.begin),
 		end(original.end),
 		count(original.count),
@@ -89,6 +90,7 @@ public:
 	 * \param original The batch to move.
 	 */
 	SimplePolygonBatch(SimplePolygonBatch&& original) :
+		subbatches(std::move(original.subbatches)),
 		begin(std::move(original.begin)),
 		end(std::move(original.end)),
 		count(std::move(original.count)),
@@ -103,6 +105,7 @@ public:
 	 * \return A reference to this batch.
 	 */
 	SimplePolygonBatch& operator =(const SimplePolygonBatch& other) {
+		subbatches = other.subbatches;
 		begin = other.begin;
 		end = other.end;
 		count = other.count;
