@@ -11,7 +11,8 @@
 
 #include <cstddef> //For size_t.
 #include <iterator> //For iterating over a subset of a data structure.
-#include <string> //For basic_string, a more efficient way of storing a short list of booleans due to SSO.
+#include <limits> //To use cl_ulong's max as marker for the end of a polygon.
+#include <unordered_map> //To track on which devices we've loaded this batch and how much memory they use.
 #include "Benchmarks.h" //To choose the preferred algorithm and device.
 #include "DeviceStatistics.h" //To split tasks up based on the available memory in devices.
 #include "OpenCLContext.h" //To get the OpenCL context to run on.
@@ -61,7 +62,6 @@ public:
 	 * polygons to batch.
 	 */
 	SimplePolygonBatch(const Iterator begin, const Iterator end) :
-		is_loaded(OpenCLDevices::getInstance().getAll().size(), false),
 		begin(begin),
 		end(end),
 		count(std::distance(begin, end)),
@@ -72,6 +72,7 @@ public:
 			}
 			return result;
 		}()) {
+		loaded_in_memory.reserve(OpenCLDevices::getInstance().getAll().size());
 	}
 
 	/*
@@ -82,7 +83,7 @@ public:
 	 */
 	SimplePolygonBatch(const SimplePolygonBatch& original) :
 		subbatches(original.subbatches),
-		is_loaded(original.is_loaded),
+		loaded_in_memory(original.loaded_in_memory),
 		begin(original.begin),
 		end(original.end),
 		count(original.count),
@@ -95,7 +96,7 @@ public:
 	 */
 	SimplePolygonBatch(SimplePolygonBatch&& original) :
 		subbatches(std::move(original.subbatches)),
-		is_loaded(std::move(original.is_loaded)),
+		loaded_in_memory(std::move(original.loaded_in_memory)),
 		begin(std::move(original.begin)),
 		end(std::move(original.end)),
 		count(std::move(original.count)),
@@ -111,7 +112,7 @@ public:
 	 */
 	SimplePolygonBatch& operator =(const SimplePolygonBatch& other) {
 		subbatches = other.subbatches;
-		is_loaded = other.is_loaded;
+		loaded_in_memory = other.loaded_in_memory;
 		begin = other.begin;
 		end = other.end;
 		count = other.count;
@@ -159,21 +160,12 @@ private:
 	std::vector<SimplePolygonBatch<Iterator>> subbatches;
 
 	/*
-	 * For each device, indicates whether this batch is loaded on that device.
+	 * For each device, indicates whether the batch is loaded and in how much
+	 * memory.
 	 *
-	 * This is essentially a vector of bools, but we're using basic_string here
-	 * because it may use the Short String Optimisation (SSO) to store the bools
-	 * on the stack rather than on the heap if there are fewer than
-	 * ``3 * sizeof(size_t) * 8 - 1`` of them (191 on a 64-bit CPU). Since most
-	 * computers will have only 1 to 3 devices, we'll probably always get SSO
-	 * here. A list of bools is also more efficient than having a set of devices
-	 * on which this batch is loaded, which is what the member is actually meant
-	 * to convey.
-	 *
-	 * The bools are stored in the order in which devices are returned by
-	 * ``OpenCLDevices::getAll``.
+	 * Use this to see whether we need to (re)load the batch on device memory.
 	 */
-	std::basic_string<bool> is_loaded;
+	std::unordered_map<const cl::Device*, cl_ulong> loaded_in_memory;
 
 	/*
 	 * The first element of a range of simple polygons to batch.
@@ -215,6 +207,56 @@ private:
 	 */
 	void area_opencl(const cl::Device& device, std::vector<area_t>& output) const {
 		//TODO: Implement.
+	}
+
+	/*
+	 * Loads this batch onto the global memory of the specified device.
+	 *
+	 * If the batch has subbatches, this does nothing. It is then up to the
+	 * algorithm that controls the device to rotate each subbatch through the
+	 * memory of the device.
+	 * \param device The compute device to load the batch data on.
+	 * \param overhead The amount of global memory to leave open in order to
+	 * store different data that is relevant to the algorithm.
+	 * \return Whether the load was successful. If it was not, the algorithm has
+	 * to be broken off and the fall-back algorithm on the host has to be used.
+	 */
+	bool load(const cl::Device& device, const cl_ulong overhead) {
+		const DeviceStatistics statistics(device);
+		const cl_ulong memory_allowed = statistics.global_memory - overhead;
+		const bool fits = ensure_fit(memory_allowed);
+		if(!fits) {
+			return false;
+		}
+		if(!subbatches.empty()) {
+			return true; //If this batch has subbatches, we can't load all of them at the same time. It's then up to the algorithm to do that one by one.
+		}
+
+		constexpr cl_ulong vertex_size = sizeof(cl_ulong) * 2;
+		std::unordered_map<const cl::Device*, cl_ulong>::const_iterator entry = loaded_in_memory.find(&device);
+		if(entry != loaded_in_memory.cend()) {
+			if(entry->second <= memory_allowed) { //It was loaded using less memory than our allowance now, so it's fine. No need to reload.
+				return true;
+			}
+		}
+
+		//We need to load it in memory.
+		const cl_ulong memory_required = (total_vertices + count) * vertex_size;
+		cl::Context& context = OpenCLContext::getInstance().contexts[device];
+		cl::Buffer batch_data(context, CL_MEM_READ_ONLY, memory_required);
+		cl::CommandQueue& queue = OpenCLContext::getInstance().queues[device];
+		cl_ulong position = 0;
+		for(Iterator polygon = begin; polygon != end; std::advance(polygon, 1)) {
+			queue.enqueueWriteBuffer(batch_data, CL_FALSE, position, polygon->size() * vertex_size, &polygon[0]); //Write actual polygon data.
+
+			cl_ulong close_marker[2]; //Marker that indicates the end of a polygon and loopback to where the polygon started.
+			close_marker[0] = std::numeric_limits<cl_ulong>::max();
+			close_marker[1] = position;
+			queue.enqueueWriteBuffer(batch_data, CL_FALSE, position, vertex_size, close_marker); //Write the close marker.
+		}
+
+		loaded_in_memory[&device] = memory_required;
+		return true;
 	}
 
 	/*
