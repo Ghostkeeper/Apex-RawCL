@@ -13,6 +13,7 @@
 #include <limits> //To simulate infinite memory.
 #include "SimplePolygon.h" //Example polygons.
 #include "SimplePolygonBatch.h"
+#include "helpers/MockDevice.h" //To mock out cl::Device.
 #include "helpers/SimplePolygonBatchGroper.h" //The class under test.
 
 namespace apex {
@@ -35,13 +36,13 @@ protected:
 	 */
 	std::vector<SimplePolygon> ten_triangles;
 
-	SimplePolygonBatch<std::vector<SimplePolygon>::iterator> ten_triangles_batch;
+	SimplePolygonBatch<std::vector<SimplePolygon>::iterator, MockDevice> ten_triangles_batch;
 
 	/*
 	 * Provides access to ``SimplePolygonBatch``'s private members in order to
 	 * test them.
 	 */
-	SimplePolygonBatchGroper<std::vector<SimplePolygon>::iterator> groper;
+	SimplePolygonBatchGroper<std::vector<SimplePolygon>::iterator, MockDevice> groper;
 
 	TestSimplePolygonBatch() :
 		ten_triangles_batch(ten_triangles.begin(), ten_triangles.end()) {
@@ -54,7 +55,7 @@ protected:
 		for(size_t i = 0; i < 10; i++) {
 			ten_triangles.push_back(triangle);
 		}
-		ten_triangles_batch = SimplePolygonBatch<std::vector<SimplePolygon>::iterator>(ten_triangles.begin(), ten_triangles.end());
+		ten_triangles_batch = SimplePolygonBatch<std::vector<SimplePolygon>::iterator, MockDevice>(ten_triangles.begin(), ten_triangles.end());
 	}
 };
 
@@ -64,7 +65,7 @@ protected:
  */
 TEST_F(TestSimplePolygonBatch, CountEmpty) {
 	std::vector<SimplePolygon> empty;
-	SimplePolygonBatch<std::vector<SimplePolygon>::iterator> batch(empty.begin(), empty.end());
+	SimplePolygonBatch<std::vector<SimplePolygon>::iterator, MockDevice> batch(empty.begin(), empty.end());
 	groper.tested_batch = &batch;
 	EXPECT_EQ(0, groper.count());
 	EXPECT_EQ(0, groper.total_vertices());
@@ -77,7 +78,7 @@ TEST_F(TestSimplePolygonBatch, CountEmpty) {
 TEST_F(TestSimplePolygonBatch, CountOne) {
 	std::vector<SimplePolygon> one_triangle;
 	one_triangle.push_back(triangle);
-	SimplePolygonBatch<std::vector<SimplePolygon>::iterator> batch(one_triangle.begin(), one_triangle.end());
+	SimplePolygonBatch<std::vector<SimplePolygon>::iterator, MockDevice> batch(one_triangle.begin(), one_triangle.end());
 	groper.tested_batch = &batch;
 
 	EXPECT_EQ(1, groper.count());
@@ -101,7 +102,7 @@ TEST_F(TestSimplePolygonBatch, CountTen) {
  */
 TEST_F(TestSimplePolygonBatch, EnsureFitEmpty) {
 	std::vector<SimplePolygon> empty;
-	SimplePolygonBatch<std::vector<SimplePolygon>::iterator> batch(empty.begin(), empty.end());
+	SimplePolygonBatch<std::vector<SimplePolygon>::iterator, MockDevice> batch(empty.begin(), empty.end());
 	groper.tested_batch = &batch;
 
 	bool result = groper.ensure_fit(100);
@@ -143,7 +144,7 @@ TEST_F(TestSimplePolygonBatch, EnsureFitSplitInTwo) {
 	const bool result = groper.ensure_fit(30 * vertex_size); //Requires 40 vertex_sizes to fit, so this is too little memory.
 	EXPECT_TRUE(result);
 	ASSERT_EQ(2, groper.subbatches().size());
-	SimplePolygonBatchGroper<std::vector<SimplePolygon>::iterator> subbatch_groper;
+	SimplePolygonBatchGroper<std::vector<SimplePolygon>::iterator, MockDevice> subbatch_groper;
 	subbatch_groper.tested_batch = &groper.subbatches()[0];
 	EXPECT_EQ(7, subbatch_groper.count()); //Each triangle requires 4 vertex_sizes. 7 * 4 = 28, which is the maximum that fits.
 	EXPECT_EQ(21, subbatch_groper.total_vertices());
@@ -163,9 +164,9 @@ TEST_F(TestSimplePolygonBatch, EnsureFitSplitInFive) {
 	const bool result = groper.ensure_fit(8 * vertex_size); //Fits 2 triangles per batch, exactly.
 	EXPECT_TRUE(result);
 	EXPECT_EQ(5, groper.subbatches().size());
-	SimplePolygonBatchGroper<std::vector<SimplePolygon>::iterator> subbatch_groper;
+	SimplePolygonBatchGroper<std::vector<SimplePolygon>::iterator, MockDevice> subbatch_groper;
 
-	for(SimplePolygonBatch<std::vector<SimplePolygon>::iterator>& subbatch : groper.subbatches()) {
+	for(SimplePolygonBatch<std::vector<SimplePolygon>::iterator, MockDevice>& subbatch : groper.subbatches()) {
 		subbatch_groper.tested_batch = &subbatch;
 		EXPECT_EQ(2, subbatch_groper.count());
 	}
@@ -186,14 +187,14 @@ TEST_F(TestSimplePolygonBatch, EnsureFitUnevenSizes) {
 	for(size_t i = 0; i < 13; i++) { //Fourth polygon gets 13 vertices.
 		uneven_sizes.back().emplace_back(0, 0);
 	}
-	SimplePolygonBatch<std::vector<SimplePolygon>::iterator> batch(uneven_sizes.begin(), uneven_sizes.end());
+	SimplePolygonBatch<std::vector<SimplePolygon>::iterator, MockDevice> batch(uneven_sizes.begin(), uneven_sizes.end());
 	groper.tested_batch = &batch;
 
 	constexpr cl_ulong vertex_size = sizeof(cl_ulong) * 2;
 	const bool result = groper.ensure_fit(14 * vertex_size); //Fits one large polygon or multiple triangles.
 	EXPECT_TRUE(result);
 	ASSERT_EQ(3, groper.subbatches().size());
-	SimplePolygonBatchGroper<std::vector<SimplePolygon>::iterator> subbatch_groper;
+	SimplePolygonBatchGroper<std::vector<SimplePolygon>::iterator, MockDevice> subbatch_groper;
 	subbatch_groper.tested_batch = &groper.subbatches()[0];
 	EXPECT_EQ(1, subbatch_groper.count()); //This batch contains just the first polygon. The second doesn't fit any more.
 	EXPECT_EQ(10, subbatch_groper.total_vertices());
@@ -219,8 +220,8 @@ TEST_F(TestSimplePolygonBatch, EnsureFitRebatch) {
 	bool result = groper.ensure_fit(20 * vertex_size); //Fits 5 triangles per batch initially.
 	EXPECT_TRUE(result);
 	ASSERT_EQ(2, groper.subbatches().size());
-	SimplePolygonBatchGroper<std::vector<SimplePolygon>::iterator> subbatch_groper;
-	for(SimplePolygonBatch<std::vector<SimplePolygon>::iterator>& subbatch : groper.subbatches()) {
+	SimplePolygonBatchGroper<std::vector<SimplePolygon>::iterator, MockDevice> subbatch_groper;
+	for(SimplePolygonBatch<std::vector<SimplePolygon>::iterator, MockDevice>& subbatch : groper.subbatches()) {
 		subbatch_groper.tested_batch = &subbatch;
 		EXPECT_EQ(5, subbatch_groper.count()); //All 2 subbatches have 5 triangles.
 	}
@@ -228,7 +229,7 @@ TEST_F(TestSimplePolygonBatch, EnsureFitRebatch) {
 	result = groper.ensure_fit(8 * vertex_size); //Fits only 2 triangles per batch now!
 	EXPECT_TRUE(result);
 	ASSERT_EQ(5, groper.subbatches().size());
-	for(SimplePolygonBatch<std::vector<SimplePolygon>::iterator>& subbatch : groper.subbatches()) {
+	for(SimplePolygonBatch<std::vector<SimplePolygon>::iterator, MockDevice>& subbatch : groper.subbatches()) {
 		subbatch_groper.tested_batch = &subbatch;
 		EXPECT_EQ(2, subbatch_groper.count()); //All 5 subbatches have 2 triangles.
 	}
@@ -244,7 +245,7 @@ TEST_F(TestSimplePolygonBatch, EnsureFitTooBig) {
 	for(size_t i = 0; i < 10; i++) {
 		polygons.back().emplace_back(0, 0);
 	}
-	SimplePolygonBatch<std::vector<SimplePolygon>::iterator> batch(polygons.begin(), polygons.end());
+	SimplePolygonBatch<std::vector<SimplePolygon>::iterator, MockDevice> batch(polygons.begin(), polygons.end());
 	groper.tested_batch = &batch;
 
 	//First polygon doesn't fit.
@@ -258,7 +259,7 @@ TEST_F(TestSimplePolygonBatch, EnsureFitTooBig) {
 	for(size_t i = 0; i < 20; i++) {
 		polygons.back().emplace_back(0, 0);
 	}
-	batch = SimplePolygonBatch<std::vector<SimplePolygon>::iterator>(polygons.begin(), polygons.end());
+	batch = SimplePolygonBatch<std::vector<SimplePolygon>::iterator, MockDevice>(polygons.begin(), polygons.end());
 	groper.tested_batch = &batch;
 	result = groper.ensure_fit(15 * vertex_size);
 	EXPECT_FALSE(result);
@@ -266,7 +267,7 @@ TEST_F(TestSimplePolygonBatch, EnsureFitTooBig) {
 
 	//Second polygon doesn't fit (but the last one does).
 	polygons.push_back(triangle);
-	batch = SimplePolygonBatch<std::vector<SimplePolygon>::iterator>(polygons.begin(), polygons.end());
+	batch = SimplePolygonBatch<std::vector<SimplePolygon>::iterator, MockDevice>(polygons.begin(), polygons.end());
 	groper.tested_batch = &batch;
 	result = groper.ensure_fit(15 * vertex_size);
 	EXPECT_FALSE(result);
