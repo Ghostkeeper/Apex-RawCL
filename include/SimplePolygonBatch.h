@@ -162,7 +162,7 @@ private:
 	 * This is essentially a vector of bools, but we're using basic_string here
 	 * because it may use the Short String Optimisation (SSO) to store the bools
 	 * on the stack rather than on the heap if there are fewer than
-	 * ``3 * sizeof(size_t) - 1`` of them (191 on a 64-bit CPU). Since most
+	 * ``3 * sizeof(size_t) * 8 - 1`` of them (191 on a 64-bit CPU). Since most
 	 * computers will have only 1 to 3 devices, we'll probably always get SSO
 	 * here. A list of bools is also more efficient than having a set of devices
 	 * on which this batch is loaded, which is what the member is actually meant
