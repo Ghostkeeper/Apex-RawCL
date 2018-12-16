@@ -133,6 +133,26 @@ TEST_F(TestSimplePolygonBatch, EnsureFitAlreadyFits) {
 }
 
 /*
+ * Tests ensure_fit on a batch that is too big for the maximum memory, and needs
+ * to be split in two.
+ */
+TEST_F(TestSimplePolygonBatch, EnsureFitSplitInTwo) {
+	groper.tested_batch = &ten_triangles_batch;
+
+	constexpr cl_ulong vertex_size = sizeof(cl_ulong) * 2;
+	bool result = groper.ensure_fit(30 * vertex_size); //Requires 40 vertex_sizes to fit, so this is too little memory.
+	EXPECT_TRUE(result);
+	ASSERT_EQ(2, groper.subbatches().size());
+	SimplePolygonBatchGroper<std::vector<SimplePolygon>::iterator> subbatch_groper;
+	subbatch_groper.tested_batch = &groper.subbatches()[0];
+	EXPECT_EQ(7, subbatch_groper.count()); //Each triangle requires 4 vertex_sizes. 7 * 4 = 28, which is the maximum that fits.
+	EXPECT_EQ(21, subbatch_groper.total_vertices());
+	subbatch_groper.tested_batch = &groper.subbatches()[1];
+	EXPECT_EQ(3, subbatch_groper.count()); //Remaining 3 triangles.
+	EXPECT_EQ(9, subbatch_groper.total_vertices());
+}
+
+/*
  * Starts running the tests.
  *
  * This calls upon GoogleTest to start testing.
