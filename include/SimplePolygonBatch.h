@@ -11,6 +11,7 @@
 
 #include <cstddef> //For size_t.
 #include <iterator> //For iterating over a subset of a data structure.
+#include <string> //For basic_string, a more efficient way of storing a short list of booleans due to SSO.
 #include "Benchmarks.h" //To choose the preferred algorithm and device.
 #include "DeviceStatistics.h" //To split tasks up based on the available memory in devices.
 #include "OpenCLContext.h" //To get the OpenCL context to run on.
@@ -79,6 +80,7 @@ public:
 	 */
 	SimplePolygonBatch(const SimplePolygonBatch& original) :
 		subbatches(original.subbatches),
+		is_loaded(original.is_loaded),
 		begin(original.begin),
 		end(original.end),
 		count(original.count),
@@ -91,6 +93,7 @@ public:
 	 */
 	SimplePolygonBatch(SimplePolygonBatch&& original) :
 		subbatches(std::move(original.subbatches)),
+		is_loaded(std::move(original.is_loaded)),
 		begin(std::move(original.begin)),
 		end(std::move(original.end)),
 		count(std::move(original.count)),
@@ -106,6 +109,7 @@ public:
 	 */
 	SimplePolygonBatch& operator =(const SimplePolygonBatch& other) {
 		subbatches = other.subbatches;
+		is_loaded = other.is_loaded;
 		begin = other.begin;
 		end = other.end;
 		count = other.count;
@@ -151,6 +155,23 @@ private:
 	 * than one layer.
 	 */
 	std::vector<SimplePolygonBatch<Iterator>> subbatches;
+
+	/*
+	 * For each device, indicates whether this batch is loaded on that device.
+	 *
+	 * This is essentially a vector of bools, but we're using basic_string here
+	 * because it may use the Short String Optimisation (SSO) to store the bools
+	 * on the stack rather than on the heap if there are fewer than
+	 * ``3 * sizeof(size_t) - 1`` of them (191 on a 64-bit CPU). Since most
+	 * computers will have only 1 to 3 devices, we'll probably always get SSO
+	 * here. A list of bools is also more efficient than having a set of devices
+	 * on which this batch is loaded, which is what the member is actually meant
+	 * to convey.
+	 *
+	 * The bools are stored in the order in which devices are returned by
+	 * ``OpenCLDevices::getAll``.
+	 */
+	std::basic_string<bool> is_loaded;
 
 	/*
 	 * The first element of a range of simple polygons to batch.
