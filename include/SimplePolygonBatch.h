@@ -72,6 +72,45 @@ public:
 	}
 
 	/*
+	 * Copies a batch of simple polygons.
+	 *
+	 * This does not copy the actual polygons. They are retained by reference.
+	 * \param original The batch to copy.
+	 */
+	SimplePolygonBatch(const SimplePolygonBatch& original) :
+		begin(original.begin),
+		end(original.end),
+		count(original.count),
+		total_vertices(original.total_vertices) {
+	}
+
+	/*
+	 * Moves the batch of simple polygons to a different memory location.
+	 * \param original The batch to move.
+	 */
+	SimplePolygonBatch(SimplePolygonBatch&& original) :
+		begin(std::move(original.begin)),
+		end(std::move(original.end)),
+		count(std::move(original.count)),
+		total_vertices(std::move(original.total_vertices)) {
+	}
+
+	/*
+	 * Assigns a copy of the batch to a different variable.
+	 *
+	 * This does not copy the actual polygons. They are retained by reference.
+	 * \param other The batch to assign to oneself.
+	 * \return A reference to this batch.
+	 */
+	SimplePolygonBatch& operator =(const SimplePolygonBatch& other) {
+		begin = other.begin;
+		end = other.end;
+		count = other.count;
+		total_vertices = other.total_vertices;
+		return *this;
+	}
+
+	/*
 	 * Compute the total surface area of the simple polygons.
 	 * \param output A vector that will be filled with the resulting areas.
 	 */
@@ -113,17 +152,17 @@ private:
 	/*
 	 * The first element of a range of simple polygons to batch.
 	 */
-	const Iterator begin;
+	Iterator begin;
 
 	/*
 	 * The last element of a range of simple polygons to batch.
 	 */
-	const Iterator end;
+	Iterator end;
 
 	/*
 	 * The total amount of simple polygons in this batch.
 	 */
-	const size_t count;
+	size_t count;
 
 	/*
 	 * The total amount of vertices in the entire batch.
@@ -131,7 +170,7 @@ private:
 	 * This is used to choose the algorithms to operate on the batch, since each
 	 * algorithm will have different ways to scale with the vertex count.
 	 */
-	const size_t total_vertices;
+	size_t total_vertices;
 
 	/*
 	 * Compute the total surface area of the simple polygons using the host CPU.
