@@ -87,7 +87,7 @@ public:
 	 * This does not copy the actual polygons. They are retained by reference.
 	 * \param original The batch to copy.
 	 */
-	SimplePolygonBatch(const SimplePolygonBatch& original) :
+	SimplePolygonBatch(const SimplePolygonBatch<Iterator, Device, DeviceStatistics, OpenCLContext, Buffer, Context, CommandQueue>& original) :
 		subbatches(original.subbatches),
 		loaded_in_memory(original.loaded_in_memory),
 		begin(original.begin),
@@ -100,7 +100,7 @@ public:
 	 * Moves the batch of simple polygons to a different memory location.
 	 * \param original The batch to move.
 	 */
-	SimplePolygonBatch(SimplePolygonBatch&& original) :
+	SimplePolygonBatch(SimplePolygonBatch<Iterator, Device, DeviceStatistics, OpenCLContext, Buffer, Context, CommandQueue>&& original) :
 		subbatches(std::move(original.subbatches)),
 		loaded_in_memory(std::move(original.loaded_in_memory)),
 		begin(std::move(original.begin)),
@@ -116,7 +116,7 @@ public:
 	 * \param other The batch to assign to oneself.
 	 * \return A reference to this batch.
 	 */
-	SimplePolygonBatch& operator =(const SimplePolygonBatch& other) {
+	SimplePolygonBatch& operator =(const SimplePolygonBatch<Iterator, Device, DeviceStatistics, OpenCLContext, Buffer, Context, CommandQueue>& other) {
 		subbatches = other.subbatches;
 		loaded_in_memory = other.loaded_in_memory;
 		begin = other.begin;
