@@ -234,6 +234,10 @@ TEST_F(TestSimplePolygonBatch, EnsureFitRebatch) {
 	}
 }
 
+/*
+ * Tests ensure_fit when it can't find a way to fit the polygons in memory
+ * because one polygon is too big.
+ */
 TEST_F(TestSimplePolygonBatch, EnsureFitTooBig) {
 	std::vector<SimplePolygon> polygons;
 	polygons.emplace_back();
