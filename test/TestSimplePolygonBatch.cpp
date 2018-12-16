@@ -108,6 +108,26 @@ TEST_F(TestSimplePolygonBatch, EnsureFitEmpty) {
 }
 
 /*
+ * Tests ensure_fit on a batch that is smaller than the maximum memory.
+ *
+ * The batch already fits, so it shouldn't create subbatches.
+ */
+TEST_F(TestSimplePolygonBatch, EnsureFitAlreadyFits) {
+	SimplePolygonBatch<std::vector<SimplePolygon>::const_iterator> batch(ten_triangles.begin(), ten_triangles.end());
+	const_groper.tested_batch = &batch;
+
+	constexpr cl_ulong vertex_size = sizeof(cl_ulong) * 2;
+	const cl_ulong expected_memory_usage = 40 * vertex_size; //10 triangles, with one extra vertex_size per polygon.
+	bool result = const_groper.ensure_fit(expected_memory_usage + 100); //Fits comfortably.
+	EXPECT_TRUE(result);
+	EXPECT_TRUE(const_groper.subbatches().empty());
+
+	result = const_groper.ensure_fit(expected_memory_usage); //Fits exactly.
+	EXPECT_TRUE(result);
+	EXPECT_TRUE(const_groper.subbatches().empty());
+}
+
+/*
  * Starts running the tests.
  *
  * This calls upon GoogleTest to start testing.
