@@ -172,6 +172,40 @@ TEST_F(TestSimplePolygonBatch, EnsureFitSplitInFive) {
 }
 
 /*
+ * Tests ensure_fit on a batch that contains polygons with different sizes.
+ */
+TEST_F(TestSimplePolygonBatch, EnsureFitUnevenSizes) {
+	std::vector<SimplePolygon> uneven_sizes;
+	uneven_sizes.emplace_back();
+	for(size_t i = 0; i < 10; i++) { //First polygon gets 10 vertices.
+		uneven_sizes.back().emplace_back(0, 0);
+	}
+	uneven_sizes.push_back(triangle); //Second polygon gets 3 vertices.
+	uneven_sizes.push_back(triangle); //Third polygon gets 3 vertices too.
+	uneven_sizes.emplace_back();
+	for(size_t i = 0; i < 13; i++) { //Fourth polygon gets 13 vertices.
+		uneven_sizes.back().emplace_back(0, 0);
+	}
+	SimplePolygonBatch<std::vector<SimplePolygon>::iterator> batch(uneven_sizes.begin(), uneven_sizes.end());
+	groper.tested_batch = &batch;
+
+	constexpr cl_ulong vertex_size = sizeof(cl_ulong) * 2;
+	const bool result = groper.ensure_fit(14 * vertex_size); //Fits one large polygon or multiple triangles.
+	EXPECT_TRUE(result);
+	ASSERT_EQ(3, groper.subbatches().size());
+	SimplePolygonBatchGroper<std::vector<SimplePolygon>::iterator> subbatch_groper;
+	subbatch_groper.tested_batch = &groper.subbatches()[0];
+	EXPECT_EQ(1, subbatch_groper.count()); //This batch contains just the first polygon. The second doesn't fit any more.
+	EXPECT_EQ(10, subbatch_groper.total_vertices());
+	subbatch_groper.tested_batch = &groper.subbatches()[1];
+	EXPECT_EQ(2, subbatch_groper.count()); //This batch contains the two triangles.
+	EXPECT_EQ(6, subbatch_groper.total_vertices());
+	subbatch_groper.tested_batch = &groper.subbatches()[2];
+	EXPECT_EQ(1, subbatch_groper.count()); //This batch contains just the last polygon.
+	EXPECT_EQ(13, subbatch_groper.total_vertices());
+}
+
+/*
  * Starts running the tests.
  *
  * This calls upon GoogleTest to start testing.
