@@ -43,14 +43,9 @@ class SimplePolygon;
  * instances.
  */
 template<typename Iterator,
-	typename Device = cl::Device, //Templated cl::Device to allow mocking it in tests.
-	typename DeviceStatistics = DeviceStatistics, //Templated DeviceStatistics to allow mocking it in tests.
-	typename OpenCLContext = OpenCLContext, //Templated OpenCLContext to allow mocking it in tests.
-	typename Buffer = cl::Buffer, //Templated cl::Buffer to allow mocking it in tests.
-	typename Context = cl::Context, //Templated cl::Context to allow mocking it in tests.
-	typename CommandQueue = cl::CommandQueue> //Templated cl::CommandQueue to allow mocking it in tests.
+	typename Device = cl::Device> //Templated cl::Device to allow mocking it in tests.
 class SimplePolygonBatch {
-	template<typename GroperIterator, typename GroperDevice, typename GroperDeviceStatistics, typename GroperOpenCLContext, typename GroperBuffer, typename GroperContext, typename GroperCommandQueue> friend class SimplePolygonBatchGroper;
+	template<typename GroperIterator, typename GroperDevice> friend class SimplePolygonBatchGroper;
 public:
 	/*
 	 * Batches a bunch of simple polygons together to operate on separately.
@@ -87,7 +82,7 @@ public:
 	 * This does not copy the actual polygons. They are retained by reference.
 	 * \param original The batch to copy.
 	 */
-	SimplePolygonBatch(const SimplePolygonBatch<Iterator, Device, DeviceStatistics, OpenCLContext, Buffer, Context, CommandQueue>& original) :
+	SimplePolygonBatch(const SimplePolygonBatch<Iterator, Device>& original) :
 		subbatches(original.subbatches),
 		loaded_in_memory(original.loaded_in_memory),
 		begin(original.begin),
@@ -100,7 +95,7 @@ public:
 	 * Moves the batch of simple polygons to a different memory location.
 	 * \param original The batch to move.
 	 */
-	SimplePolygonBatch(SimplePolygonBatch<Iterator, Device, DeviceStatistics, OpenCLContext, Buffer, Context, CommandQueue>&& original) :
+	SimplePolygonBatch(SimplePolygonBatch<Iterator, Device>&& original) :
 		subbatches(std::move(original.subbatches)),
 		loaded_in_memory(std::move(original.loaded_in_memory)),
 		begin(std::move(original.begin)),
@@ -116,7 +111,7 @@ public:
 	 * \param other The batch to assign to oneself.
 	 * \return A reference to this batch.
 	 */
-	SimplePolygonBatch& operator =(const SimplePolygonBatch<Iterator, Device, DeviceStatistics, OpenCLContext, Buffer, Context, CommandQueue>& other) {
+	SimplePolygonBatch& operator =(const SimplePolygonBatch<Iterator, Device>& other) {
 		subbatches = other.subbatches;
 		loaded_in_memory = other.loaded_in_memory;
 		begin = other.begin;
@@ -163,7 +158,7 @@ private:
 	 * memory sizes, so that it fits on all devices. Batches will not nest more
 	 * than one layer.
 	 */
-	std::vector<SimplePolygonBatch<Iterator, Device, DeviceStatistics, OpenCLContext, Buffer, Context, CommandQueue>> subbatches;
+	std::vector<SimplePolygonBatch<Iterator, Device>> subbatches;
 
 	/*
 	 * For each device, indicates whether the batch is loaded and in how much
@@ -227,6 +222,11 @@ private:
 	 * \return Whether the load was successful. If it was not, the algorithm has
 	 * to be broken off and the fall-back algorithm on the host has to be used.
 	 */
+	template<typename DeviceStatistics = DeviceStatistics, //Templated DeviceStatistics to allow mocking it in tests.
+		typename OpenCLContext = OpenCLContext, //Templated OpenCLContext to allow mocking it in tests.
+		typename Buffer = cl::Buffer, //Templated cl::Buffer to allow mocking it in tests.
+		typename Context = cl::Context, //Templated cl::Context to allow mocking it in tests.
+		typename CommandQueue = cl::CommandQueue> //Templated cl::CommandQueue to allow mocking it in tests.
 	bool load(const Device& device, const cl_ulong overhead) {
 		const DeviceStatistics statistics(device);
 		const cl_ulong memory_allowed = statistics.global_memory - overhead;
@@ -285,7 +285,7 @@ private:
 			}
 		} else {
 			bool rebatch_necessary = false;
-			for(SimplePolygonBatch<Iterator, Device, DeviceStatistics, OpenCLContext, Buffer, Context, CommandQueue>& subbatch : subbatches) {
+			for(SimplePolygonBatch<Iterator, Device>& subbatch : subbatches) {
 				if((subbatch.total_vertices + subbatch.count) * vertex_size > maximum_memory) {
 					rebatch_necessary = true;
 					break;
