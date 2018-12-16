@@ -37,6 +37,10 @@ public:
 		return tested_batch->ensure_fit(maximum_memory);
 	}
 
+	bool load(const Device& device, const cl_ulong overhead) {
+		return tested_batch->load(device, overhead);
+	}
+
 	std::vector<SimplePolygonBatch<Iterator, Device>> subbatches() const {
 		return tested_batch->subbatches;
 	}
