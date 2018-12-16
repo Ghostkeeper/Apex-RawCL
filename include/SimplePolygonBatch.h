@@ -163,7 +163,7 @@ private:
 	 * memory sizes, so that it fits on all devices. Batches will not nest more
 	 * than one layer.
 	 */
-	std::vector<SimplePolygonBatch<Iterator>> subbatches;
+	std::vector<SimplePolygonBatch<Iterator, Device, DeviceStatistics, OpenCLContext, Buffer, Context, CommandQueue>> subbatches;
 
 	/*
 	 * For each device, indicates whether the batch is loaded and in how much
@@ -285,7 +285,7 @@ private:
 			}
 		} else {
 			bool rebatch_necessary = false;
-			for(SimplePolygonBatch<Iterator>& subbatch : subbatches) {
+			for(SimplePolygonBatch<Iterator, Device, DeviceStatistics, OpenCLContext, Buffer, Context, CommandQueue>& subbatch : subbatches) {
 				if((subbatch.total_vertices + subbatch.count) * vertex_size > maximum_memory) {
 					rebatch_necessary = true;
 					break;
