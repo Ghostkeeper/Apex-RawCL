@@ -35,11 +35,17 @@ protected:
 	 */
 	std::vector<SimplePolygon> ten_triangles;
 
+	SimplePolygonBatch<std::vector<SimplePolygon>::iterator> ten_triangles_batch;
+
 	/*
 	 * Provides access to ``SimplePolygonBatch``'s private members in order to
 	 * test them.
 	 */
-	SimplePolygonBatchGroper<std::vector<SimplePolygon>::const_iterator> const_groper;
+	SimplePolygonBatchGroper<std::vector<SimplePolygon>::iterator> groper;
+
+	TestSimplePolygonBatch() :
+		ten_triangles_batch(ten_triangles.begin(), ten_triangles.end()) {
+	}
 
 	virtual void SetUp() {
 		triangle.emplace_back(0, 0);
@@ -48,6 +54,7 @@ protected:
 		for(size_t i = 0; i < 10; i++) {
 			ten_triangles.push_back(triangle);
 		}
+		ten_triangles_batch = SimplePolygonBatch<std::vector<SimplePolygon>::iterator>(ten_triangles.begin(), ten_triangles.end());
 	}
 };
 
@@ -56,11 +63,11 @@ protected:
  * empty batch.
  */
 TEST_F(TestSimplePolygonBatch, CountEmpty) {
-	const std::vector<SimplePolygon> empty;
-	SimplePolygonBatch<std::vector<SimplePolygon>::const_iterator> batch(empty.begin(), empty.end());
-	const_groper.tested_batch = &batch;
-	EXPECT_EQ(0, const_groper.count());
-	EXPECT_EQ(0, const_groper.total_vertices());
+	std::vector<SimplePolygon> empty;
+	SimplePolygonBatch<std::vector<SimplePolygon>::iterator> batch(empty.begin(), empty.end());
+	groper.tested_batch = &batch;
+	EXPECT_EQ(0, groper.count());
+	EXPECT_EQ(0, groper.total_vertices());
 }
 
 /*
@@ -70,11 +77,11 @@ TEST_F(TestSimplePolygonBatch, CountEmpty) {
 TEST_F(TestSimplePolygonBatch, CountOne) {
 	std::vector<SimplePolygon> one_triangle;
 	one_triangle.push_back(triangle);
-	SimplePolygonBatch<std::vector<SimplePolygon>::const_iterator> batch(one_triangle.begin(), one_triangle.end());
-	const_groper.tested_batch = &batch;
+	SimplePolygonBatch<std::vector<SimplePolygon>::iterator> batch(one_triangle.begin(), one_triangle.end());
+	groper.tested_batch = &batch;
 
-	EXPECT_EQ(1, const_groper.count());
-	EXPECT_EQ(3, const_groper.total_vertices());
+	EXPECT_EQ(1, groper.count());
+	EXPECT_EQ(3, groper.total_vertices());
 }
 
 /*
@@ -82,10 +89,9 @@ TEST_F(TestSimplePolygonBatch, CountOne) {
  * batch containing ten triangles.
  */
 TEST_F(TestSimplePolygonBatch, CountTen) {
-	SimplePolygonBatch<std::vector<SimplePolygon>::const_iterator> batch(ten_triangles.begin(), ten_triangles.end());
-	const_groper.tested_batch = &batch;
-	EXPECT_EQ(10, const_groper.count());
-	EXPECT_EQ(30, const_groper.total_vertices());
+	groper.tested_batch = &ten_triangles_batch;
+	EXPECT_EQ(10, groper.count());
+	EXPECT_EQ(30, groper.total_vertices());
 }
 
 /*
@@ -94,17 +100,17 @@ TEST_F(TestSimplePolygonBatch, CountTen) {
  * Whatever size you use, it should never do anything with the batch.
  */
 TEST_F(TestSimplePolygonBatch, EnsureFitEmpty) {
-	const std::vector<SimplePolygon> empty;
-	SimplePolygonBatch<std::vector<SimplePolygon>::const_iterator> batch(empty.begin(), empty.end());
-	const_groper.tested_batch = &batch;
+	std::vector<SimplePolygon> empty;
+	SimplePolygonBatch<std::vector<SimplePolygon>::iterator> batch(empty.begin(), empty.end());
+	groper.tested_batch = &batch;
 
-	bool result = const_groper.ensure_fit(100);
+	bool result = groper.ensure_fit(100);
 	EXPECT_TRUE(result);
-	EXPECT_TRUE(const_groper.subbatches().empty());
+	EXPECT_TRUE(groper.subbatches().empty());
 
-	result = const_groper.ensure_fit(0);
+	result = groper.ensure_fit(0);
 	EXPECT_TRUE(result);
-	EXPECT_TRUE(const_groper.subbatches().empty());
+	EXPECT_TRUE(groper.subbatches().empty());
 }
 
 /*
@@ -113,18 +119,17 @@ TEST_F(TestSimplePolygonBatch, EnsureFitEmpty) {
  * The batch already fits, so it shouldn't create subbatches.
  */
 TEST_F(TestSimplePolygonBatch, EnsureFitAlreadyFits) {
-	SimplePolygonBatch<std::vector<SimplePolygon>::const_iterator> batch(ten_triangles.begin(), ten_triangles.end());
-	const_groper.tested_batch = &batch;
+	groper.tested_batch = &ten_triangles_batch;
 
 	constexpr cl_ulong vertex_size = sizeof(cl_ulong) * 2;
 	const cl_ulong expected_memory_usage = 40 * vertex_size; //10 triangles, with one extra vertex_size per polygon.
-	bool result = const_groper.ensure_fit(expected_memory_usage + 100); //Fits comfortably.
+	bool result = groper.ensure_fit(expected_memory_usage + 100); //Fits comfortably.
 	EXPECT_TRUE(result);
-	EXPECT_TRUE(const_groper.subbatches().empty());
+	EXPECT_TRUE(groper.subbatches().empty());
 
-	result = const_groper.ensure_fit(expected_memory_usage); //Fits exactly.
+	result = groper.ensure_fit(expected_memory_usage); //Fits exactly.
 	EXPECT_TRUE(result);
-	EXPECT_TRUE(const_groper.subbatches().empty());
+	EXPECT_TRUE(groper.subbatches().empty());
 }
 
 /*
