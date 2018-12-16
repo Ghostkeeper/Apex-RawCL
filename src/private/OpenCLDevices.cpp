@@ -54,7 +54,7 @@ OpenCLDevices::OpenCLDevices() {
 			trim(identifier);
 		}
 		identifiers[&*device] = identifier;
-		statistics.insert(std::unordered_map<const cl::Device*, DeviceStatistics<>>::value_type(&*device, DeviceStatistics<>(&*device)));
+		statistics.insert(std::unordered_map<const cl::Device*, DeviceStatistics<>>::value_type(&*device, DeviceStatistics(&*device)));
 	}
 
 	identifiers[nullptr] = getHostIdentifier();
