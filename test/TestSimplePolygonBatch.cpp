@@ -160,7 +160,6 @@ TEST_F(TestSimplePolygonBatch, EnsureFitSplitInFive) {
 	groper.tested_batch = &ten_triangles_batch;
 
 	constexpr cl_ulong vertex_size = sizeof(cl_ulong) * 2;
-	std::cout << "Vertex size: " << vertex_size << ", limit " << (8 * vertex_size) << std::endl;
 	const bool result = groper.ensure_fit(8 * vertex_size); //Fits 2 triangles per batch, exactly.
 	EXPECT_TRUE(result);
 	EXPECT_EQ(5, groper.subbatches().size());
