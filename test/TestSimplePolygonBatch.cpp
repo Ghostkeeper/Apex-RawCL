@@ -234,6 +234,41 @@ TEST_F(TestSimplePolygonBatch, EnsureFitRebatch) {
 	}
 }
 
+TEST_F(TestSimplePolygonBatch, EnsureFitTooBig) {
+	std::vector<SimplePolygon> polygons;
+	polygons.emplace_back();
+	for(size_t i = 0; i < 10; i++) {
+		polygons.back().emplace_back(0, 0);
+	}
+	SimplePolygonBatch<std::vector<SimplePolygon>::iterator> batch(polygons.begin(), polygons.end());
+	groper.tested_batch = &batch;
+
+	//First polygon doesn't fit.
+	constexpr cl_ulong vertex_size = sizeof(cl_ulong) * 2;
+	bool result = groper.ensure_fit(10 * vertex_size); //Needs 11 vertex_sizes (one for end marker), so it won't fit.
+	EXPECT_FALSE(result);
+	EXPECT_TRUE(groper.subbatches().empty());
+
+	//Last polygon doesn't fit.
+	polygons.emplace_back();
+	for(size_t i = 0; i < 20; i++) {
+		polygons.back().emplace_back(0, 0);
+	}
+	batch = SimplePolygonBatch<std::vector<SimplePolygon>::iterator>(polygons.begin(), polygons.end());
+	groper.tested_batch = &batch;
+	result = groper.ensure_fit(15 * vertex_size);
+	EXPECT_FALSE(result);
+	EXPECT_TRUE(groper.subbatches().empty());
+
+	//Second polygon doesn't fit (but the last one does).
+	polygons.push_back(triangle);
+	batch = SimplePolygonBatch<std::vector<SimplePolygon>::iterator>(polygons.begin(), polygons.end());
+	groper.tested_batch = &batch;
+	result = groper.ensure_fit(15 * vertex_size);
+	EXPECT_FALSE(result);
+	EXPECT_TRUE(groper.subbatches().empty());
+}
+
 /*
  * Starts running the tests.
  *
