@@ -235,6 +235,7 @@ private:
 				batch_start = batch_end;
 				batch_memory = poly_size;
 				if(batch_memory > maximum_memory) { //This polygon on its own is too large already.
+					subbatches.clear();
 					return false; //Then there can be no distribution of polygons over batches where every batch fits.
 				}
 			}
