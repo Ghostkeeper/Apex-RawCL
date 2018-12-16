@@ -222,13 +222,12 @@ private:
 	 * \return Whether the load was successful. If it was not, the algorithm has
 	 * to be broken off and the fall-back algorithm on the host has to be used.
 	 */
-	template<typename DeviceStatistics = DeviceStatistics, //Templated DeviceStatistics to allow mocking it in tests.
-		typename OpenCLContext = OpenCLContext, //Templated OpenCLContext to allow mocking it in tests.
+	template<typename OpenCLContext = OpenCLContext, //Templated OpenCLContext to allow mocking it in tests.
 		typename Buffer = cl::Buffer, //Templated cl::Buffer to allow mocking it in tests.
 		typename Context = cl::Context, //Templated cl::Context to allow mocking it in tests.
 		typename CommandQueue = cl::CommandQueue> //Templated cl::CommandQueue to allow mocking it in tests.
 	bool load(const Device& device, const cl_ulong overhead) {
-		const DeviceStatistics statistics(device);
+		const DeviceStatistics<Device> statistics(device);
 		const cl_ulong memory_allowed = statistics.global_memory - overhead;
 		const bool fits = ensure_fit(memory_allowed);
 		if(!fits) {

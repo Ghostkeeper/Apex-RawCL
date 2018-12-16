@@ -54,11 +54,11 @@ OpenCLDevices::OpenCLDevices() {
 			trim(identifier);
 		}
 		identifiers[&*device] = identifier;
-		statistics.insert(std::unordered_map<const cl::Device*, DeviceStatistics>::value_type(&*device, DeviceStatistics(&*device)));
+		statistics.insert(std::unordered_map<const cl::Device*, DeviceStatistics<>>::value_type(&*device, DeviceStatistics<>(&*device)));
 	}
 
 	identifiers[nullptr] = getHostIdentifier();
-	statistics.insert(std::unordered_map<const cl::Device*, DeviceStatistics>::value_type(nullptr, DeviceStatistics(nullptr)));
+	statistics.insert(std::unordered_map<const cl::Device*, DeviceStatistics<>>::value_type(nullptr, DeviceStatistics<>(nullptr)));
 }
 
 OpenCLDevices& OpenCLDevices::getInstance() {
@@ -82,7 +82,7 @@ const std::string& OpenCLDevices::getIdentifier(const cl::Device* device) const 
 	return identifiers.find(device)->second;
 }
 
-const DeviceStatistics& OpenCLDevices::getStatistics(const cl::Device* device) const {
+const DeviceStatistics<>& OpenCLDevices::getStatistics(const cl::Device* device) const {
 	return statistics.find(device)->second;
 }
 

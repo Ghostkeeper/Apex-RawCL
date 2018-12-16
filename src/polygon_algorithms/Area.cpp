@@ -26,7 +26,7 @@ area_t SimplePolygon::area_opencl(const cl::Device& device) const {
 	);
 
 	//We might need to make multiple passes if the device has a very limited amount of memory.
-	DeviceStatistics statistics(&device);
+	DeviceStatistics<> statistics(&device);
 	constexpr size_t vertex_size = sizeof(coord_t) * 2;
 	const cl_ulong local_buffer_size = statistics.local_memory / vertex_size * vertex_size; //Make sure that the memory buffers hold an integer number of vertices.
 	const cl_ulong global_buffer_size = statistics.global_memory / vertex_size * vertex_size;

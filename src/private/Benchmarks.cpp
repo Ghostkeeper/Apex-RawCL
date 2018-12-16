@@ -34,7 +34,7 @@ std::pair<std::string, const cl::Device*> choose(const std::vector<std::string> 
 	const BenchmarkData& data = BenchmarkData::getInstance();
 	for(std::string option : options) {
 		for(const cl::Device* device : available_devices) {
-			DeviceStatistics statistics = device_manager.getStatistics(device);
+			DeviceStatistics<> statistics = device_manager.getStatistics(device);
 			if(data.predictor.find(std::pair<std::string, std::string>(option, "constant")) == data.predictor.end()) {
 				continue; //No data on this algorithm.
 			}
