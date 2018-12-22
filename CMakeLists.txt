@@ -82,6 +82,7 @@ if(BUILD_TESTS)
 	set(test_helpers_sources
 		test/helpers/SimplePolygonTestGroper.cpp
 		test/helpers/MockDevice.cpp
+		test/helpers/MockOpenCLContext.cpp
 	)
 	add_library(test_helpers ${test_helpers_sources})
 	target_link_libraries(test_helpers apex)
