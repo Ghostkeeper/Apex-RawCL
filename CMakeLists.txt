@@ -81,6 +81,7 @@ if(BUILD_TESTS)
 	#Build a library of helpers for the tests. We only need to compile this once.
 	set(test_helpers_sources
 		test/helpers/SimplePolygonTestGroper.cpp
+		test/helpers/MockDevice.cpp
 	)
 	add_library(test_helpers ${test_helpers_sources})
 	target_link_libraries(test_helpers apex)
