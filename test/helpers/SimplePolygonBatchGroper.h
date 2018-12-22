@@ -45,6 +45,10 @@ public:
 		return tested_batch->template load<OpenCLContext, Buffer, Context, CommandQueue>(device, overhead);
 	}
 
+	std::unordered_map<const Device*, cl_ulong>& loaded_in_memory() const {
+		return tested_batch->loaded_in_memory;
+	}
+
 	std::vector<SimplePolygonBatch<Iterator, Device>> subbatches() const {
 		return tested_batch->subbatches;
 	}
