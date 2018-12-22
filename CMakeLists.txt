@@ -81,6 +81,7 @@ if(BUILD_TESTS)
 	#Build a library of helpers for the tests. We only need to compile this once.
 	set(test_helpers_sources
 		test/helpers/SimplePolygonTestGroper.cpp
+		test/helpers/MockBuffer.cpp
 		test/helpers/MockDevice.cpp
 		test/helpers/MockOpenCLContext.cpp
 	)
@@ -88,6 +89,7 @@ if(BUILD_TESTS)
 	target_link_libraries(test_helpers apex)
 	target_include_directories(test_helpers PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test/helpers)
 	target_include_directories(test_helpers PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include_private) #This test library has access to private headers.
+	target_include_directories(test_helpers PRIVATE ${OpenCL_INCLUDE_DIRS})
 
 	#Names of all tests. Each must have a file called "test/<name>.cpp" as source file.
 	#Instead of slashes, use periods.
