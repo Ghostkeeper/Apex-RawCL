@@ -10,8 +10,6 @@
 #include "OpenCLDevices.h" //To get the devices to compile for.
 #include "ApexException.h"
 
-#include <iostream> //DEBUG!
-
 namespace std {
 
 size_t hash<cl::Device>::operator ()(const cl::Device& device) const {
