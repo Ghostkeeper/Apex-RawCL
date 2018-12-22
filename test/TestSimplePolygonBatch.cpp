@@ -15,6 +15,8 @@
 #include "SimplePolygonBatch.h"
 #include "helpers/MockDevice.h" //To mock out cl::Device.
 #include "helpers/SimplePolygonBatchGroper.h" //The class under test.
+#include "helpers/MockBuffer.h" //To prevent having to allocate on actual OpenCL devices.
+#include "helpers/MockOpenCLContext.h" //To prevent working with actual OpenCL devices.
 
 namespace apex {
 
@@ -272,6 +274,27 @@ TEST_F(TestSimplePolygonBatch, EnsureFitTooBig) {
 	result = groper.ensure_fit(15 * vertex_size);
 	EXPECT_FALSE(result);
 	EXPECT_TRUE(groper.subbatches().empty());
+}
+
+/*
+ * Tests loading an empty batch into device memory.
+ */
+TEST_F(TestSimplePolygonBatch, LoadEmpty) {
+	std::vector<SimplePolygon> empty;
+	SimplePolygonBatch<std::vector<SimplePolygon>::iterator, MockDevice> batch(empty.begin(), empty.end());
+	groper.tested_batch = &batch;
+
+	MockDevice device;
+	MockOpenCLContext& opencl_context = MockOpenCLContext::getInstance();
+	opencl_context.addTestDevice(device);
+
+	const bool result = groper.load<MockOpenCLContext, MockBuffer, MockContext, MockCommandQueue>(device, 0);
+	EXPECT_TRUE(result);
+
+	ASSERT_NE(groper.loaded_in_memory().find(&device), groper.loaded_in_memory().end()) << "Batch must now be marked as loaded in memory.";
+	EXPECT_EQ(groper.loaded_in_memory()[&device], 0) << "Memory requirement must be 0.";
+
+	//TODO: Verify the size of the buffer that was created by this loading.
 }
 
 /*
