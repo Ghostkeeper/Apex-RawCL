@@ -37,8 +37,12 @@ public:
 		return tested_batch->ensure_fit(maximum_memory);
 	}
 
+	template<typename OpenCLContext = OpenCLContext,
+		typename Buffer = cl::Buffer,
+		typename Context = cl::Context,
+		typename CommandQueue = cl::CommandQueue>
 	bool load(const Device& device, const cl_ulong overhead) {
-		return tested_batch->load(device, overhead);
+		return tested_batch->template load<OpenCLContext, Buffer, Context, CommandQueue>(device, overhead);
 	}
 
 	std::vector<SimplePolygonBatch<Iterator, Device>> subbatches() const {
