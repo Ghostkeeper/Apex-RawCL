@@ -6,6 +6,7 @@
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
  */
 
+#include <cassert> //To assert that we're calling getInfo with the correct parameter belonging to the type.
 #include "MockDevice.h"
 
 namespace apex {
@@ -18,6 +19,30 @@ MockDevice::MockDevice() {
 
 bool MockDevice::operator ==(const MockDevice& other) const {
 	return device_id == other.device_id;
+}
+
+template<> cl_int MockDevice::getInfo(const cl_device_info name, cl_ulong* output) const {
+	assert(name == CL_DEVICE_TYPE || name == CL_DEVICE_MAX_WORK_GROUP_SIZE || name == CL_DEVICE_GLOBAL_MEM_SIZE || name == CL_DEVICE_LOCAL_MEM_SIZE);
+	if(name == CL_DEVICE_TYPE) {
+		*output = device_type;
+	} else if(name == CL_DEVICE_MAX_WORK_GROUP_SIZE) {
+		*output = items_per_compute_unit;
+	} else if(name == CL_DEVICE_GLOBAL_MEM_SIZE) {
+		*output = global_memory;
+	} else { //CL_DEVICE_LOCAL_MEM_SIZE.
+		*output = local_memory;
+	}
+	return CL_SUCCESS;
+}
+
+template<> cl_int MockDevice::getInfo(const cl_device_info name, cl_uint* output) const {
+	assert(name == CL_DEVICE_MAX_COMPUTE_UNITS || name == CL_DEVICE_MAX_CLOCK_FREQUENCY);
+	if(name == CL_DEVICE_MAX_COMPUTE_UNITS) {
+		*output = compute_units;
+	} else { //CL_DEVICE_MAX_CLOCK_FREQUENCY.
+		*output = clock_frequency;
+	}
+	return CL_SUCCESS;
 }
 
 }
