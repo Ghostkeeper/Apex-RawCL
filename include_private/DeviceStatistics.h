@@ -58,7 +58,7 @@ public:
 				throw ApexException("Couldn't get the local memory size from OpenCL.");
 			}
 		} else { //Querying the host.
-			device_type = 2u; //Always a CPU.
+			device_type = CL_DEVICE_TYPE_CPU; //Always a CPU.
 			items_per_compute_unit = 1u; //Only one item per compute unit.
 			global_memory = std::numeric_limits<unsigned long>::max(); //Allow infinite memory. The application will crash before it has a chance to split the data up anyway.
 			std::ifstream cpuinfo("/proc/cpuinfo"); //First try /proc/cpuinfo on Linux systems.
