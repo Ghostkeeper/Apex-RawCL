@@ -82,6 +82,7 @@ if(BUILD_TESTS)
 	set(test_helpers_sources
 		test/helpers/SimplePolygonTestGroper.cpp
 		test/helpers/MockBuffer.cpp
+		test/helpers/MockCommandQueue.cpp
 		test/helpers/MockDevice.cpp
 		test/helpers/MockOpenCLContext.cpp
 	)

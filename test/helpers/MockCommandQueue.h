@@ -9,7 +9,11 @@
 #ifndef MOCKCOMMANDQUEUE_H
 #define MOCKCOMMANDQUEUE_H
 
+#include "OpenCL.h" //For cl_int and cl_bool.
+
 namespace apex {
+
+class MockBuffer;
 
 /*
  * Mocks the cl::CommandQueue class in order to not actually send commands to
@@ -18,7 +22,19 @@ namespace apex {
  * This mock records the commands given to the queue.
  */
 class MockCommandQueue {
-	//TODO.
+public:
+	/*
+	 * Mocks enqueueing a command to write to a buffer.
+	 *
+	 * The signature of this command must be the same as
+	 * ``cl::CommandQueue::enqueueWriteBuffer``.
+	 *
+	 * This method only works with ``MockBuffer`` instances. It will write to
+	 * the internal buffer of that class. It will also assert that all writes
+	 * stay inside that buffer, so that we will discover errors due to writing
+	 * out of bounds.
+	 */
+	cl_int enqueueWriteBuffer(MockBuffer& buffer, const cl_bool blocking, const size_t offset, const size_t size, const void* const source);
 };
 
 }
