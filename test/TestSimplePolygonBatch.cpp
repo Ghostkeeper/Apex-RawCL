@@ -294,7 +294,10 @@ TEST_F(TestSimplePolygonBatch, LoadEmpty) {
 	typename std::unordered_map<const MockDevice*, MockBuffer>::iterator buffer = groper.loaded_in_memory().find(&device);
 	ASSERT_NE(buffer, groper.loaded_in_memory().end()) << "Batch must now be marked as loaded in memory.";
 
-	//TODO: Verify the size of the buffer that was created by this loading.
+	size_t memory_size;
+	const cl_int success = buffer->second.getInfo(CL_MEM_SIZE, &memory_size);
+	EXPECT_EQ(success, CL_SUCCESS);
+	EXPECT_EQ(memory_size, 0) << "Memory requirement must be 0 since the batch was empty.";
 }
 
 /*
