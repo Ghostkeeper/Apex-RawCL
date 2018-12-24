@@ -42,10 +42,11 @@ class SimplePolygon;
  * supports equality tests. The iterator must be iterating over `SimplePolygon`
  * instances.
  */
-template<typename Iterator,
-	typename Device = cl::Device> //Templated cl::Device to allow mocking it in tests.
+template<typename Iterator, //Work with any kind of forward iterator.
+	typename Device = cl::Device, //Templated cl::Device to allow mocking it in tests.
+	typename Buffer = cl::Buffer> //Templated cl::Buffer to allow mocking it in tests.
 class SimplePolygonBatch {
-	template<typename GroperIterator, typename GroperDevice> friend class SimplePolygonBatchGroper;
+	template<typename GroperIterator, typename GroperDevice, typename GroperBuffer> friend class SimplePolygonBatchGroper;
 public:
 	/*
 	 * Batches a bunch of simple polygons together to operate on separately.
@@ -158,7 +159,7 @@ private:
 	 * memory sizes, so that it fits on all devices. Batches will not nest more
 	 * than one layer.
 	 */
-	std::vector<SimplePolygonBatch<Iterator, Device>> subbatches;
+	std::vector<SimplePolygonBatch<Iterator, Device, Buffer>> subbatches;
 
 	/*
 	 * For each device, indicates whether the batch is loaded and in how much
@@ -166,7 +167,7 @@ private:
 	 *
 	 * Use this to see whether we need to (re)load the batch on device memory.
 	 */
-	std::unordered_map<const Device*, cl_ulong> loaded_in_memory;
+	std::unordered_map<const Device*, Buffer> loaded_in_memory;
 
 	/*
 	 * The first element of a range of simple polygons to batch.
@@ -223,7 +224,6 @@ private:
 	 * to be broken off and the fall-back algorithm on the host has to be used.
 	 */
 	template<typename OpenCLContext = OpenCLContext, //Templated OpenCLContext to allow mocking it in tests.
-		typename Buffer = cl::Buffer, //Templated cl::Buffer to allow mocking it in tests.
 		typename Context = cl::Context, //Templated cl::Context to allow mocking it in tests.
 		typename CommandQueue = cl::CommandQueue> //Templated cl::CommandQueue to allow mocking it in tests.
 	bool load(const Device& device, const cl_ulong overhead) {
@@ -238,9 +238,11 @@ private:
 		}
 
 		constexpr cl_ulong vertex_size = sizeof(cl_ulong) * 2;
-		typename std::unordered_map<const Device*, cl_ulong>::const_iterator entry = loaded_in_memory.find(&device);
+		typename std::unordered_map<const Device*, Buffer>::iterator entry = loaded_in_memory.find(&device);
 		if(entry != loaded_in_memory.cend()) {
-			if(entry->second <= memory_allowed) { //It was loaded using less memory than our allowance now, so it's fine. No need to reload.
+			size_t memory_size;
+			const cl_int success = entry->second.getInfo(CL_MEM_SIZE, &memory_size);
+			if(success == CL_SUCCESS && memory_size <= memory_allowed) { //It was loaded using less memory than our allowance now, so it's fine. No need to reload.
 				return true;
 			}
 		}
@@ -248,7 +250,8 @@ private:
 		//We need to load it in memory.
 		const cl_ulong memory_required = (total_vertices + count) * vertex_size;
 		Context& context = OpenCLContext::getInstance().contexts[device];
-		Buffer batch_data(context, CL_MEM_READ_ONLY, memory_required);
+		loaded_in_memory.emplace(&device, Buffer(context, CL_MEM_READ_ONLY, memory_required));
+		Buffer& batch_data = entry->second;
 		CommandQueue& queue = OpenCLContext::getInstance().queues[device];
 		cl_ulong position = 0;
 		for(Iterator polygon = begin; polygon != end; std::advance(polygon, 1)) {
@@ -259,8 +262,6 @@ private:
 			close_marker[1] = position;
 			queue.enqueueWriteBuffer(batch_data, CL_FALSE, position, vertex_size, close_marker); //Write the close marker.
 		}
-
-		loaded_in_memory[&device] = memory_required;
 		return true;
 	}
 
@@ -284,7 +285,7 @@ private:
 			}
 		} else {
 			bool rebatch_necessary = false;
-			for(SimplePolygonBatch<Iterator, Device>& subbatch : subbatches) {
+			for(SimplePolygonBatch<Iterator, Device, Buffer>& subbatch : subbatches) {
 				if((subbatch.total_vertices + subbatch.count) * vertex_size > maximum_memory) {
 					rebatch_necessary = true;
 					break;

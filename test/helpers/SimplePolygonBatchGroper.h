@@ -21,13 +21,14 @@ namespace apex {
  * \tparam Iterator The type of iterators to use in the batch.
  */
 template<typename Iterator,
-	typename Device = cl::Device> //Templated cl::Device to allow mocking it in tests.
+	typename Device = cl::Device, //Templated cl::Device to allow mocking it in tests.
+	typename Buffer = cl::Buffer>
 class SimplePolygonBatchGroper {
 public:
 	/*
 	 * The batch that is being tested right now.
 	 */
-	SimplePolygonBatch<Iterator, Device>* tested_batch;
+	SimplePolygonBatch<Iterator, Device, Buffer>* tested_batch;
 
 	size_t count() const {
 		return tested_batch->count;
@@ -38,18 +39,17 @@ public:
 	}
 
 	template<typename OpenCLContext = OpenCLContext,
-		typename Buffer = cl::Buffer,
 		typename Context = cl::Context,
 		typename CommandQueue = cl::CommandQueue>
 	bool load(const Device& device, const cl_ulong overhead) {
-		return tested_batch->template load<OpenCLContext, Buffer, Context, CommandQueue>(device, overhead);
+		return tested_batch->template load<OpenCLContext, Context, CommandQueue>(device, overhead);
 	}
 
-	std::unordered_map<const Device*, cl_ulong>& loaded_in_memory() const {
+	std::unordered_map<const Device*, Buffer>& loaded_in_memory() const {
 		return tested_batch->loaded_in_memory;
 	}
 
-	std::vector<SimplePolygonBatch<Iterator, Device>> subbatches() const {
+	std::vector<SimplePolygonBatch<Iterator, Device, Buffer>> subbatches() const {
 		return tested_batch->subbatches;
 	}
 
