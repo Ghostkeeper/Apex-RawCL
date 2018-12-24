@@ -6,12 +6,19 @@
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
  */
 
+#include <cassert>
 #include "MockBuffer.h"
 
 namespace apex {
 
 MockBuffer::MockBuffer(const MockContext& context, const cl_mem_flags flags, const size_t size) {
 	data.reserve(size);
+}
+
+cl_int MockBuffer::getInfo(cl_mem_info name, size_t* output) {
+	assert(name == CL_MEM_SIZE);
+	*output = data.capacity();
+	return CL_SUCCESS;
 }
 
 }

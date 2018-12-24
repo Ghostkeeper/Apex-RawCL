@@ -30,6 +30,13 @@ public:
 	MockBuffer(const MockContext& context, const cl_mem_flags flags, const size_t size);
 
 	/*
+	 * Gets information about the buffer.
+	 *
+	 * In this mock, only CL_MEM_SIZE is supported.
+	 */
+	cl_int getInfo(cl_mem_info name, size_t* output);
+
+	/*
 	 * Stores the data. For this mock, just on the host.
 	 *
 	 * This is allocated once, during the constructor.
