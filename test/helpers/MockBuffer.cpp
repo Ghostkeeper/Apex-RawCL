@@ -12,7 +12,7 @@
 namespace apex {
 
 MockBuffer::MockBuffer(const MockContext& context, const cl_mem_flags flags, const size_t size) {
-	data.reserve(size);
+	data.resize(size); //Fill buffer with 0's.
 }
 
 cl_int MockBuffer::getInfo(cl_mem_info name, size_t* output) {
