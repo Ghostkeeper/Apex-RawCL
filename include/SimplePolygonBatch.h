@@ -250,8 +250,8 @@ private:
 		//We need to load it in memory.
 		const cl_ulong memory_required = (total_vertices + count) * vertex_size;
 		Context& context = OpenCLContext::getInstance().contexts[device];
-		loaded_in_memory.emplace(&device, Buffer(context, CL_MEM_READ_ONLY, memory_required));
-		Buffer& batch_data = entry->second;
+		std::pair<typename std::unordered_map<const Device*, Buffer>::iterator, bool> emplace_result = loaded_in_memory.emplace(&device, Buffer(context, CL_MEM_READ_ONLY, memory_required));
+		Buffer& batch_data = emplace_result.first->second;
 		CommandQueue& queue = OpenCLContext::getInstance().queues[device];
 		cl_ulong position = 0;
 		for(Iterator polygon = begin; polygon != end; std::advance(polygon, 1)) {
