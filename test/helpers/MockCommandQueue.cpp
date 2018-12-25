@@ -14,7 +14,7 @@
 namespace apex {
 
 cl_int MockCommandQueue::enqueueWriteBuffer(MockBuffer& buffer, const cl_bool blocking, const size_t offset, const size_t size, const void* const source) {
-	assert(offset + size < buffer.data.size()); //Make sure we're not writing out of bounds.
+	assert(offset + size <= buffer.data.size()); //Make sure we're not writing out of bounds.
 
 	std::memcpy(&buffer.data[offset], source, size);
 
