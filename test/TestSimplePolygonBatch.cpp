@@ -10,7 +10,7 @@
 #define TESTSIMPLEPOLYGONBATCH
 
 #include <gtest/gtest.h>
-#include <limits> //To simulate infinite memory.
+#include <limits> //To simulate infinite memory and for the marker flag.
 #include "SimplePolygon.h" //Example polygons.
 #include "SimplePolygonBatch.h"
 #include "helpers/MockDevice.h" //To mock out cl::Device.
@@ -298,6 +298,55 @@ TEST_F(TestSimplePolygonBatch, LoadEmpty) {
 	const cl_int success = buffer->second.getInfo(CL_MEM_SIZE, &memory_size);
 	EXPECT_EQ(success, CL_SUCCESS);
 	EXPECT_EQ(memory_size, 0) << "Memory requirement must be 0 since the batch was empty.";
+}
+
+/*
+ * Tests loading a simple batch into memory, with just ten triangles.
+ *
+ * This is the happy path, the base case.
+ */
+TEST_F(TestSimplePolygonBatch, LoadTenTriangles) {
+	groper.tested_batch = &ten_triangles_batch;
+
+	MockDevice device;
+	MockOpenCLContext& opencl_context = MockOpenCLContext::getInstance();
+	opencl_context.addTestDevice(device);
+
+	const bool result = groper.load<MockOpenCLContext, MockContext, MockCommandQueue>(device, 0);
+	EXPECT_TRUE(result);
+
+	typename std::unordered_map<const MockDevice*, MockBuffer>::iterator entry = groper.loaded_in_memory().find(&device);
+	ASSERT_NE(entry, groper.loaded_in_memory().end()) << "Batch must now be marked as loaded in memory.";
+	MockBuffer& buffer = entry->second;
+
+	size_t memory_size;
+	const cl_int success = buffer.getInfo(CL_MEM_SIZE, &memory_size);
+	EXPECT_EQ(success, CL_SUCCESS);
+	constexpr cl_ulong vertex_size = 2 * sizeof(cl_ulong);
+	EXPECT_EQ(memory_size, 4 * vertex_size * 10) << "Needs 4 vertex sizes per triangle, 10 triangles.";
+	for(size_t triangle = 0; triangle < ten_triangles.size(); triangle++) {
+		const size_t triangle_offset = 4 * vertex_size * triangle;
+		for(size_t vertex = 0; vertex < ten_triangles[triangle].size(); vertex++) {
+			const size_t vertex_offset = triangle_offset + vertex_size * vertex;
+			//Reconstruct coordinates from buffer's data.
+			coord_t x = 0;
+			memcpy(&x, &buffer.data[vertex_offset], sizeof(coord_t));
+			coord_t y = 0;
+			memcpy(&y, &buffer.data[vertex_offset + sizeof(coord_t)], sizeof(coord_t));
+			EXPECT_EQ(x, ten_triangles[triangle][vertex].x) << "X coordinate of data read back from buffer.";
+			EXPECT_EQ(y, ten_triangles[triangle][vertex].y) << "Y coordinate of data read back from buffer.";
+		}
+
+		//Validate marker flag.
+		cl_ulong marker = 0;
+		memcpy(&marker, &buffer.data[triangle_offset + vertex_size * ten_triangles[triangle].size()], sizeof(cl_ulong));
+		EXPECT_EQ(marker, std::numeric_limits<cl_ulong>::max()) << "Marker flag is max value of a cl_ulong.";
+
+		//Validate looping link.
+		cl_ulong loop = 0;
+		memcpy(&loop, &buffer.data[triangle_offset + vertex_size * ten_triangles[triangle].size() + sizeof(cl_ulong)], sizeof(cl_ulong));
+		EXPECT_EQ(loop, triangle_offset) << "Looper flag must point to the beginning of the triangle.";
+	}
 }
 
 /*
