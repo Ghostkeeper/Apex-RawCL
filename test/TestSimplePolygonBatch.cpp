@@ -26,6 +26,11 @@ namespace apex {
 class TestSimplePolygonBatch : public testing::Test {
 protected:
 	/*
+	 * A mocked device, which is added to the current mocked OpenCL context.
+	 */
+	MockDevice device;
+
+	/*
 	 * A polygon to test with. Put it in a batch, for instance.
 	 *
 	 * It's a triangle, so it'll have 3 vertices. It's also fairly fast to copy.
@@ -58,6 +63,9 @@ protected:
 			ten_triangles.push_back(triangle);
 		}
 		ten_triangles_batch = SimplePolygonBatch<std::vector<SimplePolygon>::iterator, MockDevice, MockBuffer>(ten_triangles.begin(), ten_triangles.end());
+
+		MockOpenCLContext& opencl_context = MockOpenCLContext::getInstance();
+		opencl_context.addTestDevice(device);
 	}
 };
 
@@ -307,10 +315,6 @@ TEST_F(TestSimplePolygonBatch, LoadEmpty) {
  */
 TEST_F(TestSimplePolygonBatch, LoadTenTriangles) {
 	groper.tested_batch = &ten_triangles_batch;
-
-	MockDevice device;
-	MockOpenCLContext& opencl_context = MockOpenCLContext::getInstance();
-	opencl_context.addTestDevice(device);
 
 	const bool result = groper.load<MockOpenCLContext, MockContext, MockCommandQueue>(device, 0);
 	EXPECT_TRUE(result);
