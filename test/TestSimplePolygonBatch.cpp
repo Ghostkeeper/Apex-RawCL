@@ -326,15 +326,16 @@ TEST_F(TestSimplePolygonBatch, LoadTenTriangles) {
 	EXPECT_EQ(memory_size, 4 * vertex_size * 10) << "Needs 4 vertex sizes per triangle, 10 triangles.";
 	for(size_t triangle = 0; triangle < ten_triangles.size(); triangle++) {
 		const size_t triangle_offset = 4 * vertex_size * triangle;
+		SimplePolygon reconstructed_triangle;
+		reconstructed_triangle.emplace_back(0, 0);
+		reconstructed_triangle.emplace_back(0, 0);
+		reconstructed_triangle.emplace_back(0, 0);
+		memcpy(&reconstructed_triangle[0], &buffer.data[triangle_offset], vertex_size * 3);
+
+		//Validate coordinates of vertices.
 		for(size_t vertex = 0; vertex < ten_triangles[triangle].size(); vertex++) {
-			const size_t vertex_offset = triangle_offset + vertex_size * vertex;
-			//Reconstruct coordinates from buffer's data.
-			coord_t buffer_x = 0;
-			memcpy(&buffer_x, &buffer.data[vertex_offset], sizeof(coord_t));
-			coord_t buffer_y = 0;
-			memcpy(&buffer_y, &buffer.data[vertex_offset + sizeof(coord_t)], sizeof(coord_t));
-			EXPECT_EQ(buffer_x, ten_triangles[triangle][vertex].x) << "X coordinate of data read back from buffer.";
-			EXPECT_EQ(buffer_y, ten_triangles[triangle][vertex].y) << "Y coordinate of data read back from buffer.";
+			EXPECT_EQ(reconstructed_triangle[vertex].x, ten_triangles[triangle][vertex].x) << "X coordinate of data read back from buffer.";
+			EXPECT_EQ(reconstructed_triangle[vertex].y, ten_triangles[triangle][vertex].y) << "Y coordinate of data read back from buffer.";
 		}
 
 		//Validate marker flag.
