@@ -261,6 +261,7 @@ private:
 			close_marker[0] = std::numeric_limits<cl_ulong>::max();
 			close_marker[1] = position;
 			queue.enqueueWriteBuffer(batch_data, CL_FALSE, position + polygon->size() * vertex_size, sizeof(cl_ulong) * 2, close_marker); //Write the close marker.
+			position += polygon->size() * vertex_size + sizeof(cl_ulong) * 2;
 		}
 		return true;
 	}
