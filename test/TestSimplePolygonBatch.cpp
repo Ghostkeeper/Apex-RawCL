@@ -372,7 +372,8 @@ TEST_F(TestSimplePolygonBatch, LoadDoesntFit) {
 
 	const bool result = groper.load<MockOpenCLContext, MockContext, MockCommandQueue>(device, 0);
 	ASSERT_FALSE(result) << "It should not fit in the device's global memory.";
-	EXPECT_EQ(groper.subbatches().size(), 0) << "No subbatches may be created.";
+	EXPECT_TRUE(groper.subbatches().empty()) << "No subbatches may be created.";
+	EXPECT_TRUE(groper.loaded_in_memory().empty()) << "It may not have tried to load anything in memory.";
 }
 
 /*
