@@ -355,6 +355,26 @@ TEST_F(TestSimplePolygonBatch, LoadTenTriangles) {
 }
 
 /*
+ * Tests loading if the polygon won't fit in global memory.
+ */
+TEST_F(TestSimplePolygonBatch, LoadDoesntFit) {
+	std::vector<SimplePolygon> polygons; //Construct a batch with one polygon of 10 vertices.
+	polygons.emplace_back();
+	for(size_t i = 0; i < 10; i++) {
+		polygons.back().emplace_back(0, 0);
+	}
+	SimplePolygonBatch<std::vector<SimplePolygon>::iterator, MockDevice, MockBuffer> batch(polygons.begin(), polygons.end());
+	groper.tested_batch = &batch;
+
+	constexpr cl_ulong vertex_size = 2 * sizeof(cl_ulong);
+	const cl_ulong required_memory = (polygons.back().size() + 1) * vertex_size;
+	device.global_memory = required_memory - 1; //Just one byte short!
+
+	const bool result = groper.load<MockOpenCLContext, MockContext, MockCommandQueue>(device, 0);
+	ASSERT_FALSE(result) << "It should not fit in the device's global memory.";
+}
+
+/*
  * Starts running the tests.
  *
  * This calls upon GoogleTest to start testing.
