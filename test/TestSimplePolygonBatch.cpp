@@ -373,7 +373,7 @@ TEST_F(TestSimplePolygonBatch, LoadDoesntFit) {
 	const bool result = groper.load<MockOpenCLContext, MockContext, MockCommandQueue>(device, 0);
 	ASSERT_FALSE(result) << "It should not fit in the device's global memory.";
 	EXPECT_TRUE(groper.subbatches().empty()) << "No subbatches may be created.";
-	EXPECT_TRUE(groper.loaded_in_memory().empty()) << "It may not have tried to load anything in memory.";
+	EXPECT_TRUE(groper.loaded_in_memory().empty()) << "It may not try to load anything in memory.";
 }
 
 /*
@@ -391,6 +391,24 @@ TEST_F(TestSimplePolygonBatch, LoadSplitSubbatches) {
 	ASSERT_TRUE(result) << "It won't directly fit, but splits into subbatches so it's still considered successful.";
 	EXPECT_FALSE(groper.subbatches().empty()) << "It must create subbatches.";
 	EXPECT_TRUE(groper.loaded_in_memory().empty()) << "It may not load anything in memory yet.";
+}
+
+/*
+ * Tests whether loading a batch for the second time sees that it's already
+ * cached.
+ */
+TEST_F(TestSimplePolygonBatch, LoadAlreadyLoaded) {
+	groper.tested_batch = &ten_triangles_batch;
+
+	//Load once. This is the normal test case tested through LoadTenTriangles.
+	groper.load<MockOpenCLContext, MockContext, MockCommandQueue>(device, 0);
+	typename std::unordered_map<const MockDevice*, MockBuffer>::iterator entry = groper.loaded_in_memory().find(&device);
+	MockBuffer* first_buffer = &entry->second; //We're going to check if this buffer remains the same. I.e. it's not being recreated.
+
+	const bool result = groper.load<MockOpenCLContext, MockContext, MockCommandQueue>(device, 0);
+	ASSERT_TRUE(result) << "The second time, loading should still succeed.";
+	entry = groper.loaded_in_memory().find(&device);
+	ASSERT_EQ(first_buffer, &entry->second) << "The buffer must not be recreated when it's already cached for the device.";
 }
 
 /*
