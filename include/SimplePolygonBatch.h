@@ -255,7 +255,7 @@ private:
 		CommandQueue& queue = OpenCLContext::getInstance().queues[device];
 		cl_ulong position = 0;
 		for(Iterator polygon = begin; polygon != end; std::advance(polygon, 1)) {
-			queue.enqueueWriteBuffer(batch_data, CL_FALSE, position, polygon->size() * vertex_size, &polygon[0]); //Write actual polygon data.
+			queue.enqueueWriteBuffer(batch_data, CL_FALSE, position, polygon->size() * vertex_size, &(*polygon)[0]); //Write actual polygon data.
 
 			cl_ulong close_marker[2]; //Marker that indicates the end of a polygon and loopback to where the polygon started.
 			close_marker[0] = std::numeric_limits<cl_ulong>::max();
