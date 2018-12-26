@@ -329,12 +329,12 @@ TEST_F(TestSimplePolygonBatch, LoadTenTriangles) {
 		for(size_t vertex = 0; vertex < ten_triangles[triangle].size(); vertex++) {
 			const size_t vertex_offset = triangle_offset + vertex_size * vertex;
 			//Reconstruct coordinates from buffer's data.
-			coord_t x = 0;
-			memcpy(&x, &buffer.data[vertex_offset], sizeof(coord_t));
-			coord_t y = 0;
-			memcpy(&y, &buffer.data[vertex_offset + sizeof(coord_t)], sizeof(coord_t));
-			EXPECT_EQ(x, ten_triangles[triangle][vertex].x) << "X coordinate of data read back from buffer.";
-			EXPECT_EQ(y, ten_triangles[triangle][vertex].y) << "Y coordinate of data read back from buffer.";
+			coord_t buffer_x = 0;
+			memcpy(&buffer_x, &buffer.data[vertex_offset], sizeof(coord_t));
+			coord_t buffer_y = 0;
+			memcpy(&buffer_y, &buffer.data[vertex_offset + sizeof(coord_t)], sizeof(coord_t));
+			EXPECT_EQ(buffer_x, ten_triangles[triangle][vertex].x) << "X coordinate of data read back from buffer.";
+			EXPECT_EQ(buffer_y, ten_triangles[triangle][vertex].y) << "Y coordinate of data read back from buffer.";
 		}
 
 		//Validate marker flag.
