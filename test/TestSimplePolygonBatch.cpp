@@ -376,6 +376,23 @@ TEST_F(TestSimplePolygonBatch, LoadDoesntFit) {
 }
 
 /*
+ * Tests loading a batch that's too big to fit in global memory on its own, but
+ * may be split up into subbatches and then loaded.
+ */
+TEST_F(TestSimplePolygonBatch, LoadSplitSubbatches) {
+	groper.tested_batch = &ten_triangles_batch;
+
+	constexpr cl_ulong vertex_size = 2 * sizeof(cl_ulong);
+	const cl_ulong required_memory = ten_triangles.size() * vertex_size * 4;
+	device.global_memory = required_memory - 1; //Just one byte short! Needs to be split into subbatches.
+
+	const bool result = groper.load<MockOpenCLContext, MockContext, MockCommandQueue>(device, 0);
+	ASSERT_TRUE(result) << "It won't directly fit, but splits into subbatches so it's still considered successful.";
+	EXPECT_FALSE(groper.subbatches().empty()) << "It must create subbatches.";
+	EXPECT_TRUE(groper.loaded_in_memory().empty()) << "It may not load anything in memory yet.";
+}
+
+/*
  * Starts running the tests.
  *
  * This calls upon GoogleTest to start testing.
