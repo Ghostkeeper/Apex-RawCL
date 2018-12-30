@@ -411,6 +411,21 @@ TEST_F(TestSimplePolygonBatch, LoadAlreadyLoaded) {
 	ASSERT_EQ(first_buffer, &entry->second) << "The buffer must not be recreated when it's already cached for the device.";
 }
 
+TEST_F(TestSimplePolygonBatch, LoadWithOverhead) {
+	groper.tested_batch = &ten_triangles_batch;
+
+	//Make sure it just fits in memory.
+	constexpr cl_ulong vertex_size = 2 * sizeof(cl_ulong);
+	const cl_ulong required_memory = ten_triangles.size() * vertex_size * 4;
+	device.global_memory = required_memory;
+
+	const bool result = groper.load<MockOpenCLContext, MockContext, MockCommandQueue>(device, 1); //1 byte overhead.
+	ASSERT_TRUE(result) << "It won't directly fit due to overhead, but it should get split into subbatches.";
+	EXPECT_FALSE(groper.subbatches().empty()) << "It must create subbatches.";
+}
+
+//TODO: Test overhead parameter of load().
+
 /*
  * Starts running the tests.
  *
