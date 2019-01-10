@@ -10,13 +10,10 @@
 #define APEX_SIMPLEPOLYGON_H
 
 #include <vector> //To store the vertices.
+#include "Device.h" //To accept parameters for which OpenCL device to compute with.
 #include "EdgeInclusion.h" //To specify whether the edge of a polygon is considered inside the polygon.
 #include "FillType.h" //To specify the default fill type for contains().
 #include "Point2.h" //The type to represent a vertex.
-
-namespace cl {
-class Device; //Forward declaration of Device so we don't have to include all of OpenCL.
-}
 
 namespace apex {
 
@@ -150,7 +147,7 @@ private:
 	 * \param device The OpenCL device to compute the area with.
 	 * \return The area of the current polygon.
 	 */
-	area_t area_opencl(const cl::Device& device) const;
+	area_t area_opencl(const Device<>& device) const;
 
 	/*
 	 * Implements the ``area`` function on the host hardware.
@@ -173,7 +170,7 @@ private:
 	 * \return ``True`` if the specified point is inside this polygon, or
 	 * ``False`` if it is outside.
 	 */
-	bool contains_opencl(const cl::Device& device, const Point2& point, const EdgeInclusion& include_edge = EdgeInclusion::INSIDE, const FillType& fill_type = FillType::NONZERO) const;
+	bool contains_opencl(const Device<>& device, const Point2& point, const EdgeInclusion& include_edge = EdgeInclusion::INSIDE, const FillType& fill_type = FillType::NONZERO) const;
 
 	/*
 	 * Implements the ``contains`` function on the host hardware.

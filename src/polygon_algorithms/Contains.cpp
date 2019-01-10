@@ -1,6 +1,6 @@
 /*
  * Library for performing massively parallel computations on polygons.
- * Copyright (C) 2018 Ghostkeeper
+ * Copyright (C) 2019 Ghostkeeper
  * This library is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for details.
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
@@ -15,7 +15,7 @@
 
 namespace apex {
 
-bool SimplePolygon::contains_opencl(const cl::Device& device, const Point2& point, const EdgeInclusion& include_edge, const FillType& fill_type) const {
+bool SimplePolygon::contains_opencl(const Device<>& device, const Point2& point, const EdgeInclusion& include_edge, const FillType& fill_type) const {
 	//TODO: If pre-calculation is allowed, obtain the AABB of the polygon and do that check first.
 
 	if(size() == 2) {
@@ -34,7 +34,7 @@ bool SimplePolygon::contains_opencl(const cl::Device& device, const Point2& poin
 	cl::CommandQueue& queue = OpenCLContext::getInstance().queues[device];
 
 	//Load the source code.
-	cl::Program& program = OpenCLContext::getInstance().compile(device,
+	cl::Program& program = OpenCLContext::getInstance().compile(device.cl_device,
 		#include "Contains.cl"
 	);
 

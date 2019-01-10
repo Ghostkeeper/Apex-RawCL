@@ -16,8 +16,8 @@
 	#include <windows.h> //To detect device information.
 #endif
 #include "ApexException.h" //For when we can't sample the device statistics.
+#include "Device.h"
 #include "DeviceStatistics.h"
-#include "OpenCL.h" //To obtain the statistics from OpenCL devices.
 
 namespace apex {
 
@@ -36,7 +36,7 @@ public:
 	 * Use the nullptr device to get these statistics for the host device.
 	 * \param device The device to get the statistics of.
 	 */
-	template<typename Device = cl::Device> //Template to mock out cl::Device for testing.
+	template<typename Device = Device<>> //Template to mock out Device for testing.
 	DeviceStatistics(const Device* device) {
 		if(device) { //An OpenCL device. Those are simple.
 			if(device->getInfo(CL_DEVICE_TYPE, &device_type) != CL_SUCCESS) {

@@ -26,16 +26,30 @@ template<class CLDevice = cl::Device>
 class Device {
 public:
 	/*
+	 * The OpenCL device that this wrapper wraps around.
+	 */
+	CLDevice cl_device;
+
+	/*
 	 * Constructs the wrapper around the device.
 	 *
 	 * This assumes that no data has been stored on the device yet.
 	 */
-	Device(CLDevice device);
-private:
+	Device(CLDevice device) : cl_device(device) {
+	}
+
 	/*
-	 * The OpenCL device that this wrapper wraps around.
+	 * Just like cl::Device, calling this class returns the Device ID of the
+	 * wrapped object.
 	 */
-	CLDevice device;
+	cl_device_id operator ()() const {
+		return cl_device();
+	}
+	
+	template<typename T>
+	cl_int getInfo(cl_device_info name, T* param) const {
+		return cl_device.getInfo(name, param);
+	}
 };
 
 }

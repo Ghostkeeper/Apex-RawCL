@@ -1,6 +1,6 @@
 /*
  * Library for performing massively parallel computations on polygons.
- * Copyright (C) 2018 Ghostkeeper
+ * Copyright (C) 2019 Ghostkeeper
  * This library is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for details.
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
@@ -15,14 +15,14 @@
 namespace apex {
 namespace benchmarks {
 
-std::pair<std::string, const cl::Device*> choose(const std::vector<std::string> options, const std::vector<size_t> problem_size) {
+std::pair<std::string, const Device<>*> choose(const std::vector<std::string> options, const std::vector<size_t> problem_size) {
 	if(options.empty()) {
 		throw ApexException("Strategy choice has no algorithms to choose from.");
 	}
 	const OpenCLDevices& device_manager = OpenCLDevices::getInstance();
-	const std::vector<cl::Device>& all_devices = device_manager.getAll();
-	std::vector<const cl::Device*> available_devices;
-	for(std::vector<cl::Device>::const_iterator device = all_devices.begin(); device != all_devices.end(); device++) { //Convert to pointers and add the host as available device.
+	const std::vector<Device<>>& all_devices = device_manager.getAll();
+	std::vector<const Device<>*> available_devices;
+	for(std::vector<Device<>>::const_iterator device = all_devices.begin(); device != all_devices.end(); device++) { //Convert to pointers and add the host as available device.
 		available_devices.push_back(&*device);
 	}
 	available_devices.push_back(nullptr);
@@ -30,10 +30,10 @@ std::pair<std::string, const cl::Device*> choose(const std::vector<std::string> 
 	//Try each option on each device. Predict how long it would take to execute.
 	double best_time = std::numeric_limits<double>::infinity();
 	std::string best_option = "";
-	const cl::Device* best_device = nullptr;
+	const Device<>* best_device = nullptr;
 	const BenchmarkData& data = BenchmarkData::getInstance();
 	for(std::string option : options) {
-		for(const cl::Device* device : available_devices) {
+		for(const Device<>* device : available_devices) {
 			DeviceStatistics statistics = device_manager.getStatistics(device);
 			if(data.predictor.find(std::pair<std::string, std::string>(option, "constant")) == data.predictor.end()) {
 				continue; //No data on this algorithm.
@@ -58,7 +58,7 @@ std::pair<std::string, const cl::Device*> choose(const std::vector<std::string> 
 		}
 	}
 
-	return std::pair<std::string, const cl::Device*>(best_option, best_device);
+	return std::pair<std::string, const Device<>*>(best_option, best_device);
 }
 
 }

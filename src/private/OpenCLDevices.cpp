@@ -1,6 +1,6 @@
 /*
  * Library for performing massively parallel computations on polygons.
- * Copyright (C) 2018 Ghostkeeper
+ * Copyright (C) 2019 Ghostkeeper
  * This library is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for details.
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
@@ -31,11 +31,11 @@ OpenCLDevices::OpenCLDevices() {
 		}
 		all_devices.reserve(all_devices.size() + devices.size());
 		for(cl::Device& device : devices) {
-			all_devices.push_back(device);
+			all_devices.emplace_back(device);
 		}
 	}
 	//Split the devices list into CPUs vs. GPUs.
-	for(std::vector<cl::Device>::iterator device = all_devices.begin(); device != all_devices.end(); device++) {
+	for(std::vector<Device<>>::iterator device = all_devices.begin(); device != all_devices.end(); device++) {
 		cl_device_type device_type;
 		if(device->getInfo(CL_DEVICE_TYPE, &device_type) != CL_SUCCESS) {
 			all_devices.erase(device); //Invalidates all pointers after the device, but luckily this is still allowed until we put the devices in the CPUs or GPUs lists.
@@ -54,11 +54,11 @@ OpenCLDevices::OpenCLDevices() {
 			trim(identifier);
 		}
 		identifiers[&*device] = identifier;
-		statistics.insert(std::unordered_map<const cl::Device*, DeviceStatistics>::value_type(&*device, DeviceStatistics(&*device)));
+		statistics.insert(std::unordered_map<const Device<>*, DeviceStatistics>::value_type(&*device, DeviceStatistics(&*device)));
 	}
 
 	identifiers[nullptr] = getHostIdentifier();
-	statistics.insert(std::unordered_map<const cl::Device*, DeviceStatistics>::value_type(nullptr, DeviceStatistics(static_cast<cl::Device*>(nullptr))));
+	statistics.insert(std::unordered_map<const Device<>*, DeviceStatistics>::value_type(nullptr, DeviceStatistics(static_cast<Device<>*>(nullptr))));
 }
 
 OpenCLDevices& OpenCLDevices::getInstance() {
@@ -66,23 +66,23 @@ OpenCLDevices& OpenCLDevices::getInstance() {
 	return instance;
 }
 
-const std::vector<cl::Device>& OpenCLDevices::getAll() const {
+const std::vector<Device<>>& OpenCLDevices::getAll() const {
 	return all_devices;
 }
 
-const std::vector<cl::Device*>& OpenCLDevices::getCPUs() const {
+const std::vector<Device<>*>& OpenCLDevices::getCPUs() const {
 	return cpu_devices;
 }
 
-const std::vector<cl::Device*>& OpenCLDevices::getGPUs() const {
+const std::vector<Device<>*>& OpenCLDevices::getGPUs() const {
 	return gpu_devices;
 }
 
-const std::string& OpenCLDevices::getIdentifier(const cl::Device* device) const {
+const std::string& OpenCLDevices::getIdentifier(const Device<>* device) const {
 	return identifiers.find(device)->second;
 }
 
-const DeviceStatistics& OpenCLDevices::getStatistics(const cl::Device* device) const {
+const DeviceStatistics& OpenCLDevices::getStatistics(const Device<>* device) const {
 	return statistics.find(device)->second;
 }
 

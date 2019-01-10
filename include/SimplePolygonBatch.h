@@ -43,7 +43,7 @@ class SimplePolygon;
  * instances.
  */
 template<typename Iterator, //Work with any kind of forward iterator.
-	typename Device = cl::Device, //Templated cl::Device to allow mocking it in tests.
+	typename Device = Device<>, //Templated Device to allow mocking it in tests.
 	typename Buffer = cl::Buffer> //Templated cl::Buffer to allow mocking it in tests.
 class SimplePolygonBatch {
 	template<typename GroperIterator, typename GroperDevice, typename GroperBuffer> friend class SimplePolygonBatchGroper;

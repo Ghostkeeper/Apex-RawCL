@@ -10,17 +10,18 @@
 #define APEX_OPENCLCONTEXT_H
 
 #include <unordered_map> //The caches of OpenCL programs and contexts.
+#include "Device.h" //To compare devices.
 #include "OpenCL.h" //To store the context and programs.
 
 namespace std {
 
 /*
- * Hashes cl::Device instances.
+ * Hashes Device instances.
  *
  * Devices are hashed by their cl_device_id, which should be unique per device.
  */
-template<> struct hash<cl::Device> {
-	size_t operator ()(const cl::Device& device) const;
+template<> struct hash<apex::Device<>> {
+	size_t operator ()(const apex::Device<>& device) const;
 };
 
 /*
@@ -49,7 +50,7 @@ template<typename F, typename S> struct hash<pair<F, S>> {
  * Devices are compared by their cl_device_id, which should be unique per
  * device.
  */
-bool operator ==(const cl::Device& first, const cl::Device& second);
+bool operator ==(const apex::Device<>& first, const apex::Device<>& second);
 
 }
 
@@ -70,12 +71,12 @@ public:
 	/*
 	 * For each OpenCL device its context, where all kernels should be run.
 	 */
-	std::unordered_map<cl::Device, cl::Context> contexts;
+	std::unordered_map<Device<>, cl::Context> contexts;
 
 	/*
 	 * For each OpenCL device its command queue.
 	 */
-	std::unordered_map<cl::Device, cl::CommandQueue> queues;
+	std::unordered_map<Device<>, cl::CommandQueue> queues;
 
 	/*
 	 * Statically gets the instance of this class.
@@ -93,7 +94,7 @@ public:
 	 * be returned. It only needs to compile once.
 	 * \param device The OpenCL device to compile the source code for.
 	 */
-	cl::Program& compile(const cl::Device& device, const std::string source);
+	cl::Program& compile(const Device<>& device, const std::string source);
 
 	/*
 	 * Since this is a singleton, the copy constructor should not be
@@ -110,7 +111,7 @@ protected:
 	/*
 	 * The cache storing programs after compiling them from source code.
 	 */
-	std::unordered_map<std::pair<const cl::Device, const std::string>, cl::Program> programs;
+	std::unordered_map<std::pair<const Device<>, const std::string>, cl::Program> programs;
 
 	/*
 	 * Creates a new instance of the OpenCL program cache.

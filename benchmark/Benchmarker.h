@@ -1,6 +1,6 @@
 /*
  * Library for performing massively parallel computations on polygons.
- * Copyright (C) 2018 Ghostkeeper
+ * Copyright (C) 2019 Ghostkeeper
  * This library is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for details.
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
@@ -11,13 +11,8 @@
 
 #include <string> //To return the device identifiers.
 #include <vector> //To store multiple benchmarks.
+#include "Device.h" //To track the device we're measuring.
 #include "SimplePolygonBenchmark.h" //The benchmark runners.
-
-namespace cl {
-
-class Device; //Forward declaration of device to associate benchmarker with.
-
-}
 
 namespace apex {
 namespace benchmarks {
@@ -51,7 +46,7 @@ public:
 	 *
 	 * If measuring the host, this should be ``nullptr``.
 	 */
-	const cl::Device* device;
+	const Device* device;
 
 	/*
 	 * Creates a new benchmarker for benchmarking the performance of a specific
@@ -59,7 +54,7 @@ public:
 	 * \param device The device to benchmark. If benchmarking the host, use
 	 * ``nullptr``.
 	 */
-	Benchmarker(const cl::Device* device);
+	Benchmarker(const Device* device);
 
 	/*
 	 * Prints the statistics of the device that can be detected via OpenGL.

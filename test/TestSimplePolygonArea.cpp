@@ -1,6 +1,6 @@
 /*
  * Library for performing massively parallel computations on polygons.
- * Copyright (C) 2018 Ghostkeeper
+ * Copyright (C) 2019 Ghostkeeper
  * This library is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for details.
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
@@ -32,7 +32,7 @@ protected:
 	/*
 	 * The devices to run tests on.
 	 */
-	std::vector<cl::Device> devices;
+	std::vector<Device<>> devices;
 
 	/*
 	 * Provides access to ``SimplePolygon``'s private members in order to test
@@ -62,7 +62,7 @@ protected:
 TEST_F(TestSimplePolygonArea, InitialAreaIsZero) {
 	SimplePolygon empty_polygon;
 	groper.tested_simple_polygon = &empty_polygon;
-	for(const cl::Device& device : devices) {
+	for(const Device<>& device : devices) {
 		EXPECT_EQ(0, groper.area_opencl(device));
 	}
 	EXPECT_EQ(0, groper.area_host());
@@ -73,7 +73,7 @@ TEST_F(TestSimplePolygonArea, InitialAreaIsZero) {
  */
 TEST_F(TestSimplePolygonArea, Square1000) {
 	groper.tested_simple_polygon = &square_1000;
-	for(const cl::Device& device : devices) {
+	for(const Device<>& device : devices) {
 		EXPECT_EQ(1000 * 1000, groper.area_opencl(device));
 	}
 	EXPECT_EQ(1000 * 1000, groper.area_host());
@@ -86,7 +86,7 @@ TEST_F(TestSimplePolygonArea, Square1000) {
 TEST_F(TestSimplePolygonArea, Square1000NegativeCoordinates) {
 	square_1000.translate(-1024, -1024);
 	groper.tested_simple_polygon = &square_1000;
-	for(const cl::Device& device : devices) {
+	for(const Device<>& device : devices) {
 		EXPECT_EQ(1000 * 1000, groper.area_opencl(device));
 	}
 	EXPECT_EQ(1000 * 1000, groper.area_host());
@@ -99,7 +99,7 @@ TEST_F(TestSimplePolygonArea, Square1000NegativeCoordinates) {
 TEST_F(TestSimplePolygonArea, Square1000NegativeY) {
 	square_1000.translate(0, -1024);
 	groper.tested_simple_polygon = &square_1000;
-	for(const cl::Device& device : devices) {
+	for(const Device<>& device : devices) {
 		EXPECT_EQ(1000 * 1000, groper.area_opencl(device));
 	}
 	EXPECT_EQ(1000 * 1000, groper.area_host());
@@ -112,7 +112,7 @@ TEST_F(TestSimplePolygonArea, Square1000NegativeY) {
 TEST_F(TestSimplePolygonArea, Square1000AroundOrigin) {
 	square_1000.translate(-512, -512);
 	groper.tested_simple_polygon = &square_1000;
-	for(const cl::Device& device : devices) {
+	for(const Device<>& device : devices) {
 		EXPECT_EQ(1000 * 1000, groper.area_opencl(device));
 	}
 	EXPECT_EQ(1000 * 1000, groper.area_host());
@@ -128,7 +128,7 @@ TEST_F(TestSimplePolygonArea, Triangle1000) {
 	triangle_1000.emplace_back(524, 1024);
 
 	groper.tested_simple_polygon = &triangle_1000;
-	for(const cl::Device& device : devices) {
+	for(const Device<>& device : devices) {
 		EXPECT_EQ(1000 * 1000 / 2, groper.area_opencl(device));
 	}
 	EXPECT_EQ(1000 * 1000 / 2, groper.area_host());
@@ -145,7 +145,7 @@ TEST_F(TestSimplePolygonArea, Rectangle) {
 	rectangle.emplace_back(0, 1);
 
 	groper.tested_simple_polygon = &rectangle;
-	for(const cl::Device& device : devices) {
+	for(const Device<>& device : devices) {
 		EXPECT_EQ(1000 * 1, groper.area_opencl(device));
 	}
 	EXPECT_EQ(1000 * 1, groper.area_host());
@@ -165,7 +165,7 @@ TEST_F(TestSimplePolygonArea, Concave) {
 	concave.emplace_back(60, 110);
 
 	groper.tested_simple_polygon = &concave;
-	for(const cl::Device& device : devices) {
+	for(const Device<>& device : devices) {
 		EXPECT_EQ(100 * 100 / 2 - 100 * 50 / 2, groper.area_opencl(device));
 	}
 	EXPECT_EQ(100 * 100 / 2 - 100 * 50 / 2, groper.area_host());
@@ -185,7 +185,7 @@ TEST_F(TestSimplePolygonArea, NegativeSquare) {
 	negative_square_1000.emplace_back(1000, 0);
 
 	groper.tested_simple_polygon = &negative_square_1000;
-	for(const cl::Device& device : devices) {
+	for(const Device<>& device : devices) {
 		EXPECT_EQ(-square_1000.area(), groper.area_opencl(device));
 	}
 	EXPECT_EQ(-square_1000.area(), groper.area_host());
@@ -202,7 +202,7 @@ TEST_F(TestSimplePolygonArea, SelfIntersecting) {
 	hourglass.emplace_back(75, 75);
 
 	groper.tested_simple_polygon = &hourglass;
-	for(const cl::Device& device : devices) {
+	for(const Device<>& device : devices) {
 		EXPECT_EQ(100 * 50 / 2 - 50 * 25 / 2, groper.area_opencl(device));
 	}
 	EXPECT_EQ(100 * 50 / 2 - 50 * 25 / 2, groper.area_host());
@@ -217,7 +217,7 @@ TEST_F(TestSimplePolygonArea, Line) {
 	line.emplace_back(100, 100);
 
 	groper.tested_simple_polygon = &line;
-	for(const cl::Device& device : devices) {
+	for(const Device<>& device : devices) {
 		EXPECT_EQ(0, groper.area_opencl(device));
 	}
 	EXPECT_EQ(0, groper.area_host()); //Lines have no area.
@@ -232,7 +232,7 @@ TEST_F(TestSimplePolygonArea, Point) {
 	point.emplace_back(25, 25);
 
 	groper.tested_simple_polygon = &point;
-	for(const cl::Device& device : devices) {
+	for(const Device<>& device : devices) {
 		EXPECT_EQ(0, groper.area_opencl(device));
 	}
 	EXPECT_EQ(0, groper.area_host());
@@ -261,7 +261,7 @@ TEST_F(TestSimplePolygonArea, Circle) {
 	constexpr area_t error_margin = std::sqrt(num_vertices) / num_vertices / 6 * (PI * radius * radius - PI * (radius - 1) * (radius - 1)); //Allow some error due to rounding of input coordinates.
 
 	groper.tested_simple_polygon = &circle;
-	for(const cl::Device& device : devices) {
+	for(const Device<>& device : devices) {
 		EXPECT_NEAR(ground_truth, groper.area_opencl(device), error_margin);
 	}
 	EXPECT_NEAR(ground_truth, groper.area_host(), error_margin);

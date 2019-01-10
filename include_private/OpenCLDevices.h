@@ -12,6 +12,7 @@
 #include <functional> //For reference_wrapper to make the cpu_devices and gpu_devices link to all_devices.
 #include <unordered_map> //To store the device identifier for each device.
 #include <vector> //To store the platforms.
+#include "Device.h" //OpenCL devices are stored via their wrapper.
 #include "DeviceStatistics.h" //To get the statistics on the devices.
 #include "OpenCL.h" //To call the OpenCL API.
 
@@ -40,21 +41,21 @@ public:
 	/*
 	 * Get all devices available to compute with.
 	 */
-	const std::vector<cl::Device>& getAll() const;
+	const std::vector<Device<>>& getAll() const;
 
 	/*
 	 * Get the CPU devices available to compute with.
 	 *
 	 * These pointers are referencing to the array returned by getAll().
 	 */
-	const std::vector<cl::Device*>& getCPUs() const;
+	const std::vector<Device<>*>& getCPUs() const;
 
 	/*
 	 * Get the GPU devices available to compute with.
 	 *
 	 * These pointers are referencing to the array returned by getAll().
 	 */
-	const std::vector<cl::Device*>& getGPUs() const;
+	const std::vector<Device<>*>& getGPUs() const;
 
 	/*
 	 * Get a device identifier, chosen by the manufacturer of the device.
@@ -71,7 +72,7 @@ public:
 	 * the identifier of the host CPU device.
 	 * \return A device identifier for the specified device.
 	 */
-	const std::string& getIdentifier(const cl::Device* device) const;
+	const std::string& getIdentifier(const Device<>* device) const;
 
 	/*
 	 * Gets the device statistics of the specified device.
@@ -83,7 +84,7 @@ public:
 	 * \return A ``DeviceStatistics`` object containing some statistics on the
 	 * specified device.
 	 */
-	const DeviceStatistics& getStatistics(const cl::Device* device) const;
+	const DeviceStatistics& getStatistics(const Device<>* device) const;
 
 	/*
 	 * Since this is a singleton, the copy constructor should not be
@@ -108,7 +109,7 @@ protected:
 	/*
 	 * All detected devices.
 	 */
-	std::vector<cl::Device> all_devices;
+	std::vector<Device<>> all_devices;
 
 	/*
 	 * All detected CPU-type devices.
@@ -117,7 +118,7 @@ protected:
 	 * a CPU-type device, for instance if the task is not well parallelised, or
 	 * requires lots of branching.
 	 */
-	std::vector<cl::Device*> cpu_devices;
+	std::vector<Device<>*> cpu_devices;
 
 	/*
 	 * All detected GPU-type devices.
@@ -126,20 +127,20 @@ protected:
 	 * a GPU-type device, for instance if the task parallelises well and doesn't
 	 * have a lot of branching.
 	 */
-	std::vector<cl::Device*> gpu_devices;
+	std::vector<Device<>*> gpu_devices;
 
 	/*
 	 * For each device as well as the host (nullptr) device, an identifier
 	 * to identify the device with.
 	 */
-	std::unordered_map<const cl::Device*, std::string> identifiers;
+	std::unordered_map<const Device<>*, std::string> identifiers;
 
 	/*
 	 * For each device as well as the host (nullptr) device, some relevant
 	 * statistics about the device that could indicate what sort of performance
 	 * to expect from the device.
 	 */
-	std::unordered_map<const cl::Device*, DeviceStatistics> statistics;
+	std::unordered_map<const Device<>*, DeviceStatistics> statistics;
 
 private:
 	/*

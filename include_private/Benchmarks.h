@@ -9,7 +9,7 @@
 #ifndef APEX_BENCHMARKS_H
 #define APEX_BENCHMARKS_H
 
-#include "OpenCL.h" //For cl::Device.
+#include "Device.h" //To return the most optimal device to run the algorithm on, according to benchmarks.
 
 namespace apex {
 namespace benchmarks { //Contain all benchmark data and the ``choose`` function in a sub-namespace.
@@ -69,7 +69,7 @@ namespace benchmarks { //Contain all benchmark data and the ``choose`` function 
  * * The name of the most efficient algorithm to run in this case.
  * * The device to run this algorithm on, or nullptr if it should be the host.
  */
-std::pair<std::string, const cl::Device*> choose(const std::vector<std::string> options, const std::vector<size_t> problem_size);
+std::pair<std::string, const Device<>*> choose(const std::vector<std::string> options, const std::vector<size_t> problem_size);
 
 }
 }
