@@ -6,8 +6,8 @@
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
  */
 
-#ifndef BENCHMARKDATA_H
-#define BENCHMARKDATA_H
+#ifndef APEX_BENCHMARKDATA_H
+#define APEX_BENCHMARKDATA_H
 
 #include <string> //To use as device identifiers.
 #include <unordered_map> //Data structure that holds the benchmark data.
@@ -141,5 +141,5 @@ private:
 }
 }
 
-#endif //BENCHMARKDATA_H
+#endif //APEX_BENCHMARKDATA_H
 
