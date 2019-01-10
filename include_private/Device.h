@@ -45,10 +45,16 @@ public:
 	cl_device_id operator ()() const {
 		return cl_device();
 	}
-	
+
+	/*
+	 * Gets metadata information about a device.
+	 * \param name What metadata entry to get.
+	 * \param output The value of the specified metadata entry.
+	 * \return Whether the command was successful or not.
+	 */
 	template<typename T>
-	cl_int getInfo(cl_device_info name, T* param) const {
-		return cl_device.getInfo(name, param);
+	cl_int getInfo(cl_device_info name, T* output) const {
+		return cl_device.getInfo(name, output);
 	}
 };
 
