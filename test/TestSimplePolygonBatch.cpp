@@ -424,7 +424,13 @@ TEST_F(TestSimplePolygonBatch, LoadWithOverhead) {
 	EXPECT_FALSE(groper.subbatches().empty()) << "It must create subbatches.";
 }
 
-//TODO: Test overhead parameter of load().
+TEST_F(TestSimplePolygonBatch, LoadOverheadMoreThanGlobalMemory) {
+	groper.tested_batch = &ten_triangles_batch;
+
+	const cl_ulong overhead = device.global_memory + 1;
+	const bool result = groper.load<MockOpenCLContext, MockContext, MockCommandQueue>(device, overhead);
+	ASSERT_FALSE(result) << "It won't fit due to too much overhead.";
+}
 
 /*
  * Starts running the tests.
