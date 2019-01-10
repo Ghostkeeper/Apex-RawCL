@@ -228,6 +228,9 @@ private:
 		typename CommandQueue = cl::CommandQueue> //Templated cl::CommandQueue to allow mocking it in tests.
 	bool load(const Device& device, const cl_ulong overhead) {
 		const DeviceStatistics statistics(&device);
+		if(statistics.global_memory < overhead) {
+			return false; //Overhead exceeds global memory available, so nothing would fit.
+		}
 		const cl_ulong memory_allowed = statistics.global_memory - overhead;
 		const bool fits = ensure_fit(memory_allowed);
 		if(!fits) {
