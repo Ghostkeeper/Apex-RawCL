@@ -1,6 +1,6 @@
 /*
  * Library for performing massively parallel computations on polygons.
- * Copyright (C) 2018 Ghostkeeper
+ * Copyright (C) 2019 Ghostkeeper
  * This library is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for details.
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
@@ -345,7 +345,9 @@ TEST_F(TestSimplePolygonBatch, LoadTenTriangles) {
 		//Validate marker flag.
 		cl_ulong marker = 0;
 		memcpy(&marker, &buffer.data[triangle_offset + vertex_size * ten_triangles[triangle].size()], sizeof(cl_ulong));
+#pragma GCC diagnostic ignored "-Wignored-attributes" //Doesn't matter for numeric_limits.
 		EXPECT_EQ(marker, std::numeric_limits<cl_ulong>::max()) << "Marker flag is max value of a cl_ulong.";
+#pragma GCC diagnostic pop
 
 		//Validate looping link.
 		cl_ulong loop = 0;

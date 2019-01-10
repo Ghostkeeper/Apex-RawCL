@@ -1,6 +1,6 @@
 /*
  * Library for performing massively parallel computations on polygons.
- * Copyright (C) 2018 Ghostkeeper
+ * Copyright (C) 2019 Ghostkeeper
  * This library is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for details.
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
@@ -89,7 +89,9 @@ public:
 	 * device that is not known to us, we can interpolate between the known
 	 * devices using their device statistics.
 	 */
+#pragma GCC diagnostic ignored "-Wignored-attributes" //Alignment isn't used here. It originates from OpenCL but it's only used in host.
 	std::unordered_map<std::string, std::unordered_map<std::string, cl_ulong>> devices;
+#pragma GCC diagnostic pop
 
 	/*
 	 * Prediction vector for the time it'll take to compute area on an OpenCL
