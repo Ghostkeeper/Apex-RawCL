@@ -43,6 +43,12 @@ protected:
 	 */
 	std::vector<SimplePolygon> ten_triangles;
 
+	/*
+	 * A batch that wraps the vector containing the ten triangles.
+	 *
+	 * This batch mocks out the cl::Device and cl::Buffer with idealised
+	 * versions so that it doesn't depend on the OpenCL device.
+	 */
 	SimplePolygonBatch<std::vector<SimplePolygon>::iterator, MockDevice, MockBuffer> ten_triangles_batch;
 
 	/*
