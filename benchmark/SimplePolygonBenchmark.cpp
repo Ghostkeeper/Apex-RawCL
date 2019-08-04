@@ -31,11 +31,11 @@ SimplePolygon SimplePolygonBenchmark::regularNGon(const size_t size) {
 	return polygon;
 }
 
-SimplePolygonBenchmark::SimplePolygonBenchmark(const std::string name, std::function<void(const cl::Device*, SimplePolygon&)> run): name(name), run(run) {
+SimplePolygonBenchmark::SimplePolygonBenchmark(const std::string name, std::function<void(const Device<>*, SimplePolygon&)> run): name(name), run(run) {
 	//Simply store all input parameters in the fields.
 }
 
-void SimplePolygonBenchmark::benchmark(const cl::Device* device) const {
+void SimplePolygonBenchmark::benchmark(const Device<>* device) const {
 	//Debug output for progress reporting goes through std::cerr.
 	std::cerr << name << ":   0%";
 

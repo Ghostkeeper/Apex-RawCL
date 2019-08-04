@@ -46,7 +46,7 @@ public:
 	 *
 	 * If measuring the host, this should be ``nullptr``.
 	 */
-	const Device* device;
+	const Device<>* device;
 
 	/*
 	 * Creates a new benchmarker for benchmarking the performance of a specific
@@ -54,7 +54,7 @@ public:
 	 * \param device The device to benchmark. If benchmarking the host, use
 	 * ``nullptr``.
 	 */
-	Benchmarker(const Device* device);
+	Benchmarker(const Device<>* device);
 
 	/*
 	 * Prints the statistics of the device that can be detected via OpenGL.

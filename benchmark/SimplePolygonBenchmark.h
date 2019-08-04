@@ -73,7 +73,7 @@ public:
 	 * is the function that we benchmark, so keep overhead to an absolute
 	 * minimum.
 	 */
-	SimplePolygonBenchmark(const std::string name, std::function<void(const cl::Device*, SimplePolygon&)> run);
+	SimplePolygonBenchmark(const std::string name, std::function<void(const Device<>*, SimplePolygon&)> run);
 
 	/*
 	 * Starts benchmarking for a specific device.
@@ -81,7 +81,7 @@ public:
 	 * The results of the benchmark are output to cout.
 	 * \param device The device that the benchmarker must be run on.
 	 */
-	void benchmark(const cl::Device* device) const;
+	void benchmark(const Device<>* device) const;
 
 	/*
 	 * Computes the interpolation parameters for this test.
@@ -106,7 +106,7 @@ private:
 	/*
 	 * The function that runs one test with a pre-generated polygon.
 	 */
-	std::function<void(const cl::Device*, SimplePolygon&)> run;
+	std::function<void(const Device<>*, SimplePolygon&)> run;
 };
 
 }
