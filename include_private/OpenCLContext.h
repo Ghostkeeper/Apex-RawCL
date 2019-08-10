@@ -97,6 +97,12 @@ public:
 	cl::Program& compile(const Device<>& device, const std::string source);
 
 	/*
+	 * Cleans up the OpenCL context, finalising any command queues that are
+	 * still running.
+	 */
+	~OpenCLContext();
+
+	/*
 	 * Since this is a singleton, the copy constructor should not be
 	 * implemented.
 	 */

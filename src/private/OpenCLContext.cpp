@@ -45,6 +45,12 @@ OpenCLContext::OpenCLContext() {
 	}
 }
 
+OpenCLContext::~OpenCLContext() {
+	for(const std::pair<const Device<>, cl::CommandQueue> queue : queues) {
+		queue.second.finish();
+	}
+}
+
 OpenCLContext& OpenCLContext::getInstance() {
 	static OpenCLContext instance; //Constructs using the default constructor.
 	return instance;
