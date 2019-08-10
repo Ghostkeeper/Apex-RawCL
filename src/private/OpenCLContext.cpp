@@ -46,7 +46,7 @@ OpenCLContext::OpenCLContext() {
 }
 
 OpenCLContext::~OpenCLContext() {
-	for(const std::pair<const Device<>, cl::CommandQueue> queue : queues) {
+	for(const std::pair<const Device<>&, cl::CommandQueue>& queue : queues) {
 		queue.second.finish();
 	}
 }
